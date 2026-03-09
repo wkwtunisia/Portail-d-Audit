@@ -20,7 +20,7 @@
             {"src": "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png", "sizes": "512x512", "type": "image/png"}
         ]
     }'>
-    <title>WKW Automotive | Master Audit Pro</title>
+    <title>WKW Automotive | Audit Pro + Magasin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -152,6 +152,12 @@
         .page-section { display: none; }
         .page-section.active { display: block; animation: fadeUp 0.5s ease forwards; }
         #lastAuditSummary { margin-top: 30px; }
+        .audit-type-tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .audit-tab { padding: 12px 24px; background: white; border: 1px solid #e2e8f0; border-radius: 30px; font-weight: 700; cursor: pointer; transition: var(--transition); color: var(--text-dark); }
+        body.dark .audit-tab { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+        .audit-tab.active { background: var(--wkw-red); color: white; border-color: var(--wkw-red); }
+        .audit-form { display: block; }
+        .audit-form.hidden { display: none; }
     </style>
 </head>
 <body>
@@ -199,11 +205,11 @@
             </div>
         </div>
 
-        <!-- Audit Page -->
+        <!-- Audit Page with two tabs -->
         <div id="auditPage" class="page-section active">
             <div class="stats-grid animate-fade-up delay-1">
-                <div class="stat-card ok-card"><div class="stat-icon"><i class="fa-solid fa-check"></i></div><div><h3>Points OK</h3><div class="value" id="count-ok" style="color:var(--success)">0</div></div></div>
-                <div class="stat-card nok-card"><div class="stat-icon"><i class="fa-solid fa-xmark"></i></div><div><h3>Points NOK</h3><div class="value" id="count-nok" style="color:var(--wkw-red)">0</div></div></div>
+                <div class="stat-card ok-card"><div class="stat-icon"><i class="fa-solid fa-check"></i></div><div><h3>Points OK</h3><div class="value" id="count-ok">0</div></div></div>
+                <div class="stat-card nok-card"><div class="stat-icon"><i class="fa-solid fa-xmark"></i></div><div><h3>Points NOK</h3><div class="value" id="count-nok">0</div></div></div>
                 <div class="stat-card score-card"><div class="stat-icon"><i class="fa-solid fa-bolt"></i></div><div><h3>Performance</h3><div class="value" id="count-score">0%</div></div></div>
             </div>
 
@@ -219,17 +225,41 @@
             </div>
 
             <div class="glass-panel animate-fade-up delay-2">
+                <!-- Tabs for audit type -->
+                <div class="audit-type-tabs">
+                    <div class="audit-tab active" onclick="switchAuditType('production')">🏭 Audit Production</div>
+                    <div class="audit-tab" onclick="switchAuditType('magasin')">📦 Audit Magasin</div>
+                </div>
+
+                <!-- Common header fields (date, uap, ligne) -->
                 <div class="form-row">
-                    <div class="input-group"><label>Date de l'inspection</label><input type="date" id="auditDate"></div>
+                    <div class="input-group"><label>Date de l'inspection</label><input type="date" id="auditDate" value="2026-03-09"></div>
                     <div class="input-group"><label>Secteur (UAP)</label><select id="uapSelect"><option value="UAP 1">UAP 1</option><option value="UAP 2">UAP 2</option></select></div>
                     <div class="input-group"><label>Numéro de Ligne</label><input type="text" id="ligneInput" placeholder="Ex: Ligne 04"></div>
                 </div>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead><tr><th>N°</th><th>Critère d'évaluation</th><th>Statut de conformité</th></tr></thead>
-                        <tbody id="auditTableBody"></tbody>
-                    </table>
+
+                <!-- Production Audit Form (10 criteria) -->
+                <div id="productionAuditForm" class="audit-form">
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>N°</th><th>Critère d'évaluation</th><th>Statut de conformité</th></tr></thead>
+                            <tbody id="auditTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
+
+                <!-- Magasin Audit Form (8 criteria) avec les nouveaux critères -->
+                <div id="magasinAuditForm" class="audit-form hidden">
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>N°</th><th>Critère d'évaluation</th><th>Statut de conformité</th></tr></thead>
+                            <tbody id="magasinTableBody">
+                                <!-- Rempli dynamiquement par JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <button class="btn-primary" style="margin-top: 40px; max-width: 300px; float: right;" onclick="validateAndSave()">
                     <i class="fa-solid fa-cloud-arrow-up"></i> Sauvegarder l'Audit
                 </button>
@@ -254,7 +284,7 @@
                 </div>
                 <div style="overflow-x: auto;">
                     <table>
-                        <thead><tr><th>ID</th><th>Date</th><th>UAP</th><th>Ligne</th><th>OK</th><th>NOK</th><th>Score</th><th>Résultat</th></tr></thead>
+                        <thead><tr><th>ID</th><th>Type</th><th>Date</th><th>UAP</th><th>Ligne</th><th>OK</th><th>NOK</th><th>Score</th><th>Résultat</th></tr></thead>
                         <tbody id="historyTableBody"></tbody>
                     </table>
                 </div>
@@ -275,7 +305,7 @@
     // ────────────────────────────────────────────────
     // Constants & Globals
     // ────────────────────────────────────────────────
-    const criteria = [
+    const productionCriteria = [
         "Qualification de la Main d'œuvre",
         "État des Rebuts (Matière)",
         "Conformité du Dossier de Fabrication",
@@ -286,6 +316,18 @@
         "Maintenance Préventive (Niveau 1)",
         "Suivi Maintenance (Niveau 2)",
         "Validation POKA YOKE"
+    ];
+
+    // Nouveaux critères pour Audit Magasin (8 items)
+    const magasinCriteria = [
+        "Qualification (Grille de polyvalence)",
+        "Etiquette",
+        "Instruction",
+        "Stockage",
+        "Formulaire",
+        "HSE",
+        "5S",
+        "Chariot élévateur"
     ];
 
     const firebaseConfig = {
@@ -305,6 +347,7 @@
 
     let db = [];
     let chartUAP, chartEvolution, chartPassRate, chartLigneOKNOK;
+    let currentAuditType = 'production'; // 'production' ou 'magasin'
 
     // ────────────────────────────────────────────────
     // Auth & Login Functions
@@ -434,23 +477,66 @@
         }
     }
 
+    // Bascule entre les types d'audit
+    function switchAuditType(type) {
+        currentAuditType = type;
+        // Mise à jour des onglets
+        document.querySelectorAll('.audit-tab').forEach(tab => tab.classList.remove('active'));
+        if (type === 'production') {
+            document.querySelectorAll('.audit-tab')[0].classList.add('active');
+            document.getElementById('productionAuditForm').classList.remove('hidden');
+            document.getElementById('magasinAuditForm').classList.add('hidden');
+        } else {
+            document.querySelectorAll('.audit-tab')[1].classList.add('active');
+            document.getElementById('productionAuditForm').classList.add('hidden');
+            document.getElementById('magasinAuditForm').classList.remove('hidden');
+        }
+        // Recalculer les scores à zéro lors du changement
+        resetCounters();
+    }
+
+    function resetCounters() {
+        document.getElementById('count-ok').innerText = '0';
+        document.getElementById('count-nok').innerText = '0';
+        document.getElementById('count-score').innerText = '0%';
+    }
+
     // ────────────────────────────────────────────────
     // Data & Audit Functions
     // ────────────────────────────────────────────────
     function initSystem() {
-        document.getElementById('auditDate').valueAsDate = new Date();
+        // Date par défaut au 09/03/2026 comme demandé
+        document.getElementById('auditDate').value = '2026-03-09';
 
-        const tbody = document.getElementById('auditTableBody');
-        tbody.innerHTML = criteria.map((q, i) => {
+        // Remplir tableau production
+        const prodTbody = document.getElementById('auditTableBody');
+        prodTbody.innerHTML = productionCriteria.map((q, i) => {
             const id = i + 1;
             return `<tr>
                 <td>${id < 10 ? '0'+id : id}</td>
                 <td>${q}</td>
                 <td>
                     <div class="custom-radio-group">
-                        <div class="radio-btn"><input type="radio" id="ok${id}" name="q${id}" value="1" onchange="calcScore()"><label for="ok${id}" class="ok-label"><i class="fa-solid fa-check"></i> OK</label></div>
-                        <div class="radio-btn"><input type="radio" id="nok${id}" name="q${id}" value="0" onchange="calcScore()"><label for="nok${id}" class="nok-label"><i class="fa-solid fa-xmark"></i> NOK</label></div>
-                        ${id === 10 ? `<div class="radio-btn"><input type="radio" id="na${id}" name="q${id}" value="na" onchange="calcScore()"><label for="na${id}" class="na-label">N/A</label></div>` : ''}
+                        <div class="radio-btn"><input type="radio" id="prod_ok${id}" name="prod_q${id}" value="1" onchange="calcScore()"><label for="prod_ok${id}" class="ok-label"><i class="fa-solid fa-check"></i> OK</label></div>
+                        <div class="radio-btn"><input type="radio" id="prod_nok${id}" name="prod_q${id}" value="0" onchange="calcScore()"><label for="prod_nok${id}" class="nok-label"><i class="fa-solid fa-xmark"></i> NOK</label></div>
+                        ${id === 10 ? `<div class="radio-btn"><input type="radio" id="prod_na${id}" name="prod_q${id}" value="na" onchange="calcScore()"><label for="prod_na${id}" class="na-label">N/A</label></div>` : ''}
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+
+        // Remplir tableau magasin avec 8 critères (tous avec N/A possible ? selon demande, on met N/A sur tous pour flexibilité)
+        const magTbody = document.getElementById('magasinTableBody');
+        magTbody.innerHTML = magasinCriteria.map((q, i) => {
+            const id = i + 1;
+            return `<tr>
+                <td>M${id < 10 ? '0'+id : id}</td>
+                <td>${q}</td>
+                <td>
+                    <div class="custom-radio-group">
+                        <div class="radio-btn"><input type="radio" id="mag_ok${id}" name="mag_q${id}" value="1" onchange="calcScore()"><label for="mag_ok${id}" class="ok-label"><i class="fa-solid fa-check"></i> OK</label></div>
+                        <div class="radio-btn"><input type="radio" id="mag_nok${id}" name="mag_q${id}" value="0" onchange="calcScore()"><label for="mag_nok${id}" class="nok-label"><i class="fa-solid fa-xmark"></i> NOK</label></div>
+                        <div class="radio-btn"><input type="radio" id="mag_na${id}" name="mag_q${id}" value="na" onchange="calcScore()"><label for="mag_na${id}" class="na-label">N/A</label></div>
                     </div>
                 </td>
             </tr>`;
@@ -466,33 +552,56 @@
 
     function calcScore() {
         let ok = 0, nok = 0, na = 0;
-        for(let i=1; i<=10; i++) {
-            const sel = document.querySelector(`input[name="q${i}"]:checked`);
-            if(sel) {
-                if(sel.value === "1") ok++;
-                else if(sel.value === "0") nok++;
-                else if(sel.value === "na") na++;
+        const totalQuestions = currentAuditType === 'production' ? 10 : 8;
+
+        if (currentAuditType === 'production') {
+            for(let i=1; i<=10; i++) {
+                const sel = document.querySelector(`input[name="prod_q${i}"]:checked`);
+                if(sel) {
+                    if(sel.value === "1") ok++;
+                    else if(sel.value === "0") nok++;
+                    else if(sel.value === "na") na++;
+                }
+            }
+        } else {
+            for(let i=1; i<=8; i++) {
+                const sel = document.querySelector(`input[name="mag_q${i}"]:checked`);
+                if(sel) {
+                    if(sel.value === "1") ok++;
+                    else if(sel.value === "0") nok++;
+                    else if(sel.value === "na") na++;
+                }
             }
         }
+
         document.getElementById('count-ok').innerText = ok;
         document.getElementById('count-nok').innerText = nok;
-        const divisor = (na > 0) ? 9 : 10;
+        // Si tous sont N/A, on évite division par zéro
+        const divisor = (totalQuestions - na) > 0 ? (totalQuestions - na) : 1;
         const score = ok / divisor * 100;
         document.getElementById('count-score').innerText = score.toFixed(1) + "%";
     }
 
     function validateAndSave() {
         const ligne = document.getElementById('ligneInput').value.trim();
-        const selected = document.querySelectorAll('input[type="radio"]:checked').length;
+        const totalQuestions = currentAuditType === 'production' ? 10 : 8;
+        let selected = 0;
 
-        if (selected < 10 || !ligne) {
-            return showToast("Veuillez compléter tous les critères et indiquer la ligne", true);
+        if (currentAuditType === 'production') {
+            selected = document.querySelectorAll('input[name^="prod_q"]:checked').length;
+        } else {
+            selected = document.querySelectorAll('input[name^="mag_q"]:checked').length;
+        }
+
+        if (selected < totalQuestions || !ligne) {
+            return showToast(`Veuillez compléter tous les critères (${totalQuestions}) et indiquer la ligne`, true);
         }
 
         const scoreStr = document.getElementById('count-score').innerText;
         const scoreNum = parseFloat(scoreStr);
 
         const newAudit = {
+            type: currentAuditType === 'production' ? 'Production' : 'Magasin',
             date: document.getElementById('auditDate').value,
             uap: document.getElementById('uapSelect').value,
             ligne: ligne,
@@ -509,7 +618,8 @@
 
         newRef.set({ ...newAudit, auditId: shortId })
             .then(() => {
-                showToast(`Audit #${shortId} enregistré avec succès !`);
+                showToast(`Audit #${shortId} (${newAudit.type}) enregistré !`);
+                // Optionnel: réinitialiser les radios
                 switchPage('historyPage');
                 updateLastAuditSummary();
             })
@@ -541,6 +651,7 @@
         tbody.innerHTML = db.slice().reverse().map(r => `
             <tr>
                 <td><strong>#${r.auditId || '—'}</strong></td>
+                <td><span style="background:${r.type==='Magasin'?'#f59e0b':'#3b82f6'}; color:white; padding:4px 10px; border-radius:20px; font-size:11px;">${r.type || 'Prod'}</span></td>
                 <td>${r.date || '—'}</td>
                 <td>${r.uap || '—'}</td>
                 <td><b>${r.ligne || '—'}</b></td>
@@ -561,8 +672,8 @@
         const fLigne = document.getElementById('searchLigne').value.toLowerCase().trim();
 
         document.querySelectorAll('#historyTableBody tr').forEach(row => {
-            const dateCell = row.cells[1].innerText.toLowerCase();
-            const ligneCell = row.cells[3].innerText.toLowerCase();
+            const dateCell = row.cells[2].innerText.toLowerCase();
+            const ligneCell = row.cells[4].innerText.toLowerCase();
             row.style.display = (dateCell.includes(fDate) && ligneCell.includes(fLigne)) ? "" : "none";
         });
     }
@@ -575,19 +686,20 @@
             return showToast("Aucun audit visible à exporter", true);
         }
 
-        const headers = ["ID", "Date", "UAP", "Ligne", "OK", "NOK", "Score", "Résultat"];
+        const headers = ["ID", "Type", "Date", "UAP", "Ligne", "OK", "NOK", "Score", "Résultat"];
 
         const rows = visibleRows.map(row => {
             const cells = row.querySelectorAll('td');
             return [
                 cells[0].innerText.trim(),
-                cells[1].innerText.trim(),
+                cells[1].innerText.trim().replace(/<[^>]+>/g, ''), // nettoie le span
                 cells[2].innerText.trim(),
                 cells[3].innerText.trim(),
                 cells[4].innerText.trim(),
                 cells[5].innerText.trim(),
                 cells[6].innerText.trim(),
-                cells[7].innerText.replace(/<[^>]+>/g, '').trim()
+                cells[7].innerText.trim(),
+                cells[8].innerText.replace(/<[^>]+>/g, '').trim()
             ].map(v => `"${v}"`).join(';');
         });
 
@@ -612,7 +724,7 @@
     }
 
     // ────────────────────────────────────────────────
-    // Charts
+    // Charts (simplifiés, s'adaptent aux deux types)
     // ────────────────────────────────────────────────
     function renderCharts() {
         const container = document.getElementById('chartsContent');
@@ -671,7 +783,7 @@
             options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
         });
 
-        // Graph 3: Taux de conformité (doughnut)
+        // Graph 3: Taux de conformité
         const passCount = db.filter(a => parseFloat(a.score) >= 80).length;
         const failCount = db.length - passCount;
 
@@ -710,38 +822,17 @@
         });
     }
 
-    // ────────────────────────────────────────────────
-    // PWA Setup (runs on load)
-    // ────────────────────────────────────────────────
+    // PWA Setup
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register(new URL('', location.href), {type: 'module'})
-            .then(reg => console.log('SW registered', reg))
-            .catch(err => console.error('SW registration failed', err));
-    }
-
-    // Basic SW code (inline as module for single file)
-    const swCode = `
-    const CACHE_NAME = 'wkw-audit-cache-v1';
-    const urlsToCache = ['/', 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'];
-
-    self.addEventListener('install', e => {
-        e.waitUntil(
-            caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
-        );
-    });
-
-    self.addEventListener('fetch', e => {
-        e.respondWith(
-            caches.match(e.request).then(res => res || fetch(e.request))
-        );
-    });
-    `;
-    const swBlob = new Blob([swCode], {type: 'application/javascript'});
-    const swUrl = URL.createObjectURL(swBlob);
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register(swUrl)
-            .then(() => showToast('PWA prêt pour offline !'))
-            .catch(err => console.error('SW error', err));
+        const swCode = `
+        const CACHE_NAME = 'wkw-audit-cache-v2';
+        const urlsToCache = ['/', 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'];
+        self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))));
+        self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(res => res || fetch(e.request))));
+        `;
+        const swBlob = new Blob([swCode], {type: 'application/javascript'});
+        const swUrl = URL.createObjectURL(swBlob);
+        navigator.serviceWorker.register(swUrl).catch(err => console.error('SW error', err));
     }
 
     // Enter key for login
