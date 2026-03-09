@@ -160,6 +160,7 @@
         .audit-form.hidden { display: none; }
         .sub-select { margin-top: 10px; padding: 12px; border-radius: 12px; border: 2px solid #e2e8f0; background: #f8fafc; width: 100%; }
         body.dark .sub-select { background: #1e293b; border-color: #334155; color: white; }
+        .mur-select-container { margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -220,7 +221,7 @@
                 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:16px; font-size:15px;">
                     <div><strong>Date :</strong> <span id="lastDate">—</span></div>
                     <div><strong>UAP :</strong> <span id="lastUAP">—</span></div>
-                    <div><strong>Ligne :</strong> <span id="lastLigne">—</span></div>
+                    <div><strong>Ligne/Mur :</strong> <span id="lastLigne">—</span></div>
                     <div><strong>Score :</strong> <span id="lastScore">—</span></div>
                     <div><strong>Résultat :</strong> <span id="lastResult">—</span></div>
                 </div>
@@ -234,11 +235,11 @@
                     <div class="audit-tab" onclick="switchAuditType('mur')">🧱 Audit Mur Qualité</div>
                 </div>
 
-                <!-- Common header fields (date, uap) -->
-                <div class="form-row">
+                <!-- Common header fields (date, uap) - ligneInput is only shown for production/magasin -->
+                <div class="form-row" id="commonFields">
                     <div class="input-group"><label>Date de l'inspection</label><input type="date" id="auditDate" value="2026-03-09"></div>
                     <div class="input-group"><label>Secteur (UAP)</label><select id="uapSelect" onchange="updateMurList()"><option value="UAP 1">UAP 1</option><option value="UAP 2">UAP 2</option></select></div>
-                    <div class="input-group"><label>Numéro de Ligne / Mur</label><input type="text" id="ligneInput" placeholder="Ex: Ligne 04"></div>
+                    <div class="input-group" id="ligneField"><label>Numéro de Ligne</label><input type="text" id="ligneInput" placeholder="Ex: Ligne 04"></div>
                 </div>
 
                 <!-- Production Audit Form (10 criteria) -->
@@ -261,17 +262,14 @@
                     </div>
                 </div>
 
-                <!-- Mur Qualité Audit Form (7 criteria) avec liste déroulante -->
+                <!-- Mur Qualité Audit Form (7 criteria) avec liste simplifiée -->
                 <div id="murAuditForm" class="audit-form hidden">
-                    <div class="input-group" style="margin-bottom: 20px;">
+                    <div class="mur-select-container input-group">
                         <label>Liste Mur Qualité (selon UAP)</label>
                         <select id="murSelect" class="sub-select">
-                            <option value="Mur UAP1 - Contrôle entrée">Mur UAP1 - Contrôle entrée</option>
-                            <option value="Mur UAP1 - Audit processus">Mur UAP1 - Audit processus</option>
-                            <option value="Mur UAP2 - Produits finis">Mur UAP2 - Produits finis</option>
-                            <option value="Mur UAP2 - Expédition">Mur UAP2 - Expédition</option>
+                            <option value="Mur Qualité UAP 1">Mur Qualité UAP 1</option>
+                            <option value="Mur Qualité UAP 2">Mur Qualité UAP 2</option>
                         </select>
-                        <small style="color:#64748b;">Sélectionnez le mur spécifique (la liste s'adapte à l'UAP choisie)</small>
                     </div>
                     <div style="overflow-x: auto;">
                         <table>
@@ -508,41 +506,43 @@
         }
     }
 
-    // Met à jour la liste déroulante du Mur Qualité en fonction de l'UAP sélectionnée
+    // Met à jour la liste déroulante du Mur Qualité (simplifiée)
     function updateMurList() {
         const uap = document.getElementById('uapSelect').value;
         const murSelect = document.getElementById('murSelect');
+        // Liste simplifiée selon la demande
         if (uap === 'UAP 1') {
-            murSelect.innerHTML = `
-                <option value="Mur UAP1 - Contrôle entrée">Mur UAP1 - Contrôle entrée</option>
-                <option value="Mur UAP1 - Audit processus">Mur UAP1 - Audit processus</option>
-            `;
+            murSelect.innerHTML = `<option value="Mur Qualité UAP 1">Mur Qualité UAP 1</option>`;
         } else {
-            murSelect.innerHTML = `
-                <option value="Mur UAP2 - Produits finis">Mur UAP2 - Produits finis</option>
-                <option value="Mur UAP2 - Expédition">Mur UAP2 - Expédition</option>
-            `;
+            murSelect.innerHTML = `<option value="Mur Qualité UAP 2">Mur Qualité UAP 2</option>`;
         }
     }
 
     function switchAuditType(type) {
         currentAuditType = type;
         document.querySelectorAll('.audit-tab').forEach(tab => tab.classList.remove('active'));
+        
+        // Gérer l'affichage du champ ligne
+        const ligneField = document.getElementById('ligneField');
+        
         if (type === 'production') {
             document.querySelectorAll('.audit-tab')[0].classList.add('active');
             document.getElementById('productionAuditForm').classList.remove('hidden');
             document.getElementById('magasinAuditForm').classList.add('hidden');
             document.getElementById('murAuditForm').classList.add('hidden');
+            ligneField.style.display = 'block'; // Afficher le champ ligne
         } else if (type === 'magasin') {
             document.querySelectorAll('.audit-tab')[1].classList.add('active');
             document.getElementById('productionAuditForm').classList.add('hidden');
             document.getElementById('magasinAuditForm').classList.remove('hidden');
             document.getElementById('murAuditForm').classList.add('hidden');
-        } else {
+            ligneField.style.display = 'block'; // Afficher le champ ligne
+        } else { // mur
             document.querySelectorAll('.audit-tab')[2].classList.add('active');
             document.getElementById('productionAuditForm').classList.add('hidden');
             document.getElementById('magasinAuditForm').classList.add('hidden');
             document.getElementById('murAuditForm').classList.remove('hidden');
+            ligneField.style.display = 'none'; // Cacher le champ ligne pour Mur Qualité
             updateMurList(); // assure la bonne liste
         }
         resetCounters();
@@ -667,40 +667,44 @@
         let totalQuestions = 0;
         let selected = 0;
         let auditTypeLabel = '';
+        let ligneValue = '';
 
         if (currentAuditType === 'production') {
             totalQuestions = 10;
             selected = document.querySelectorAll('input[name^="prod_q"]:checked').length;
             auditTypeLabel = 'Production';
+            if (!ligne) {
+                return showToast(`Veuillez indiquer la ligne`, true);
+            }
+            ligneValue = ligne;
         } else if (currentAuditType === 'magasin') {
             totalQuestions = 8;
             selected = document.querySelectorAll('input[name^="mag_q"]:checked').length;
             auditTypeLabel = 'Magasin';
+            if (!ligne) {
+                return showToast(`Veuillez indiquer la ligne`, true);
+            }
+            ligneValue = ligne;
         } else { // mur
             totalQuestions = 7;
             selected = document.querySelectorAll('input[name^="mur_q"]:checked').length;
             auditTypeLabel = 'Mur Qualité';
+            // Pour Mur Qualité, on utilise la valeur du select comme ligne
+            ligneValue = document.getElementById('murSelect').value;
         }
 
-        if (selected < totalQuestions || !ligne) {
-            return showToast(`Veuillez compléter tous les critères (${totalQuestions}) et indiquer la ligne/mur`, true);
+        if (selected < totalQuestions) {
+            return showToast(`Veuillez compléter tous les critères (${totalQuestions})`, true);
         }
 
         const scoreStr = document.getElementById('count-score').innerText;
         const scoreNum = parseFloat(scoreStr);
 
-        // Pour Mur Qualité, on peut aussi enregistrer le sous-type sélectionné
-        let murDetail = '';
-        if (currentAuditType === 'mur') {
-            murDetail = document.getElementById('murSelect').value;
-        }
-
         const newAudit = {
             type: auditTypeLabel,
-            murDetail: murDetail || '',
             date: document.getElementById('auditDate').value,
             uap: document.getElementById('uapSelect').value,
-            ligne: ligne + (murDetail ? ' - ' + murDetail : ''),
+            ligne: ligneValue,
             ok: document.getElementById('count-ok').innerText,
             nok: document.getElementById('count-nok').innerText,
             score: scoreStr,
@@ -920,7 +924,7 @@
     // PWA Setup
     if ('serviceWorker' in navigator) {
         const swCode = `
-        const CACHE_NAME = 'wkw-audit-cache-v3';
+        const CACHE_NAME = 'wkw-audit-cache-v4';
         const urlsToCache = ['/', 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'];
         self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))));
         self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(res => res || fetch(e.request))));
