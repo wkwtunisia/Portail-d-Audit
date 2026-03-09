@@ -20,7 +20,7 @@
             {"src": "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png", "sizes": "512x512", "type": "image/png"}
         ]
     }'>
-    <title>WKW Automotive | Audit Pro + Magasin</title>
+    <title>WKW Automotive | Triple Audit</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -152,12 +152,14 @@
         .page-section { display: none; }
         .page-section.active { display: block; animation: fadeUp 0.5s ease forwards; }
         #lastAuditSummary { margin-top: 30px; }
-        .audit-type-tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .audit-type-tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; flex-wrap: wrap; }
         .audit-tab { padding: 12px 24px; background: white; border: 1px solid #e2e8f0; border-radius: 30px; font-weight: 700; cursor: pointer; transition: var(--transition); color: var(--text-dark); }
         body.dark .audit-tab { background: #1e293b; border-color: #334155; color: #e2e8f0; }
         .audit-tab.active { background: var(--wkw-red); color: white; border-color: var(--wkw-red); }
         .audit-form { display: block; }
         .audit-form.hidden { display: none; }
+        .sub-select { margin-top: 10px; padding: 12px; border-radius: 12px; border: 2px solid #e2e8f0; background: #f8fafc; width: 100%; }
+        body.dark .sub-select { background: #1e293b; border-color: #334155; color: white; }
     </style>
 </head>
 <body>
@@ -205,7 +207,7 @@
             </div>
         </div>
 
-        <!-- Audit Page with two tabs -->
+        <!-- Audit Page with three tabs -->
         <div id="auditPage" class="page-section active">
             <div class="stats-grid animate-fade-up delay-1">
                 <div class="stat-card ok-card"><div class="stat-icon"><i class="fa-solid fa-check"></i></div><div><h3>Points OK</h3><div class="value" id="count-ok">0</div></div></div>
@@ -229,13 +231,14 @@
                 <div class="audit-type-tabs">
                     <div class="audit-tab active" onclick="switchAuditType('production')">🏭 Audit Production</div>
                     <div class="audit-tab" onclick="switchAuditType('magasin')">📦 Audit Magasin</div>
+                    <div class="audit-tab" onclick="switchAuditType('mur')">🧱 Audit Mur Qualité</div>
                 </div>
 
-                <!-- Common header fields (date, uap, ligne) -->
+                <!-- Common header fields (date, uap) -->
                 <div class="form-row">
                     <div class="input-group"><label>Date de l'inspection</label><input type="date" id="auditDate" value="2026-03-09"></div>
-                    <div class="input-group"><label>Secteur (UAP)</label><select id="uapSelect"><option value="UAP 1">UAP 1</option><option value="UAP 2">UAP 2</option></select></div>
-                    <div class="input-group"><label>Numéro de Ligne</label><input type="text" id="ligneInput" placeholder="Ex: Ligne 04"></div>
+                    <div class="input-group"><label>Secteur (UAP)</label><select id="uapSelect" onchange="updateMurList()"><option value="UAP 1">UAP 1</option><option value="UAP 2">UAP 2</option></select></div>
+                    <div class="input-group"><label>Numéro de Ligne / Mur</label><input type="text" id="ligneInput" placeholder="Ex: Ligne 04"></div>
                 </div>
 
                 <!-- Production Audit Form (10 criteria) -->
@@ -248,14 +251,32 @@
                     </div>
                 </div>
 
-                <!-- Magasin Audit Form (8 criteria) avec les nouveaux critères -->
+                <!-- Magasin Audit Form (8 criteria) -->
                 <div id="magasinAuditForm" class="audit-form hidden">
                     <div style="overflow-x: auto;">
                         <table>
                             <thead><tr><th>N°</th><th>Critère d'évaluation</th><th>Statut de conformité</th></tr></thead>
-                            <tbody id="magasinTableBody">
-                                <!-- Rempli dynamiquement par JavaScript -->
-                            </tbody>
+                            <tbody id="magasinTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mur Qualité Audit Form (7 criteria) avec liste déroulante -->
+                <div id="murAuditForm" class="audit-form hidden">
+                    <div class="input-group" style="margin-bottom: 20px;">
+                        <label>Liste Mur Qualité (selon UAP)</label>
+                        <select id="murSelect" class="sub-select">
+                            <option value="Mur UAP1 - Contrôle entrée">Mur UAP1 - Contrôle entrée</option>
+                            <option value="Mur UAP1 - Audit processus">Mur UAP1 - Audit processus</option>
+                            <option value="Mur UAP2 - Produits finis">Mur UAP2 - Produits finis</option>
+                            <option value="Mur UAP2 - Expédition">Mur UAP2 - Expédition</option>
+                        </select>
+                        <small style="color:#64748b;">Sélectionnez le mur spécifique (la liste s'adapte à l'UAP choisie)</small>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>N°</th><th>Critère d'évaluation</th><th>Statut de conformité</th></tr></thead>
+                            <tbody id="murTableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -273,7 +294,7 @@
                 <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap:wrap; gap:15px;">
                     <div class="form-row" style="margin:0; flex:1; max-width: 600px; gap:12px;">
                         <input type="text" id="searchDate" placeholder="Rechercher une Date (YYYY-MM-DD)..." onkeyup="filterData()">
-                        <input type="text" id="searchLigne" placeholder="Rechercher une Ligne..." onkeyup="filterData()">
+                        <input type="text" id="searchLigne" placeholder="Rechercher une Ligne/Mur..." onkeyup="filterData()">
                     </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button onclick="exportToCSV()" class="export-btn"><i class="fa-solid fa-download"></i> Exporter visible (CSV)</button>
@@ -284,7 +305,7 @@
                 </div>
                 <div style="overflow-x: auto;">
                     <table>
-                        <thead><tr><th>ID</th><th>Type</th><th>Date</th><th>UAP</th><th>Ligne</th><th>OK</th><th>NOK</th><th>Score</th><th>Résultat</th></tr></thead>
+                        <thead><tr><th>ID</th><th>Type</th><th>Date</th><th>UAP</th><th>Ligne/Mur</th><th>OK</th><th>NOK</th><th>Score</th><th>Résultat</th></tr></thead>
                         <tbody id="historyTableBody"></tbody>
                     </table>
                 </div>
@@ -318,7 +339,6 @@
         "Validation POKA YOKE"
     ];
 
-    // Nouveaux critères pour Audit Magasin (8 items)
     const magasinCriteria = [
         "Qualification (Grille de polyvalence)",
         "Etiquette",
@@ -328,6 +348,17 @@
         "HSE",
         "5S",
         "Chariot élévateur"
+    ];
+
+    // Nouveaux critères pour Mur Qualité (7 items)
+    const murCriteria = [
+        "Qualification (Grille de polyvalence)",
+        "Etat de rebut",
+        "OK démarrage",
+        "Dossier de Fabrication",
+        "Formulaire (Prod/ Qualité)",
+        "HSE",
+        "5S"
     ];
 
     const firebaseConfig = {
@@ -347,7 +378,7 @@
 
     let db = [];
     let chartUAP, chartEvolution, chartPassRate, chartLigneOKNOK;
-    let currentAuditType = 'production'; // 'production' ou 'magasin'
+    let currentAuditType = 'production'; // 'production', 'magasin', 'mur'
 
     // ────────────────────────────────────────────────
     // Auth & Login Functions
@@ -477,21 +508,43 @@
         }
     }
 
-    // Bascule entre les types d'audit
+    // Met à jour la liste déroulante du Mur Qualité en fonction de l'UAP sélectionnée
+    function updateMurList() {
+        const uap = document.getElementById('uapSelect').value;
+        const murSelect = document.getElementById('murSelect');
+        if (uap === 'UAP 1') {
+            murSelect.innerHTML = `
+                <option value="Mur UAP1 - Contrôle entrée">Mur UAP1 - Contrôle entrée</option>
+                <option value="Mur UAP1 - Audit processus">Mur UAP1 - Audit processus</option>
+            `;
+        } else {
+            murSelect.innerHTML = `
+                <option value="Mur UAP2 - Produits finis">Mur UAP2 - Produits finis</option>
+                <option value="Mur UAP2 - Expédition">Mur UAP2 - Expédition</option>
+            `;
+        }
+    }
+
     function switchAuditType(type) {
         currentAuditType = type;
-        // Mise à jour des onglets
         document.querySelectorAll('.audit-tab').forEach(tab => tab.classList.remove('active'));
         if (type === 'production') {
             document.querySelectorAll('.audit-tab')[0].classList.add('active');
             document.getElementById('productionAuditForm').classList.remove('hidden');
             document.getElementById('magasinAuditForm').classList.add('hidden');
-        } else {
+            document.getElementById('murAuditForm').classList.add('hidden');
+        } else if (type === 'magasin') {
             document.querySelectorAll('.audit-tab')[1].classList.add('active');
             document.getElementById('productionAuditForm').classList.add('hidden');
             document.getElementById('magasinAuditForm').classList.remove('hidden');
+            document.getElementById('murAuditForm').classList.add('hidden');
+        } else {
+            document.querySelectorAll('.audit-tab')[2].classList.add('active');
+            document.getElementById('productionAuditForm').classList.add('hidden');
+            document.getElementById('magasinAuditForm').classList.add('hidden');
+            document.getElementById('murAuditForm').classList.remove('hidden');
+            updateMurList(); // assure la bonne liste
         }
-        // Recalculer les scores à zéro lors du changement
         resetCounters();
     }
 
@@ -505,10 +558,9 @@
     // Data & Audit Functions
     // ────────────────────────────────────────────────
     function initSystem() {
-        // Date par défaut au 09/03/2026 comme demandé
         document.getElementById('auditDate').value = '2026-03-09';
 
-        // Remplir tableau production
+        // Production
         const prodTbody = document.getElementById('auditTableBody');
         prodTbody.innerHTML = productionCriteria.map((q, i) => {
             const id = i + 1;
@@ -525,7 +577,7 @@
             </tr>`;
         }).join('');
 
-        // Remplir tableau magasin avec 8 critères (tous avec N/A possible ? selon demande, on met N/A sur tous pour flexibilité)
+        // Magasin
         const magTbody = document.getElementById('magasinTableBody');
         magTbody.innerHTML = magasinCriteria.map((q, i) => {
             const id = i + 1;
@@ -542,6 +594,23 @@
             </tr>`;
         }).join('');
 
+        // Mur Qualité (7 critères, tous avec N/A)
+        const murTbody = document.getElementById('murTableBody');
+        murTbody.innerHTML = murCriteria.map((q, i) => {
+            const id = i + 1;
+            return `<tr>
+                <td>MQ${id < 10 ? '0'+id : id}</td>
+                <td>${q}</td>
+                <td>
+                    <div class="custom-radio-group">
+                        <div class="radio-btn"><input type="radio" id="mur_ok${id}" name="mur_q${id}" value="1" onchange="calcScore()"><label for="mur_ok${id}" class="ok-label"><i class="fa-solid fa-check"></i> OK</label></div>
+                        <div class="radio-btn"><input type="radio" id="mur_nok${id}" name="mur_q${id}" value="0" onchange="calcScore()"><label for="mur_nok${id}" class="nok-label"><i class="fa-solid fa-xmark"></i> NOK</label></div>
+                        <div class="radio-btn"><input type="radio" id="mur_na${id}" name="mur_q${id}" value="na" onchange="calcScore()"><label for="mur_na${id}" class="na-label">N/A</label></div>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+
         auditsRef.on('value', (snapshot) => {
             db = snapshot.val() ? Object.values(snapshot.val()) : [];
             loadHistory();
@@ -552,9 +621,10 @@
 
     function calcScore() {
         let ok = 0, nok = 0, na = 0;
-        const totalQuestions = currentAuditType === 'production' ? 10 : 8;
+        let totalQuestions = 0;
 
         if (currentAuditType === 'production') {
+            totalQuestions = 10;
             for(let i=1; i<=10; i++) {
                 const sel = document.querySelector(`input[name="prod_q${i}"]:checked`);
                 if(sel) {
@@ -563,9 +633,20 @@
                     else if(sel.value === "na") na++;
                 }
             }
-        } else {
+        } else if (currentAuditType === 'magasin') {
+            totalQuestions = 8;
             for(let i=1; i<=8; i++) {
                 const sel = document.querySelector(`input[name="mag_q${i}"]:checked`);
+                if(sel) {
+                    if(sel.value === "1") ok++;
+                    else if(sel.value === "0") nok++;
+                    else if(sel.value === "na") na++;
+                }
+            }
+        } else { // mur
+            totalQuestions = 7;
+            for(let i=1; i<=7; i++) {
+                const sel = document.querySelector(`input[name="mur_q${i}"]:checked`);
                 if(sel) {
                     if(sel.value === "1") ok++;
                     else if(sel.value === "0") nok++;
@@ -576,7 +657,6 @@
 
         document.getElementById('count-ok').innerText = ok;
         document.getElementById('count-nok').innerText = nok;
-        // Si tous sont N/A, on évite division par zéro
         const divisor = (totalQuestions - na) > 0 ? (totalQuestions - na) : 1;
         const score = ok / divisor * 100;
         document.getElementById('count-score').innerText = score.toFixed(1) + "%";
@@ -584,27 +664,43 @@
 
     function validateAndSave() {
         const ligne = document.getElementById('ligneInput').value.trim();
-        const totalQuestions = currentAuditType === 'production' ? 10 : 8;
+        let totalQuestions = 0;
         let selected = 0;
+        let auditTypeLabel = '';
 
         if (currentAuditType === 'production') {
+            totalQuestions = 10;
             selected = document.querySelectorAll('input[name^="prod_q"]:checked').length;
-        } else {
+            auditTypeLabel = 'Production';
+        } else if (currentAuditType === 'magasin') {
+            totalQuestions = 8;
             selected = document.querySelectorAll('input[name^="mag_q"]:checked').length;
+            auditTypeLabel = 'Magasin';
+        } else { // mur
+            totalQuestions = 7;
+            selected = document.querySelectorAll('input[name^="mur_q"]:checked').length;
+            auditTypeLabel = 'Mur Qualité';
         }
 
         if (selected < totalQuestions || !ligne) {
-            return showToast(`Veuillez compléter tous les critères (${totalQuestions}) et indiquer la ligne`, true);
+            return showToast(`Veuillez compléter tous les critères (${totalQuestions}) et indiquer la ligne/mur`, true);
         }
 
         const scoreStr = document.getElementById('count-score').innerText;
         const scoreNum = parseFloat(scoreStr);
 
+        // Pour Mur Qualité, on peut aussi enregistrer le sous-type sélectionné
+        let murDetail = '';
+        if (currentAuditType === 'mur') {
+            murDetail = document.getElementById('murSelect').value;
+        }
+
         const newAudit = {
-            type: currentAuditType === 'production' ? 'Production' : 'Magasin',
+            type: auditTypeLabel,
+            murDetail: murDetail || '',
             date: document.getElementById('auditDate').value,
             uap: document.getElementById('uapSelect').value,
-            ligne: ligne,
+            ligne: ligne + (murDetail ? ' - ' + murDetail : ''),
             ok: document.getElementById('count-ok').innerText,
             nok: document.getElementById('count-nok').innerText,
             score: scoreStr,
@@ -618,8 +714,7 @@
 
         newRef.set({ ...newAudit, auditId: shortId })
             .then(() => {
-                showToast(`Audit #${shortId} (${newAudit.type}) enregistré !`);
-                // Optionnel: réinitialiser les radios
+                showToast(`Audit #${shortId} (${auditTypeLabel}) enregistré !`);
                 switchPage('historyPage');
                 updateLastAuditSummary();
             })
@@ -651,7 +746,7 @@
         tbody.innerHTML = db.slice().reverse().map(r => `
             <tr>
                 <td><strong>#${r.auditId || '—'}</strong></td>
-                <td><span style="background:${r.type==='Magasin'?'#f59e0b':'#3b82f6'}; color:white; padding:4px 10px; border-radius:20px; font-size:11px;">${r.type || 'Prod'}</span></td>
+                <td><span style="background:${r.type==='Magasin'?'#f59e0b':r.type==='Mur Qualité'?'#8e44ad':'#3b82f6'}; color:white; padding:4px 10px; border-radius:20px; font-size:11px;">${r.type || 'Prod'}</span></td>
                 <td>${r.date || '—'}</td>
                 <td>${r.uap || '—'}</td>
                 <td><b>${r.ligne || '—'}</b></td>
@@ -686,13 +781,13 @@
             return showToast("Aucun audit visible à exporter", true);
         }
 
-        const headers = ["ID", "Type", "Date", "UAP", "Ligne", "OK", "NOK", "Score", "Résultat"];
+        const headers = ["ID", "Type", "Date", "UAP", "Ligne/Mur", "OK", "NOK", "Score", "Résultat"];
 
         const rows = visibleRows.map(row => {
             const cells = row.querySelectorAll('td');
             return [
                 cells[0].innerText.trim(),
-                cells[1].innerText.trim().replace(/<[^>]+>/g, ''), // nettoie le span
+                cells[1].innerText.trim().replace(/<[^>]+>/g, ''),
                 cells[2].innerText.trim(),
                 cells[3].innerText.trim(),
                 cells[4].innerText.trim(),
@@ -724,7 +819,7 @@
     }
 
     // ────────────────────────────────────────────────
-    // Charts (simplifiés, s'adaptent aux deux types)
+    // Charts
     // ────────────────────────────────────────────────
     function renderCharts() {
         const container = document.getElementById('chartsContent');
@@ -818,14 +913,14 @@
                     { label: 'NOK', data: nokValues, backgroundColor: '#c0392b' }
                 ]
             },
-            options: { responsive: true, plugins: { title: { display: true, text: 'OK vs NOK par Ligne' } } }
+            options: { responsive: true, plugins: { title: { display: true, text: 'OK vs NOK par Ligne/Mur' } } }
         });
     }
 
     // PWA Setup
     if ('serviceWorker' in navigator) {
         const swCode = `
-        const CACHE_NAME = 'wkw-audit-cache-v2';
+        const CACHE_NAME = 'wkw-audit-cache-v3';
         const urlsToCache = ['/', 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'];
         self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))));
         self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(res => res || fetch(e.request))));
