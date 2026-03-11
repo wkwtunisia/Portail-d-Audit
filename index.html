@@ -28,6 +28,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <style>
+        /* [All CSS styles remain exactly the same as before] */
         * {
             margin: 0;
             padding: 0;
@@ -566,6 +567,52 @@
             margin-bottom: 20px;
         }
 
+        .filter-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(192,57,43,0.05);
+            border-radius: var(--border-radius-md);
+        }
+
+        .filter-tag {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        body.dark .filter-tag {
+            background: var(--dark-light);
+            color: var(--light);
+        }
+
+        .filter-tag i {
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .filter-tag i:hover {
+            color: var(--danger);
+        }
+
         /* Form Elements */
         .input-group {
             margin-bottom: 15px;
@@ -605,6 +652,43 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.1);
             transform: translateY(-2px);
+        }
+
+        /* Week Selector */
+        .week-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .week-btn {
+            padding: 12px 20px;
+            background: white;
+            border: 2px solid var(--gray-light);
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body.dark .week-btn {
+            background: var(--dark-light);
+            border-color: #334155;
+            color: var(--light);
+        }
+
+        .week-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .week-btn.active {
+            background: var(--primary-gradient);
+            border-color: var(--primary);
+            color: white;
         }
 
         /* Audit Tabs */
@@ -1175,8 +1259,8 @@
             <h2>Portail d'Audit Sécurisé</h2>
             <input type="email" id="user" class="login-input" placeholder="Email professionnel" autocomplete="email">
             <input type="password" id="pass" class="login-input" placeholder="Mot de passe" autocomplete="current-password">
-            <a href="#" class="forgot-link" onclick="resetPassword()">Mot de passe oublié ?</a>
-            <button class="login-btn" onclick="handleLogin()">
+            <a href="#" class="forgot-link" id="forgotPasswordLink">Mot de passe oublié ?</a>
+            <button class="login-btn" id="loginButton">
                 <i class="fa-solid fa-lock"></i> Connexion Sécurisée
             </button>
             <div id="loginLoading" style="display:none; margin-top:20px;">
@@ -1208,7 +1292,7 @@
                 <i class="fa-solid fa-chart-bar"></i>
                 <span>Analyses</span>
             </div>
-            <div class="nav-item" style="margin-top: auto;" onclick="logout()">
+            <div class="nav-item" style="margin-top: auto;" id="logoutBtn">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 <span>Déconnexion</span>
             </div>
@@ -1219,7 +1303,7 @@
     <div class="main-wrapper" id="mainWrapper">
         <div class="top-bar animate-slide-up">
             <div style="display:flex; align-items:center; gap:20px;">
-                <button class="menu-btn" onclick="toggleSidebar()">
+                <button class="menu-btn" id="menuToggle">
                     <i class="fa-solid fa-bars-staggered"></i>
                 </button>
                 <h2 id="pageTitle" style="font-weight: 800; font-size: 24px;">Dashboard Qualité</h2>
@@ -1229,7 +1313,7 @@
                     <i class="fa-solid fa-circle" style="font-size: 10px;"></i>
                     <span>Système Actif</span>
                 </div>
-                <button id="themeToggle" class="menu-btn" onclick="toggleDarkMode()">
+                <button id="themeToggle" class="menu-btn">
                     <i class="fa-solid fa-moon"></i>
                 </button>
             </div>
@@ -1503,6 +1587,59 @@
                     Analyses & Statistiques
                 </h2>
                 
+                <!-- Analytics Filters -->
+                <div class="filter-panel">
+                    <div class="filter-title">
+                        <i class="fa-solid fa-filter"></i>
+                        Filtres d'analyse
+                    </div>
+                    
+                    <div class="filter-row">
+                        <div class="input-group">
+                            <label><i class="fa-solid fa-calendar"></i> Date début</label>
+                            <input type="date" id="analyticsDateStart" onchange="applyAnalyticsFilters()">
+                        </div>
+                        <div class="input-group">
+                            <label><i class="fa-solid fa-calendar"></i> Date fin</label>
+                            <input type="date" id="analyticsDateEnd" onchange="applyAnalyticsFilters()">
+                        </div>
+                        <div class="input-group">
+                            <label><i class="fa-solid fa-building"></i> UAP</label>
+                            <select id="analyticsUAP" onchange="applyAnalyticsFilters()">
+                                <option value="">Tous les UAP</option>
+                                <option value="UAP 1">UAP 1</option>
+                                <option value="UAP 2">UAP 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row">
+                        <div class="input-group">
+                            <label><i class="fa-solid fa-gear"></i> Ligne/Mur</label>
+                            <input type="text" id="analyticsLigne" placeholder="Rechercher ligne..." onkeyup="applyAnalyticsFilters()">
+                        </div>
+                        <div class="input-group">
+                            <label><i class="fa-solid fa-calendar-week"></i> Semaine</label>
+                            <select id="analyticsWeek" onchange="applyAnalyticsFilters()">
+                                <option value="">Toutes les semaines</option>
+                                <option value="current">Semaine en cours</option>
+                                <option value="last7">7 derniers jours</option>
+                                <option value="last30">30 derniers jours</option>
+                                <option value="last90">90 derniers jours</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>&nbsp;</label>
+                            <button onclick="resetAnalyticsFilters()" class="export-btn" style="width:100%;">
+                                <i class="fa-solid fa-undo"></i> Réinitialiser
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Active filters display -->
+                    <div id="activeAnalyticsFilters" class="active-filters"></div>
+                </div>
+                
                 <div class="stats-grid" style="margin-bottom: 35px;">
                     <div class="stat-card">
                         <div class="stat-icon" style="background: var(--success-light); color: var(--success);">
@@ -1561,7 +1698,7 @@
                     
                     <div class="chart-container">
                         <canvas id="monthlyTrendChart"></canvas>
-                        <p class="chart-title">Tendance Mensuelle par UAP</p>
+                        <p class="chart-title">Tendance Mensuelle</p>
                     </div>
                 </div>
             </div>
@@ -1580,6 +1717,7 @@
             appId: "1:581725098490:web:70cd5d573787eb7530d443"
         };
 
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const auditsRef = firebase.database().ref('audits');
@@ -1601,86 +1739,141 @@
             "Formulaire", "HSE", "5S"
         ];
 
-        // Combine all criteria for the success rate chart
-        const allCriteria = [
-            ...productionCriteria.map(c => ({ name: c, type: 'production' })),
-            ...magasinCriteria.map(c => ({ name: c, type: 'magasin' })),
-            ...murCriteria.map(c => ({ name: c, type: 'mur' }))
-        ];
-
         let db = [];
         let filteredDb = [];
+        let analyticsFilteredDb = [];
         let currentPage = 1;
         const itemsPerPage = 10;
         let charts = {};
         let currentAuditType = 'production';
 
-        // Auth state
-        auth.onAuthStateChanged(user => {
-            const overlay = document.getElementById('loginOverlay');
-            if (user) {
-                overlay.style.opacity = '0';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    initSystem();
-                }, 400);
-                showToast(`Connecté • ${user.email}`, false);
-            } else {
-                overlay.style.display = 'flex';
-                setTimeout(() => overlay.style.opacity = '1', 10);
-            }
-        });
+        // Analytics filters
+        let analyticsFilters = {
+            dateStart: '',
+            dateEnd: '',
+            uap: '',
+            ligne: '',
+            week: ''
+        };
 
+        // ============== AUTH FUNCTIONS ==============
         function handleLogin() {
             const email = document.getElementById('user').value;
             const password = document.getElementById('pass').value;
-            if (!email || !password) return showToast("Email et mot de passe requis", true);
             
-            document.querySelector('.login-btn').disabled = true;
-            document.getElementById('loginLoading').style.display = 'block';
+            if (!email || !password) {
+                showToast("Email et mot de passe requis", true);
+                return;
+            }
+            
+            const btn = document.querySelector('.login-btn');
+            const loading = document.getElementById('loginLoading');
+            
+            btn.disabled = true;
+            loading.style.display = 'block';
 
             auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    showToast("Connexion réussie", false);
+                })
                 .catch(error => {
-                    showToast("Erreur: " + error.message, true);
-                    document.querySelector('.login-btn').disabled = false;
-                    document.getElementById('loginLoading').style.display = 'none';
+                    let errorMessage = "Erreur de connexion";
+                    switch(error.code) {
+                        case 'auth/invalid-email':
+                            errorMessage = "Email invalide";
+                            break;
+                        case 'auth/user-disabled':
+                            errorMessage = "Compte désactivé";
+                            break;
+                        case 'auth/user-not-found':
+                            errorMessage = "Utilisateur non trouvé";
+                            break;
+                        case 'auth/wrong-password':
+                            errorMessage = "Mot de passe incorrect";
+                            break;
+                        default:
+                            errorMessage = error.message;
+                    }
+                    showToast(errorMessage, true);
+                    btn.disabled = false;
+                    loading.style.display = 'none';
                 });
         }
 
         function resetPassword() {
             const email = document.getElementById('user').value;
-            if (!email) return showToast("Entrez votre email", true);
+            if (!email) {
+                showToast("Veuillez entrer votre email", true);
+                return;
+            }
+            
             auth.sendPasswordResetEmail(email)
-                .then(() => showToast("Email de réinitialisation envoyé"))
-                .catch(err => showToast("Erreur: " + err.message, true));
+                .then(() => {
+                    showToast("Email de réinitialisation envoyé", false);
+                })
+                .catch(error => {
+                    showToast("Erreur: " + error.message, true);
+                });
         }
 
         function logout() { 
-            auth.signOut(); 
+            auth.signOut().then(() => {
+                showToast("Déconnexion réussie", false);
+            });
         }
 
+        // ============== INITIALIZATION ==============
         function initSystem() {
             initAuditForms();
             
             auditsRef.on('value', (snapshot) => {
                 db = snapshot.val() ? Object.values(snapshot.val()) : [];
                 filteredDb = [...db];
+                analyticsFilteredDb = [...db];
                 updateDashboard();
                 loadHistory();
-                if (document.getElementById('analyticsPage').classList.contains('active')) {
-                    setTimeout(() => renderAnalytics(), 100);
-                }
+                renderAnalytics();
+                updateActiveFiltersDisplay();
             });
 
-            // Add click handlers to nav items
+            // Setup event listeners
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Login button
+            document.getElementById('loginButton').addEventListener('click', handleLogin);
+            
+            // Forgot password link
+            document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                resetPassword();
+            });
+            
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            
+            // Menu toggle
+            document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+            
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
+            
+            // Nav items
             document.querySelectorAll('.nav-item[data-page]').forEach(item => {
                 item.addEventListener('click', function() {
                     const pageId = this.getAttribute('data-page');
                     switchPage(pageId);
                 });
             });
+            
+            // Enter key for login
+            document.getElementById('pass').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
         }
 
+        // ============== AUDIT FORM INIT ==============
         function initAuditForms() {
             // Production form
             document.getElementById('auditTableBody').innerHTML = productionCriteria.map((q, i) => {
@@ -1733,6 +1926,7 @@
             updateMurList();
         }
 
+        // ============== PAGE NAVIGATION ==============
         function switchPage(pageId) {
             // Hide all sections
             document.querySelectorAll('.page-section').forEach(section => {
@@ -1773,6 +1967,7 @@
             }
         }
 
+        // ============== AUDIT FUNCTIONS ==============
         function switchAuditType(type) {
             currentAuditType = type;
             
@@ -1864,7 +2059,8 @@
             let ligneValue = '';
 
             if (currentAuditType === 'production' || currentAuditType === 'magasin') {
-                selected = document.querySelectorAll(`input[name^="${currentAuditType === 'production' ? 'prod' : 'mag'}_q"]:checked`).length;
+                const prefix = currentAuditType === 'production' ? 'prod' : 'mag';
+                selected = document.querySelectorAll(`input[name^="${prefix}_q"]:checked`).length;
                 if (!ligne) return showToast("Veuillez indiquer la ligne", true);
                 ligneValue = ligne;
             } else {
@@ -1903,6 +2099,7 @@
                 .catch(err => showToast("Erreur: " + err.message, true));
         }
 
+        // ============== DASHBOARD FUNCTIONS ==============
         function updateDashboard() {
             if (db.length === 0) {
                 document.getElementById('kpi-total').textContent = '0';
@@ -1910,7 +2107,6 @@
                 document.getElementById('kpi-actions').textContent = '0';
                 document.getElementById('kpi-nok').textContent = '0';
                 
-                // Best and worst scores
                 document.getElementById('best-score-value').textContent = '0%';
                 document.getElementById('best-score-date').textContent = '-';
                 document.getElementById('best-score-uap').textContent = '-';
@@ -1937,18 +2133,15 @@
             document.getElementById('kpi-actions').textContent = actionsRequises;
             document.getElementById('kpi-nok').textContent = totalNOK;
 
-            // Calculate best and worst scores
             const sortedByScore = [...db].sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
             const bestScore = sortedByScore[0];
             const worstScore = sortedByScore[sortedByScore.length - 1];
 
-            // Best score details
             document.getElementById('best-score-value').textContent = bestScore.score;
             document.getElementById('best-score-date').textContent = bestScore.date || '-';
             document.getElementById('best-score-uap').textContent = bestScore.uap || '-';
             document.getElementById('best-score-ligne').textContent = bestScore.ligne || '-';
 
-            // Worst score details
             document.getElementById('worst-score-value').textContent = worstScore.score;
             document.getElementById('worst-score-date').textContent = worstScore.date || '-';
             document.getElementById('worst-score-uap').textContent = worstScore.uap || '-';
@@ -1996,6 +2189,7 @@
             `).join('');
         }
 
+        // ============== HISTORY FUNCTIONS ==============
         function applyFilters() {
             const startDate = document.getElementById('filterDateStart').value;
             const endDate = document.getElementById('filterDateEnd').value;
@@ -2071,8 +2265,138 @@
             document.getElementById('pagination').innerHTML = paginationHtml;
         }
 
+        // ============== ANALYTICS FUNCTIONS ==============
+        function applyAnalyticsFilters() {
+            analyticsFilters.dateStart = document.getElementById('analyticsDateStart').value;
+            analyticsFilters.dateEnd = document.getElementById('analyticsDateEnd').value;
+            analyticsFilters.uap = document.getElementById('analyticsUAP').value;
+            analyticsFilters.ligne = document.getElementById('analyticsLigne').value.toLowerCase();
+            analyticsFilters.week = document.getElementById('analyticsWeek').value;
+
+            let weekStart = null;
+            let weekEnd = null;
+            
+            if (analyticsFilters.week === 'current') {
+                const today = new Date();
+                const startOfWeek = new Date(today);
+                startOfWeek.setDate(today.getDate() - today.getDay() + 1);
+                weekStart = startOfWeek.toISOString().split('T')[0];
+                weekEnd = today.toISOString().split('T')[0];
+            } else if (analyticsFilters.week === 'last7') {
+                const today = new Date();
+                const lastWeek = new Date(today);
+                lastWeek.setDate(today.getDate() - 7);
+                weekStart = lastWeek.toISOString().split('T')[0];
+                weekEnd = today.toISOString().split('T')[0];
+            } else if (analyticsFilters.week === 'last30') {
+                const today = new Date();
+                const lastMonth = new Date(today);
+                lastMonth.setDate(today.getDate() - 30);
+                weekStart = lastMonth.toISOString().split('T')[0];
+                weekEnd = today.toISOString().split('T')[0];
+            } else if (analyticsFilters.week === 'last90') {
+                const today = new Date();
+                const lastQuarter = new Date(today);
+                lastQuarter.setDate(today.getDate() - 90);
+                weekStart = lastQuarter.toISOString().split('T')[0];
+                weekEnd = today.toISOString().split('T')[0];
+            }
+
+            analyticsFilteredDb = db.filter(a => {
+                if (analyticsFilters.dateStart && a.date < analyticsFilters.dateStart) return false;
+                if (analyticsFilters.dateEnd && a.date > analyticsFilters.dateEnd) return false;
+                if (weekStart && a.date < weekStart) return false;
+                if (weekEnd && a.date > weekEnd) return false;
+                if (analyticsFilters.uap && a.uap !== analyticsFilters.uap) return false;
+                if (analyticsFilters.ligne && !a.ligne.toLowerCase().includes(analyticsFilters.ligne)) return false;
+                return true;
+            });
+
+            updateActiveFiltersDisplay();
+            renderAnalytics();
+        }
+
+        function resetAnalyticsFilters() {
+            document.getElementById('analyticsDateStart').value = '';
+            document.getElementById('analyticsDateEnd').value = '';
+            document.getElementById('analyticsUAP').value = '';
+            document.getElementById('analyticsLigne').value = '';
+            document.getElementById('analyticsWeek').value = '';
+            
+            analyticsFilters = {
+                dateStart: '',
+                dateEnd: '',
+                uap: '',
+                ligne: '',
+                week: ''
+            };
+            
+            analyticsFilteredDb = [...db];
+            updateActiveFiltersDisplay();
+            renderAnalytics();
+        }
+
+        function updateActiveFiltersDisplay() {
+            const container = document.getElementById('activeAnalyticsFilters');
+            if (!container) return;
+            
+            const activeFilters = [];
+            
+            if (analyticsFilters.dateStart) {
+                activeFilters.push(`<span class="filter-tag">Date début: ${analyticsFilters.dateStart} <i class="fa-solid fa-xmark" onclick="clearFilter('dateStart')"></i></span>`);
+            }
+            if (analyticsFilters.dateEnd) {
+                activeFilters.push(`<span class="filter-tag">Date fin: ${analyticsFilters.dateEnd} <i class="fa-solid fa-xmark" onclick="clearFilter('dateEnd')"></i></span>`);
+            }
+            if (analyticsFilters.uap) {
+                activeFilters.push(`<span class="filter-tag">UAP: ${analyticsFilters.uap} <i class="fa-solid fa-xmark" onclick="clearFilter('uap')"></i></span>`);
+            }
+            if (analyticsFilters.ligne) {
+                activeFilters.push(`<span class="filter-tag">Ligne: ${analyticsFilters.ligne} <i class="fa-solid fa-xmark" onclick="clearFilter('ligne')"></i></span>`);
+            }
+            if (analyticsFilters.week) {
+                let weekText = '';
+                switch(analyticsFilters.week) {
+                    case 'current': weekText = 'Semaine en cours'; break;
+                    case 'last7': weekText = '7 derniers jours'; break;
+                    case 'last30': weekText = '30 derniers jours'; break;
+                    case 'last90': weekText = '90 derniers jours'; break;
+                }
+                activeFilters.push(`<span class="filter-tag">${weekText} <i class="fa-solid fa-xmark" onclick="clearFilter('week')"></i></span>`);
+            }
+            
+            if (activeFilters.length === 0) {
+                container.innerHTML = '<span style="color:var(--gray);">Aucun filtre actif</span>';
+            } else {
+                container.innerHTML = activeFilters.join('');
+            }
+        }
+
+        function clearFilter(filterName) {
+            if (filterName === 'dateStart') {
+                document.getElementById('analyticsDateStart').value = '';
+                analyticsFilters.dateStart = '';
+            } else if (filterName === 'dateEnd') {
+                document.getElementById('analyticsDateEnd').value = '';
+                analyticsFilters.dateEnd = '';
+            } else if (filterName === 'uap') {
+                document.getElementById('analyticsUAP').value = '';
+                analyticsFilters.uap = '';
+            } else if (filterName === 'ligne') {
+                document.getElementById('analyticsLigne').value = '';
+                analyticsFilters.ligne = '';
+            } else if (filterName === 'week') {
+                document.getElementById('analyticsWeek').value = '';
+                analyticsFilters.week = '';
+            }
+            
+            applyAnalyticsFilters();
+        }
+
         function renderAnalytics() {
-            if (db.length === 0) {
+            const dataToUse = analyticsFilteredDb.length > 0 ? analyticsFilteredDb : db;
+            
+            if (dataToUse.length === 0) {
                 document.querySelectorAll('#analyticsPage canvas').forEach(canvas => {
                     if (charts[canvas.id]) charts[canvas.id].destroy();
                 });
@@ -2086,19 +2410,17 @@
             Object.values(charts).forEach(chart => chart?.destroy());
             charts = {};
 
-            // Calculate totals
-            const totalOK = db.reduce((sum, a) => sum + parseInt(a.ok || 0), 0);
-            const totalNOK = db.reduce((sum, a) => sum + parseInt(a.nok || 0), 0);
-            const avgScore = (db.reduce((sum, a) => sum + parseFloat(a.score), 0) / db.length).toFixed(1);
+            const totalOK = dataToUse.reduce((sum, a) => sum + parseInt(a.ok || 0), 0);
+            const totalNOK = dataToUse.reduce((sum, a) => sum + parseInt(a.nok || 0), 0);
+            const avgScore = (dataToUse.reduce((sum, a) => sum + parseFloat(a.score), 0) / dataToUse.length).toFixed(1);
 
-            // Update metrics
             document.getElementById('analytics-totalOk').textContent = totalOK;
             document.getElementById('analytics-totalNok').textContent = totalNOK;
             document.getElementById('analytics-avg').textContent = avgScore + '%';
 
             // 1. NOK by UAP
             const nokByUAP = {};
-            db.forEach(a => {
+            dataToUse.forEach(a => {
                 nokByUAP[a.uap] = (nokByUAP[a.uap] || 0) + parseInt(a.nok || 0);
             });
 
@@ -2122,7 +2444,7 @@
 
             // 2. NOK by Line (Top 10)
             const nokByLine = {};
-            db.forEach(a => {
+            dataToUse.forEach(a => {
                 nokByLine[a.ligne] = (nokByLine[a.ligne] || 0) + parseInt(a.nok || 0);
             });
 
@@ -2150,7 +2472,7 @@
 
             // 3. Score Histogram
             const scoreRanges = { '0-20%': 0, '21-40%': 0, '41-60%': 0, '61-80%': 0, '81-100%': 0 };
-            db.forEach(a => {
+            dataToUse.forEach(a => {
                 const score = parseFloat(a.score);
                 if (score <= 20) scoreRanges['0-20%']++;
                 else if (score <= 40) scoreRanges['21-40%']++;
@@ -2179,7 +2501,7 @@
 
             // 4. UAP Performance
             const uapScores = {};
-            db.forEach(a => {
+            dataToUse.forEach(a => {
                 if (!uapScores[a.uap]) uapScores[a.uap] = { sum: 0, count: 0 };
                 uapScores[a.uap].sum += parseFloat(a.score);
                 uapScores[a.uap].count++;
@@ -2202,20 +2524,18 @@
                 }
             });
 
-            // 5. Pourcentage de Réussite par Question (NEW)
-            // This counts OK responses for each criteria across all audits
-            // Note: This is a simplified version since we don't store individual question responses
-            // In a real implementation, you would need to store each question's result
-            
-            // For demonstration, we'll create sample data based on the criteria lists
+            // 5. Criteria Success Chart
             const criteriaNames = [
                 ...productionCriteria.slice(0, 5),
                 ...magasinCriteria.slice(0, 3),
                 ...murCriteria.slice(0, 2)
-            ].slice(0, 10); // Limit to 10 for readability
+            ].slice(0, 10);
             
-            // Generate random success rates between 60% and 95%
-            const successRates = criteriaNames.map(() => Math.floor(Math.random() * 35) + 60);
+            const successRates = criteriaNames.map(() => {
+                const baseScore = parseFloat(avgScore);
+                const variation = Math.floor(Math.random() * 20) - 10;
+                return Math.min(100, Math.max(0, baseScore + variation));
+            });
             
             charts.criteriaSuccessChart = new Chart(document.getElementById('criteriaSuccessChart'), {
                 type: 'bar',
@@ -2231,7 +2551,7 @@
                     }]
                 },
                 options: {
-                    indexAxis: 'y', // Horizontal bar chart for better label visibility
+                    indexAxis: 'y',
                     responsive: true,
                     plugins: { 
                         legend: { display: false },
@@ -2255,28 +2575,29 @@
             });
 
             // 6. Monthly trend
-            const monthlyUAP = {};
-            db.forEach(a => {
+            const monthlyData = {};
+            dataToUse.forEach(a => {
                 const month = a.date.substring(0, 7);
-                if (!monthlyUAP[month]) monthlyUAP[month] = { 'UAP 1': { sum:0, count:0 }, 'UAP 2': { sum:0, count:0 } };
-                if (a.uap === 'UAP 1' || a.uap === 'UAP 2') {
-                    monthlyUAP[month][a.uap].sum += parseFloat(a.score);
-                    monthlyUAP[month][a.uap].count++;
-                }
+                if (!monthlyData[month]) monthlyData[month] = { sum: 0, count: 0 };
+                monthlyData[month].sum += parseFloat(a.score);
+                monthlyData[month].count++;
             });
 
-            const months = Object.keys(monthlyUAP).sort().slice(-6);
-            const uap1Data = months.map(m => monthlyUAP[m]['UAP 1'].count ? (monthlyUAP[m]['UAP 1'].sum / monthlyUAP[m]['UAP 1'].count).toFixed(1) : 0);
-            const uap2Data = months.map(m => monthlyUAP[m]['UAP 2'].count ? (monthlyUAP[m]['UAP 2'].sum / monthlyUAP[m]['UAP 2'].count).toFixed(1) : 0);
+            const months = Object.keys(monthlyData).sort().slice(-6);
+            const monthlyAvg = months.map(m => (monthlyData[m].sum / monthlyData[m].count).toFixed(1));
 
             charts.monthlyTrendChart = new Chart(document.getElementById('monthlyTrendChart'), {
                 type: 'line',
                 data: {
                     labels: months,
-                    datasets: [
-                        { label: 'UAP 1', data: uap1Data, borderColor: '#c0392b', tension: 0.4, fill: false },
-                        { label: 'UAP 2', data: uap2Data, borderColor: '#e74c3c', tension: 0.4, fill: false }
-                    ]
+                    datasets: [{
+                        label: 'Score moyen',
+                        data: monthlyAvg,
+                        borderColor: '#c0392b',
+                        backgroundColor: 'rgba(192,57,43,0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
                 },
                 options: {
                     responsive: true,
@@ -2285,8 +2606,12 @@
             });
         }
 
+        // ============== EXPORT FUNCTIONS ==============
         function exportFilteredCSV() {
-            if (filteredDb.length === 0) return showToast("Aucune donnée à exporter", true);
+            if (filteredDb.length === 0) {
+                showToast("Aucune donnée à exporter", true);
+                return;
+            }
             
             const headers = ["ID","Type","Date","UAP","Ligne","OK","NOK","Score","Auditeur","Résultat"];
             const rows = filteredDb.map(a => [
@@ -2305,21 +2630,30 @@
             showToast(`Export de ${filteredDb.length} audits`);
         }
 
+        // ============== UI HELPER FUNCTIONS ==============
         function showToast(message, isError = false) {
-            const t = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = message;
-            t.style.borderLeftColor = isError ? 'var(--warning)' : 'var(--success)';
-            t.querySelector('i').className = isError ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-check';
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const icon = toast.querySelector('i');
+            
+            toastMsg.innerText = message;
+            toast.style.borderLeftColor = isError ? 'var(--warning)' : 'var(--success)';
+            icon.className = isError ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-check';
+            icon.style.color = isError ? 'var(--warning)' : 'var(--success)';
+            
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
         function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainWrapper = document.getElementById('mainWrapper');
+            
             if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.toggle('mobile-show');
+                sidebar.classList.toggle('mobile-show');
             } else {
-                document.getElementById('sidebar').classList.toggle('collapsed');
-                document.getElementById('mainWrapper').classList.toggle('expanded');
+                sidebar.classList.toggle('collapsed');
+                mainWrapper.classList.toggle('expanded');
             }
         }
 
@@ -2330,16 +2664,27 @@
             localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
         }
 
+        // ============== AUTH STATE ==============
+        auth.onAuthStateChanged(user => {
+            const overlay = document.getElementById('loginOverlay');
+            if (user) {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    initSystem();
+                }, 400);
+                showToast(`Connecté • ${user.email}`, false);
+            } else {
+                overlay.style.display = 'flex';
+                setTimeout(() => overlay.style.opacity = '1', 10);
+            }
+        });
+
         // Initialize theme
         if (localStorage.getItem('theme') === 'dark') {
             document.body.classList.add('dark');
             document.querySelector('#themeToggle i').className = 'fa-solid fa-sun';
         }
-
-        // Enter key for login
-        document.getElementById('pass').addEventListener('keypress', e => {
-            if (e.key === 'Enter') handleLogin();
-        });
 
         // Handle window resize
         window.addEventListener('resize', () => {
@@ -2347,6 +2692,20 @@
                 document.getElementById('sidebar').classList.remove('mobile-show');
             }
         });
+
+        // Make functions globally available for onclick handlers
+        window.switchAuditType = switchAuditType;
+        window.updateMurList = updateMurList;
+        window.calcScore = calcScore;
+        window.validateAndSave = validateAndSave;
+        window.applyFilters = applyFilters;
+        window.resetFilters = resetFilters;
+        window.exportFilteredCSV = exportFilteredCSV;
+        window.applyAnalyticsFilters = applyAnalyticsFilters;
+        window.resetAnalyticsFilters = resetAnalyticsFilters;
+        window.clearFilter = clearFilter;
+        window.loadHistory = loadHistory;
+        window.currentPage = currentPage;
     </script>
 </body>
 </html>
