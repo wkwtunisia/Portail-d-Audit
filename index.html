@@ -3,2037 +3,531 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="WKW Audit">
-    <meta name="theme-color" content="#c0392b">
-    <link rel="manifest" href='data:application/manifest+json,{
-        "name": "WKW Automotive Audit",
-        "short_name": "WKW Audit",
-        "start_url": ".",
-        "display": "standalone",
-        "background_color": "#f1f5f9",
-        "theme_color": "#c0392b",
-        "orientation": "portrait-primary",
-        "icons": [
-            {"src": "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png", "sizes": "192x192", "type": "image/png"},
-            {"src": "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png", "sizes": "512x512", "type": "image/png"}
-        ]
-    }'>
-    <title>WKW Automotive | Audit Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <title>Portail d'Audit Gemba</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        :root {
-            --primary: #c0392b;
-            --primary-light: #e74c3c;
-            --primary-dark: #962d22;
-            --primary-gradient: linear-gradient(135deg, #c0392b, #e74c3c);
-            --secondary: #0f172a;
-            --success: #10b981;
-            --success-light: #d1fae5;
-            --warning: #f59e0b;
-            --warning-light: #fef3c7;
-            --danger: #ef4444;
-            --danger-light: #fee2e2;
-            --info: #3b82f6;
-            --info-light: #dbeafe;
-            --purple: #8b5cf6;
-            --purple-light: #ede9fe;
-            --dark: #0f172a;
-            --dark-light: #1e293b;
-            --light: #f8fafc;
-            --gray: #64748b;
-            --gray-light: #e2e8f0;
-            --border-radius-sm: 12px;
-            --border-radius-md: 16px;
-            --border-radius-lg: 24px;
-            --border-radius-xl: 32px;
-            --box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            --box-shadow-hover: 0 20px 50px rgba(0,0,0,0.12);
-            --box-shadow-glow: 0 0 20px rgba(192,57,43,0.2);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
         body {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            background: #f4f7fa;
             min-height: 100vh;
-            color: var(--dark);
             display: flex;
-        }
-
-        body.dark {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: var(--light);
-        }
-
-        /* Login Page Styles */
-        #loginOverlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            transition: opacity 0.4s;
-        }
-
-        .login-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            padding: 60px 50px;
-            border-radius: var(--border-radius-xl);
-            text-align: center;
-            width: 90%;
-            max-width: 460px;
-            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--primary-gradient);
-        }
-
-        body.dark .login-card {
-            background: rgba(30, 41, 59, 0.98);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .login-card img {
-            width: 200px;
-            margin-bottom: 30px;
-            filter: drop-shadow(0 10px 15px rgba(192,57,43,0.2));
-            transition: var(--transition);
-        }
-
-        .login-card:hover img {
-            transform: scale(1.05);
-        }
-
-        .login-card h2 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 35px;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .login-input {
-            width: 100%;
-            padding: 18px 22px;
-            margin-bottom: 20px;
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius-md);
-            font-size: 15px;
-            transition: var(--transition);
-            background: white;
-        }
-
-        body.dark .login-input {
-            background: var(--dark-light);
-            border-color: #334155;
-            color: var(--light);
-        }
-
-        .login-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 18px;
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius-md);
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-top: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .login-btn:hover::before {
-            left: 100%;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 30px -10px rgba(192, 57, 43, 0.4);
-        }
-
-        .forgot-link {
-            color: var(--primary);
-            font-size: 14px;
-            text-decoration: none;
-            display: block;
-            margin: 15px 0 25px;
-            transition: var(--transition);
-            font-weight: 500;
-        }
-
-        .forgot-link:hover {
-            color: var(--primary-dark);
-            transform: translateX(5px);
-        }
-
-        /* Sidebar Styles */
-        .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #0f172a 0%, #1a1f2e 100%);
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            transition: var(--transition);
-            z-index: 2000;
-            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.2);
-            overflow-y: auto;
-            border-right: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .sidebar-header {
-            height: 120px;
-            display: flex;
             align-items: center;
-            justify-content: center;
-            border-bottom: 2px solid var(--primary);
-            background: rgba(255, 255, 255, 0.02);
-            overflow: hidden;
-            position: relative;
         }
-
-        .sidebar-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
+        #app {
             width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-        }
-
-        .sidebar-header img {
-            width: 160px;
-            transition: var(--transition);
-            filter: brightness(0) invert(1);
-        }
-
-        .sidebar.collapsed .sidebar-header img {
-            width: 0;
-            opacity: 0;
-        }
-
-        .nav-links {
-            padding: 30px 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 14px 20px;
-            color: #94a3b8;
-            border-radius: var(--border-radius-md);
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-item i {
-            min-width: 40px;
-            font-size: 1.3rem;
-            z-index: 2;
-        }
-
-        .nav-item span {
-            font-weight: 600;
-            font-size: 15px;
-            z-index: 2;
-            transition: var(--transition);
-            white-space: nowrap;
-        }
-
-        .sidebar.collapsed .nav-item span {
-            opacity: 0;
-            width: 0;
-            visibility: hidden;
-        }
-
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 0;
-            background: var(--primary-gradient);
-            transition: var(--transition);
-            z-index: 1;
-            opacity: 0.8;
-        }
-
-        .nav-item:hover::before,
-        .nav-item.active::before {
-            width: 100%;
-        }
-
-        .nav-item:hover,
-        .nav-item.active {
-            color: white;
-            transform: translateX(8px);
-        }
-
-        /* User Info in Sidebar */
-        .user-info {
-            padding: 20px 15px;
-            margin-top: auto;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: white;
-        }
-
-        .user-name {
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .user-role {
-            font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            display: inline-block;
-            background: var(--primary);
-        }
-
-        .user-role.admin { background: var(--purple); }
-        .user-role.manager { background: var(--info); }
-        .user-role.auditor { background: var(--success); }
-
-        /* Main Content */
-        .main-wrapper {
-            flex: 1;
-            margin-left: 280px;
-            padding: 30px;
-            transition: var(--transition);
             min-height: 100vh;
-        }
-
-        .main-wrapper.expanded {
-            margin-left: 80px;
-        }
-
-        /* Page Sections */
-        .page-section {
-            display: none;
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-
-        .page-section.active {
-            display: block;
-        }
-
-        /* Top Bar */
-        .top-bar {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            border-radius: var(--border-radius-xl);
-            margin-bottom: 35px;
-            box-shadow: var(--box-shadow);
-            border: 1px solid rgba(255, 255, 255, 0.5);
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
         }
-
-        .top-bar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--primary-gradient);
-        }
-
-        body.dark .top-bar {
-            background: rgba(30, 41, 59, 0.9);
-            border-color: #334155;
-        }
-
-        .menu-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: var(--border-radius-md);
-            border: 1px solid var(--gray-light);
-            background: white;
-            color: var(--dark);
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-        }
-
-        body.dark .menu-btn {
-            background: var(--dark-light);
-            border-color: #334155;
-            color: var(--light);
-        }
-
-        .menu-btn:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: rotate(90deg);
-        }
-
-        .status-badge {
+        /* Page de connexion */
+        #login-container {
+            width: 100%;
             display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--success-light);
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            color: var(--success);
-            box-shadow: 0 4px 15px rgba(16,185,129,0.1);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 4px 15px rgba(16,185,129,0.1); }
-            50% { box-shadow: 0 4px 25px rgba(16,185,129,0.3); }
-            100% { box-shadow: 0 4px 15px rgba(16,185,129,0.1); }
-        }
-
-        /* Cards and Grids */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 35px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 30px;
-            border-radius: var(--border-radius-xl);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, transparent 50%, rgba(192,57,43,0.03) 50%);
-            border-radius: 50%;
-            transform: translate(30px, -30px);
-        }
-
-        body.dark .stat-card {
-            background: var(--dark-light);
-            border-color: #334155;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: var(--box-shadow-hover);
-        }
-
-        .stat-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: var(--border-radius-lg);
-            display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
-            transition: var(--transition);
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
         }
-
-        .stat-card:hover .stat-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .stat-card h3 {
-            font-size: 14px;
-            color: var(--gray);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .stat-card .value {
-            font-size: 2.8rem;
-            font-weight: 800;
-            line-height: 1;
-            background: linear-gradient(135deg, var(--dark), var(--dark-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        body.dark .stat-card .value {
-            background: linear-gradient(135deg, white, var(--gray-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Glass Panel */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+        .login-box {
+            background: white;
             padding: 40px;
-            border-radius: var(--border-radius-xl);
-            box-shadow: var(--box-shadow);
-            margin-bottom: 35px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             width: 100%;
-            height: 4px;
-            background: var(--primary-gradient);
+            max-width: 400px;
         }
-
-        body.dark .glass-panel {
-            background: rgba(30, 41, 59, 0.9);
-            border-color: #334155;
-        }
-
-        /* Filter Panel */
-        .filter-panel {
-            background: var(--light);
-            padding: 30px;
-            border-radius: var(--border-radius-lg);
+        .login-box h2 {
+            text-align: center;
+            color: #333;
             margin-bottom: 30px;
-            border: 1px solid var(--gray-light);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+            font-size: 28px;
         }
-
-        body.dark .filter-panel {
-            background: var(--dark-light);
-            border-color: #334155;
-        }
-
-        .filter-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .filter-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--primary);
-        }
-
-        .active-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(192,57,43,0.05);
-            border-radius: var(--border-radius-md);
-        }
-
-        .filter-tag {
-            background: white;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        body.dark .filter-tag {
-            background: var(--dark-light);
-            color: var(--light);
-        }
-
-        .filter-tag i {
-            color: var(--primary);
-            cursor: pointer;
-        }
-
-        .filter-tag i:hover {
-            color: var(--danger);
-        }
-
-        /* Form Elements */
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-
         .input-group label {
             display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--gray);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .input-group input,
-        .input-group select,
-        .input-group textarea {
-            width: 100%;
-            padding: 16px 18px;
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius-md);
-            font-size: 14px;
-            transition: var(--transition);
-            background: white;
-        }
-
-        body.dark .input-group input,
-        body.dark .input-group select,
-        body.dark .input-group textarea {
-            background: var(--dark-light);
-            border-color: #334155;
-            color: var(--light);
-        }
-
-        .input-group input:focus,
-        .input-group select:focus,
-        .input-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.1);
-            transform: translateY(-2px);
-        }
-
-        /* Comment Section */
-        .comment-section {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(192,57,43,0.05);
-            border-radius: var(--border-radius-md);
-            border-left: 3px solid var(--primary);
-        }
-
-        .comment-item {
-            background: white;
-            padding: 15px;
-            border-radius: var(--border-radius-md);
-            margin-bottom: 10px;
-            border: 1px solid var(--gray-light);
-        }
-
-        body.dark .comment-item {
-            background: var(--dark-light);
-            border-color: #334155;
-        }
-
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 13px;
-            color: var(--gray);
-        }
-
-        .comment-text {
+            margin-bottom: 5px;
+            color: #555;
             font-weight: 500;
-            margin-bottom: 10px;
         }
-
-        .comment-status {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
         }
-
-        .status-open { background: var(--warning-light); color: var(--warning); }
-        .status-progress { background: var(--info-light); color: var(--info); }
-        .status-closed { background: var(--success-light); color: var(--success); }
-
-        .add-comment-btn {
-            background: var(--primary-light);
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: var(--border-radius-md);
-            font-size: 13px;
+            border-radius: 5px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
-            margin-top: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .add-comment-btn:hover {
-            background: var(--primary);
+        .login-box button:hover {
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-
-        /* Modal */
-        .modal {
+        .login-box button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 5px;
+            text-align: center;
             display: none;
+        }
+        .message.error { background-color: #fee; color: #c33; border: 1px solid #fcc; display: block; }
+        .message.success { background-color: #efe; color: #3c3; border: 1px solid #cfc; display: block; }
+        .message.info { background-color: #e6f3ff; color: #2c7be0; border: 1px solid #b8daff; display: block; }
+        .toggle-form, .forgot-password { text-align: center; margin-top: 15px; }
+        .toggle-form a, .forgot-password a { color: #667eea; text-decoration: none; font-weight: 500; cursor: pointer; }
+        .toggle-form a:hover, .forgot-password a:hover { text-decoration: underline; }
+        .forgot-password { text-align: right; margin-top: 5px; }
+
+        /* Dashboard */
+        #dashboard-container {
+            display: none;
+            width: 100%;
+            background: #f4f7fa;
+        }
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
-            z-index: 10000;
+            height: 100vh;
+        }
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .sidebar-header h2 { font-size: 24px; font-weight: 600; }
+        .sidebar-header p { font-size: 14px; opacity: 0.8; margin-top: 5px; }
+        .sidebar-nav { flex: 1; padding: 20px 0; }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav li {
+            padding: 15px 25px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+        }
+        .sidebar-nav li:hover { background: rgba(255,255,255,0.2); }
+        .sidebar-nav li.active { background: rgba(255,255,255,0.3); border-left: 4px solid white; }
+        .sidebar-nav li i { margin-right: 15px; font-style: normal; font-size: 20px; }
+        .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.2); }
+        .logout-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
             align-items: center;
             justify-content: center;
         }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: var(--border-radius-xl);
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
+        .logout-btn i { margin-right: 10px; font-style: normal; }
+        .logout-btn:hover { background: rgba(255,255,255,0.3); }
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 30px;
             overflow-y: auto;
         }
-
-        body.dark .modal-content {
-            background: var(--dark-light);
-        }
-
-        .modal-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--primary);
-        }
-
-        .modal-close {
-            float: right;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--gray);
-        }
-
-        .modal-close:hover {
-            color: var(--danger);
-        }
-
-        /* User Management */
-        .user-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background: white;
-            border-radius: var(--border-radius-md);
-            margin-bottom: 10px;
-            border: 1px solid var(--gray-light);
-        }
-
-        body.dark .user-row {
-            background: var(--dark-light);
-            border-color: #334155;
-        }
-
-        .user-email {
-            font-weight: 600;
-        }
-
-        .user-role-select {
-            padding: 8px 12px;
-            border-radius: var(--border-radius-md);
-            border: 2px solid var(--gray-light);
-            background: white;
-        }
-
-        body.dark .user-role-select {
-            background: var(--dark-light);
-            color: var(--light);
-            border-color: #334155;
-        }
-
-        .delete-user-btn {
-            color: var(--danger);
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-
-        .delete-user-btn:hover {
-            background: var(--danger-light);
-            transform: scale(1.1);
-        }
-
-        /* Week Selector */
-        .week-selector {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .week-btn {
-            padding: 12px 20px;
-            background: white;
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius-md);
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        body.dark .week-btn {
-            background: var(--dark-light);
-            border-color: #334155;
-            color: var(--light);
-        }
-
-        .week-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .week-btn.active {
-            background: var(--primary-gradient);
-            border-color: var(--primary);
-            color: white;
-        }
-
-        /* Audit Tabs */
-        .audit-type-tabs {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 35px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--gray-light);
-            flex-wrap: wrap;
-        }
-
-        .audit-tab {
-            padding: 14px 32px;
-            background: white;
-            border: 2px solid var(--gray-light);
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            transition: var(--transition);
-            color: var(--dark);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-        }
-
-        body.dark .audit-tab {
-            background: var(--dark-light);
-            border-color: #334155;
-            color: var(--light);
-        }
-
-        .audit-tab:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .audit-tab.active {
-            background: var(--primary-gradient);
-            border-color: var(--primary);
-            color: white;
-            box-shadow: var(--box-shadow-glow);
-        }
-
-        /* Radio Buttons */
-        .custom-radio-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .radio-btn input[type="radio"] {
-            display: none;
-        }
-
-        .radio-btn label {
+        .section { display: none; animation: fadeIn 0.3s; }
+        .section.active-section { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .section h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
             display: inline-block;
-            padding: 10px 20px;
-            background: var(--gray-light);
-            color: var(--gray);
-            border-radius: 40px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid transparent;
         }
-
-        body.dark .radio-btn label {
-            background: #334155;
-            color: #cbd5e1;
-        }
-
-        .radio-btn input[type="radio"]:checked + label.ok-label {
-            background: var(--success);
-            color: white;
-            box-shadow: 0 8px 20px rgba(16,185,129,0.3);
-            border-color: var(--success);
-            transform: scale(1.05);
-        }
-
-        .radio-btn input[type="radio"]:checked + label.nok-label {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 8px 20px rgba(192,57,43,0.3);
-            border-color: var(--primary);
-            transform: scale(1.05);
-        }
-
-        .radio-btn input[type="radio"]:checked + label.na-label {
-            background: var(--gray);
-            color: white;
-            border-color: var(--gray);
-            transform: scale(1.05);
-        }
-
-        /* Tables */
-        .table-container {
-            overflow-x: auto;
-            border-radius: var(--border-radius-lg);
+        .card-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+        .card {
             background: white;
-            padding: 5px;
-        }
-
-        body.dark .table-container {
-            background: var(--dark-light);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 12px;
-        }
-
-        th {
-            text-align: left;
-            padding: 18px 20px;
-            color: var(--gray);
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            background: rgba(192,57,43,0.02);
-        }
-
-        tbody tr {
-            background: white;
-            transition: var(--transition);
-            border-radius: var(--border-radius-md);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-        }
-
-        body.dark tbody tr {
-            background: var(--dark-light);
-        }
-
-        tbody tr:hover {
-            transform: scale(1.01);
-            box-shadow: var(--box-shadow);
-            background: linear-gradient(90deg, white, #fafafa);
-        }
-
-        body.dark tbody tr:hover {
-            background: linear-gradient(90deg, var(--dark-light), #2d3748);
-        }
-
-        td {
+            border-radius: 10px;
             padding: 20px;
-            font-size: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .card h3 { color: #667eea; margin-bottom: 10px; }
+        .card p { color: #666; line-height: 1.6; }
 
-        td:first-child {
-            border-top-left-radius: var(--border-radius-md);
-            border-bottom-left-radius: var(--border-radius-md);
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        td:last-child {
-            border-top-right-radius: var(--border-radius-md);
-            border-bottom-right-radius: var(--border-radius-md);
-        }
-
-        /* Comment Indicator */
-        .has-comment {
-            color: var(--info);
-            margin-right: 5px;
-            cursor: pointer;
-        }
-
-        .comment-badge {
-            background: var(--info-light);
-            color: var(--info);
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: 5px;
-        }
-
-        /* Badges */
-        .badge {
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 700;
-            display: inline-block;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-success {
-            background: var(--success-light);
-            color: var(--success);
-            border: 1px solid var(--success);
-        }
-
-        .badge-warning {
-            background: var(--warning-light);
-            color: var(--warning);
-            border: 1px solid var(--warning);
-        }
-
-        .badge-danger {
-            background: var(--danger-light);
-            color: var(--danger);
-            border: 1px solid var(--danger);
-        }
-
-        .badge-info {
-            background: var(--info-light);
-            color: var(--info);
-            border: 1px solid var(--info);
-        }
-
-        .badge-purple {
-            background: var(--purple-light);
-            color: var(--purple);
-            border: 1px solid var(--purple);
-        }
-
-        /* Alerts */
-        .alerts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-        }
-
-        .alert-card {
+        /* Sous-navigation */
+        .sub-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
             background: white;
-            padding: 25px;
-            border-radius: var(--border-radius-lg);
-            border-left: 5px solid;
-            transition: var(--transition);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-            position: relative;
-            overflow: hidden;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-
-        body.dark .alert-card {
-            background: var(--dark-light);
+        .sub-nav button {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
         }
+        .sub-nav button.active { background: #667eea; color: white; }
+        .sub-nav button:hover:not(.active) { background: #f0f0f0; }
+        .audit-content { display: none; }
+        .audit-content.active-content { display: block; }
 
-        .alert-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, transparent 50%, rgba(192,57,43,0.02) 50%);
-            border-radius: 50%;
-        }
-
-        .alert-card.warning {
-            border-left-color: var(--warning);
-        }
-
-        .alert-card.danger {
-            border-left-color: var(--danger);
-        }
-
-        .alert-card:hover {
-            transform: translateX(8px) translateY(-4px);
-            box-shadow: var(--box-shadow-hover);
-        }
-
-        /* Charts */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
-            gap: 35px;
-            margin-top: 35px;
-        }
-
-        .chart-container {
+        /* Formulaire d'audit */
+        .audit-form {
             background: white;
             padding: 30px;
-            border-radius: var(--border-radius-xl);
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-            border: 1px solid rgba(255,255,255,0.5);
-            position: relative;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
-        body.dark .chart-container {
-            background: var(--dark-light);
-            border-color: #334155;
+        .audit-form h3 { margin-bottom: 20px; color: #333; }
+        .question-group {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
         }
-
-        .chart-container:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--box-shadow-hover);
-        }
-
-        .chart-title {
-            text-align: center;
-            margin-top: 20px;
-            font-weight: 700;
-            color: var(--gray);
-            font-size: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Buttons */
-        .export-btn {
-            background: var(--success-light);
-            color: var(--success);
-            border: none;
-            padding: 14px 28px;
-            border-radius: var(--border-radius-md);
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid transparent;
+        .question-group label { display: block; font-weight: 600; color: #444; margin-bottom: 10px; }
+        .radio-group { display: flex; gap: 20px; align-items: center; }
+        .radio-group div { display: flex; align-items: center; gap: 5px; }
+        .radio-group input[type="radio"] { width: auto; margin-right: 5px; }
+        .text-input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
             font-size: 14px;
         }
-
-        .export-btn:hover {
-            background: var(--success);
+        .text-input:focus, select:focus { outline: none; border-color: #667eea; }
+        .btn-submit {
+            background: #667eea;
             color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px -10px rgba(16,185,129,0.4);
-        }
-
-        .delete-btn {
-            background: var(--danger-light);
-            color: var(--danger);
             border: none;
-            padding: 14px 28px;
-            border-radius: var(--border-radius-md);
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .delete-btn:hover {
-            background: var(--danger);
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px -10px rgba(239,68,68,0.4);
-        }
-
-        /* Pagination */
-        #pagination {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 40px;
-            flex-wrap: wrap;
-        }
-
-        .page-btn {
-            padding: 12px 20px;
-            border: 2px solid var(--gray-light);
-            background: white;
-            color: var(--dark);
-            border-radius: var(--border-radius-md);
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            min-width: 50px;
-            font-size: 14px;
-        }
-
-        body.dark .page-btn {
-            background: var(--dark-light);
-            border-color: #334155;
-            color: var(--light);
-        }
-
-        .page-btn.active {
-            background: var(--primary-gradient);
-            border-color: var(--primary);
-            color: white;
-            box-shadow: var(--box-shadow-glow);
-        }
-
-        .page-btn:hover:not(.active) {
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        /* Toast */
-        #toast {
-            position: fixed;
-            bottom: -100px;
-            right: 30px;
-            background: white;
-            color: var(--dark);
-            padding: 18px 32px;
-            border-radius: var(--border-radius-lg);
-            border-left: 5px solid var(--primary);
-            box-shadow: var(--box-shadow-hover);
-            font-weight: 600;
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            backdrop-filter: blur(10px);
-        }
-
-        body.dark #toast {
-            background: var(--dark-light);
-            color: var(--light);
-        }
-
-        #toast.show {
-            bottom: 30px;
-        }
-
-        #toast i {
-            font-size: 1.8rem;
-        }
-
-        /* No Data */
-        .no-data {
-            text-align: center;
-            padding: 80px 20px;
-            color: var(--gray);
+            padding: 12px 30px;
+            border-radius: 5px;
             font-size: 16px;
-            background: rgba(255,255,255,0.5);
-            border-radius: var(--border-radius-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
         }
-
-        .no-data i {
-            font-size: 5rem;
-            opacity: 0.2;
-            margin-bottom: 25px;
+        .btn-submit:hover { background: #5a67d8; }
+        .resultat {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 18px;
         }
+        .resultat.success { background: #efe; color: #2e7d32; }
 
-        /* Hidden Class */
-        .hidden {
-            display: none !important;
-        }
-
-        /* Admin Only Elements */
-        .admin-only {
-            display: none;
-        }
-
-        body[data-role="admin"] .admin-only,
-        body[data-role="manager"] .manager-only {
-            display: block;
-        }
-
-        /* Animations */
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .animate-slide-up {
-            animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .animate-slide-left {
-            animation: slideInLeft 0.5s ease-out forwards;
-        }
-
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-
-        /* Mur Select */
-        .sub-select {
+        /* Tableau des audits */
+        .auditor-table {
             width: 100%;
-            padding: 16px 18px;
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius-md);
-            font-size: 14px;
             background: white;
-            margin-bottom: 25px;
-            transition: var(--transition);
-        }
-
-        body.dark .sub-select {
-            background: var(--dark-light);
-            border-color: #334155;
-            color: var(--light);
-        }
-
-        .sub-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(192,57,43,0.1);
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            width: 45px;
-            height: 45px;
-            border: 4px solid var(--gray-light);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Progress Bar */
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: var(--gray-light);
             border-radius: 10px;
             overflow: hidden;
-            margin: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--primary-gradient);
-            transition: width 1s ease;
+        .auditor-table table { width: 100%; border-collapse: collapse; }
+        .auditor-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .auditor-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .auditor-table tr:last-child td { border-bottom: none; }
+        .auditor-table tr:hover td { background: #f9f9f9; }
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .chart-container {
+            margin-top: 20px;
+            background: white;
             border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.mobile-show {
-                transform: translateX(0);
-            }
-            .main-wrapper {
-                margin-left: 0 !important;
-                padding: 20px;
-            }
-            .main-wrapper.expanded {
-                margin-left: 0 !important;
-            }
-            .filter-row {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .stat-card {
-                padding: 25px;
-            }
-            .glass-panel {
-                padding: 25px;
-            }
+        .filter-bar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
         }
     </style>
 </head>
 <body>
-    <div id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastMsg">Message</span></div>
-
-    <!-- Login Overlay -->
-    <div id="loginOverlay">
-        <div class="login-card">
-            <img src="https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png" alt="WKW Logo">
-            <h2>Portail d'Audit Sécurisé</h2>
-            <input type="email" id="user" class="login-input" placeholder="Email professionnel" autocomplete="email">
-            <input type="password" id="pass" class="login-input" placeholder="Mot de passe" autocomplete="current-password">
-            <a href="#" class="forgot-link" id="forgotPasswordLink">Mot de passe oublié ?</a>
-            <button class="login-btn" id="loginButton">
-                <i class="fa-solid fa-lock"></i> Connexion Sécurisée
-            </button>
-            <div id="loginLoading" style="display:none; margin-top:20px;">
-                <div class="spinner"></div>
-                <p style="margin-top:10px; color:var(--gray);">Connexion en cours...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <img src="https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png" alt="WKW">
-        </div>
-        <div class="nav-links">
-            <div class="nav-item active" data-page="dashboardPage">
-                <i class="fa-solid fa-chart-pie"></i>
-                <span>Dashboard</span>
-            </div>
-            <div class="nav-item" data-page="auditPage">
-                <i class="fa-solid fa-layer-group"></i>
-                <span>Nouvel Audit</span>
-            </div>
-            <div class="nav-item" data-page="historyPage">
-                <i class="fa-solid fa-chart-line"></i>
-                <span>Historique</span>
-            </div>
-            <div class="nav-item" data-page="analyticsPage">
-                <i class="fa-solid fa-chart-bar"></i>
-                <span>Analyses</span>
-            </div>
-            <!-- Admin only link -->
-            <div class="nav-item admin-only" data-page="usersPage" id="usersPageLink">
-                <i class="fa-solid fa-users-gear"></i>
-                <span>Gestion Utilisateurs</span>
-            </div>
-            <div class="nav-item" style="margin-top: auto;" id="logoutBtn">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                <span>Déconnexion</span>
-            </div>
-        </div>
-        
-        <!-- User Info in Sidebar -->
-        <div class="user-info" id="userInfo">
-            <div class="user-name" id="userName">Chargement...</div>
-            <div class="user-role" id="userRole">Auditeur</div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="main-wrapper" id="mainWrapper">
-        <div class="top-bar animate-slide-up">
-            <div style="display:flex; align-items:center; gap:20px;">
-                <button class="menu-btn" id="menuToggle">
-                    <i class="fa-solid fa-bars-staggered"></i>
-                </button>
-                <h2 id="pageTitle" style="font-weight: 800; font-size: 24px;">Dashboard Qualité</h2>
-            </div>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <div class="status-badge">
-                    <i class="fa-solid fa-circle" style="font-size: 10px;"></i>
-                    <span>Système Actif</span>
+    <div id="app">
+        <!-- Conteneur de connexion -->
+        <div id="login-container">
+            <div class="login-box">
+                <h2 id="form-title">Connexion</h2>
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="votre@email.com" required>
                 </div>
-                <button id="themeToggle" class="menu-btn">
-                    <i class="fa-solid fa-moon"></i>
-                </button>
+                <div class="input-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <div class="forgot-password">
+                    <a onclick="showForgotPassword()">Mot de passe oublié ?</a>
+                </div>
+                <button onclick="handleAuth()" id="auth-button">Se connecter</button>
+                <div class="toggle-form">
+                    <a onclick="toggleForm()" id="toggle-link">Créer un compte</a>
+                </div>
+                <div id="message" class="message"></div>
             </div>
         </div>
 
-        <!-- Dashboard Page -->
-        <div id="dashboardPage" class="page-section active">
-            <div class="stats-grid">
-                <div class="stat-card animate-slide-left delay-1">
-                    <div class="stat-icon" style="background: var(--info-light); color: var(--info);">
-                        <i class="fa-solid fa-clipboard-list"></i>
-                    </div>
-                    <div>
-                        <h3>Total Audits</h3>
-                        <div class="value" id="kpi-total">0</div>
-                    </div>
+        <!-- Conteneur du tableau de bord -->
+        <div id="dashboard-container">
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Portail Audit</h2>
+                    <p id="user-email">Espace administrateur</p>
                 </div>
-                <div class="stat-card animate-slide-left delay-2">
-                    <div class="stat-icon" style="background: var(--success-light); color: var(--success);">
-                        <i class="fa-solid fa-check-circle"></i>
-                    </div>
-                    <div>
-                        <h3>Taux Conformité</h3>
-                        <div class="value" id="kpi-conformite">0%</div>
-                    </div>
+                <div class="sidebar-nav">
+                    <ul>
+                        <li id="nav-dashboard" class="active" onclick="switchSection('dashboard')"><i>📊</i> Dashboard</li>
+                        <li id="nav-courbes" onclick="switchSection('courbes')"><i>📈</i> Courbes</li>
+                        <li id="nav-auditeurs" onclick="switchSection('auditeurs')"><i>📝</i> Nouvelle audit</li>
+                        <li id="nav-details" onclick="switchSection('details')"><i>📋</i> Détails d'audit</li>
+                    </ul>
                 </div>
-                <div class="stat-card animate-slide-left delay-3">
-                    <div class="stat-icon" style="background: var(--warning-light); color: var(--warning);">
-                        <i class="fa-solid fa-exclamation-triangle"></i>
-                    </div>
-                    <div>
-                        <h3>Actions Requises</h3>
-                        <div class="value" id="kpi-actions">0</div>
-                    </div>
-                </div>
-                <div class="stat-card animate-slide-left delay-4">
-                    <div class="stat-icon" style="background: var(--danger-light); color: var(--danger);">
-                        <i class="fa-solid fa-times-circle"></i>
-                    </div>
-                    <div>
-                        <h3>Total NOK</h3>
-                        <div class="value" id="kpi-nok">0</div>
-                    </div>
+                <div class="sidebar-footer">
+                    <button class="logout-btn" onclick="logout()"><i>🚪</i> Déconnexion</button>
                 </div>
             </div>
 
-            <!-- Best and Worst Scores Row -->
-            <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
-                <div class="stat-card animate-slide-left delay-1" style="background: linear-gradient(135deg, #10b98120, #10b98105); border-left: 5px solid var(--success);">
-                    <div class="stat-icon" style="background: var(--success-light); color: var(--success);">
-                        <i class="fa-solid fa-trophy"></i>
+            <div class="main-content">
+                <!-- Section Dashboard -->
+                <div id="section-dashboard" class="section active-section">
+                    <h1>Dashboard</h1>
+                    <div class="card-container">
+                        <div class="card"><h3>Auditeurs actifs</h3><p style="font-size:36px;">12</p><p>+3 cette semaine</p></div>
+                        <div class="card"><h3>Audits en cours</h3><p style="font-size:36px;">8</p><p>Dont 2 critiques</p></div>
+                        <div class="card"><h3>Audits terminés</h3><p style="font-size:36px;">47</p><p>Ce mois-ci</p></div>
+                        <div class="card"><h3>Taux de conformité</h3><p style="font-size:36px;">85%</p><p>En hausse de 5%</p></div>
                     </div>
-                    <div style="flex: 1;">
-                        <h3>Meilleur Score</h3>
-                        <div class="value" id="best-score-value" style="color: var(--success); font-size: 2.2rem;">0%</div>
-                        <div style="display: flex; gap: 15px; margin-top: 8px; flex-wrap: wrap;">
-                            <small><i class="fa-regular fa-calendar"></i> <span id="best-score-date">-</span></small>
-                            <small><i class="fa-solid fa-building"></i> <span id="best-score-uap">-</span></small>
-                            <small><i class="fa-solid fa-gear"></i> <span id="best-score-ligne">-</span></small>
+                    <div class="card" style="margin-top:20px;"><h3>Activité récente</h3><p>• Audit #124 terminé par Jean Dupont</p><p>• Nouvel auditeur : Marie Martin</p><p>• Rapport d'audit #123 généré</p></div>
+                </div>
+
+                <!-- Section Courbes -->
+                <div id="section-courbes" class="section">
+                    <h1>Courbes et statistiques</h1>
+                    <div class="chart-container"><canvas id="auditChart" style="width:100%; max-height:400px;"></canvas></div>
+                    <div class="card-container" style="margin-top:20px;">
+                        <div class="card"><h3>Audits par mois</h3><p>Jan: 12, Fév: 15, Mar: 20</p></div>
+                        <div class="card"><h3>Répartition par type</h3><p>Financier: 45%, Qualité: 30%, Sécurité: 25%</p></div>
+                    </div>
+                </div>
+
+                <!-- Section Nouvelle audit -->
+                <div id="section-auditeurs" class="section">
+                    <h1>Nouvelle audit Gemba</h1>
+                    <div class="sub-nav">
+                        <button id="tab-ligne" class="active" onclick="switchAuditType('ligne')">Ligne</button>
+                        <button id="tab-magasin" onclick="switchAuditType('magasin')">Magasin</button>
+                        <button id="tab-mur" onclick="switchAuditType('mur')">Mur qualité</button>
+                    </div>
+
+                    <!-- Audit Ligne -->
+                    <div id="audit-ligne" class="audit-content active-content">
+                        <div class="audit-form">
+                            <h3>Audit Gemba - Ligne de production</h3>
+                            <form id="form-audit-ligne">
+                                <div class="question-group">
+                                    <label>Date</label>
+                                    <input type="date" id="date-ligne" class="text-input" required>
+                                </div>
+                                <div class="question-group">
+                                    <label>Zone / Ligne / Poste</label>
+                                    <input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required>
+                                </div>
+                                <div class="question-group">
+                                    <label>UAP</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="uapLigne" value="UAP1" required> UAP1</div>
+                                        <div><input type="radio" name="uapLigne" value="UAP2"> UAP2</div>
+                                    </div>
+                                </div>
+                                <!-- Questions -->
+                                <div class="question-group"><label>Main d'œuvre : Qualification (Grille de polyvalence)</label><div class="radio-group"><div><input type="radio" name="mainLigne" value="OK" required> OK</div><div><input type="radio" name="mainLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>matière : Etat de rebut</label><div class="radio-group"><div><input type="radio" name="matiereLigne" value="OK" required> OK</div><div><input type="radio" name="matiereLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : OK démarrage</label><div class="radio-group"><div><input type="radio" name="demarrageLigne" value="OK" required> OK</div><div><input type="radio" name="demarrageLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : Dossier de Fabrication</label><div class="radio-group"><div><input type="radio" name="dossierLigne" value="OK" required> OK</div><div><input type="radio" name="dossierLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : Formulaire (Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireLigne" value="OK" required> OK</div><div><input type="radio" name="formulaireLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : HSE</label><div class="radio-group"><div><input type="radio" name="hseLigne" value="OK" required> OK</div><div><input type="radio" name="hseLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Milieu : 5S</label><div class="radio-group"><div><input type="radio" name="cinqSLigne" value="OK" required> OK</div><div><input type="radio" name="cinqSLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Machine : Préventif niveau 1</label><div class="radio-group"><div><input type="radio" name="prev1Ligne" value="OK" required> OK</div><div><input type="radio" name="prev1Ligne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Préventif niveau 2</label><div class="radio-group"><div><input type="radio" name="prev2Ligne" value="OK" required> OK</div><div><input type="radio" name="prev2Ligne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>POKA YOKE</label><div class="radio-group"><div><input type="radio" name="pokaLigne" value="OK" required> OK</div><div><input type="radio" name="pokaLigne" value="NOK"> NOK</div><div><input type="radio" name="pokaLigne" value="N/A"> N/A</div></div></div>
+
+                                <button type="button" class="btn-submit" onclick="soumettreLigne()">Soumettre l'audit</button>
+                            </form>
+                            <div id="resultat-ligne" class="resultat" style="display: none;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Audit Magasin -->
+                    <div id="audit-magasin" class="audit-content">
+                        <div class="audit-form">
+                            <h3>Audit Gemba - Magasin / Stock</h3>
+                            <form id="form-audit-magasin">
+                                <div class="question-group">
+                                    <label>Date</label>
+                                    <input type="date" id="date-magasin" class="text-input" required>
+                                </div>
+                                <div class="question-group">
+                                    <label>Magasin</label>
+                                    <select id="magasin-select" required>
+                                        <option value="">Sélectionnez</option>
+                                        <option value="Magasin general">Magasin général</option>
+                                        <option value="Magasin P1">Magasin P1</option>
+                                        <option value="Magasin P2">Magasin P2</option>
+                                    </select>
+                                </div>
+                                <div class="question-group"><label>1. Qualification (Grille de polyvalence)</label><div class="radio-group"><div><input type="radio" name="qualifMag" value="OK" required> OK</div><div><input type="radio" name="qualifMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>2. Identification (Etiquette)</label><div class="radio-group"><div><input type="radio" name="idMag" value="OK" required> OK</div><div><input type="radio" name="idMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>3. Méthode (Instruction)</label><div class="radio-group"><div><input type="radio" name="instructionMag" value="OK" required> OK</div><div><input type="radio" name="instructionMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>4. Méthode (Stockage)</label><div class="radio-group"><div><input type="radio" name="stockageMag" value="OK" required> OK</div><div><input type="radio" name="stockageMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>5. Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMag" value="OK" required> OK</div><div><input type="radio" name="formulaireMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>6. Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMag" value="OK" required> OK</div><div><input type="radio" name="hseMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>7. Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMag" value="OK" required> OK</div><div><input type="radio" name="cinqSMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>8. Chariot élévateur (Préventif niveau 1)</label><div class="radio-group"><div><input type="radio" name="chariotMag" value="OK" required> OK</div><div><input type="radio" name="chariotMag" value="NOK"> NOK</div><div><input type="radio" name="chariotMag" value="N/A"> N/A</div></div></div>
+
+                                <button type="button" class="btn-submit" onclick="soumettreMagasin()">Soumettre l'audit</button>
+                            </form>
+                            <div id="resultat-magasin" class="resultat" style="display: none;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Audit Mur qualité -->
+                    <div id="audit-mur" class="audit-content">
+                        <div class="audit-form">
+                            <h3>Audit Gemba - Mur qualité</h3>
+                            <form id="form-audit-mur">
+                                <div class="question-group">
+                                    <label>Date</label>
+                                    <input type="date" id="date-mur" class="text-input" required>
+                                </div>
+                                <div class="question-group">
+                                    <label>Mur qualité</label>
+                                    <select id="mur-select" required>
+                                        <option value="">Sélectionnez</option>
+                                        <option value="Mur qualite uap1">Mur qualité UAP1</option>
+                                        <option value="Mur qualite uap2">Mur qualité UAP2</option>
+                                    </select>
+                                </div>
+                                <div class="question-group"><label>Main d'œuvre (Qualification)</label><div class="radio-group"><div><input type="radio" name="mainMur" value="OK" required> OK</div><div><input type="radio" name="mainMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>matière (Etat de rebut)</label><div class="radio-group"><div><input type="radio" name="matiereMur" value="OK" required> OK</div><div><input type="radio" name="matiereMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (OK démarrage)</label><div class="radio-group"><div><input type="radio" name="demarrageMur" value="OK" required> OK</div><div><input type="radio" name="demarrageMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (Dossier de Fabrication)</label><div class="radio-group"><div><input type="radio" name="dossierMur" value="OK" required> OK</div><div><input type="radio" name="dossierMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (Formulaire Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireMur" value="OK" required> OK</div><div><input type="radio" name="formulaireMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMur" value="OK" required> OK</div><div><input type="radio" name="hseMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMur" value="OK" required> OK</div><div><input type="radio" name="cinqSMur" value="NOK"> NOK</div></div></div>
+
+                                <button type="button" class="btn-submit" onclick="soumettreMur()">Soumettre l'audit</button>
+                            </form>
+                            <div id="resultat-mur" class="resultat" style="display: none;"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="stat-card animate-slide-left delay-2" style="background: linear-gradient(135deg, #ef444420, #ef444405); border-left: 5px solid var(--danger);">
-                    <div class="stat-icon" style="background: var(--danger-light); color: var(--danger);">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <h3>Plus Mauvais Score</h3>
-                        <div class="value" id="worst-score-value" style="color: var(--danger); font-size: 2.2rem;">0%</div>
-                        <div style="display: flex; gap: 15px; margin-top: 8px; flex-wrap: wrap;">
-                            <small><i class="fa-regular fa-calendar"></i> <span id="worst-score-date">-</span></small>
-                            <small><i class="fa-solid fa-building"></i> <span id="worst-score-uap">-</span></small>
-                            <small><i class="fa-solid fa-gear"></i> <span id="worst-score-ligne">-</span></small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel animate-slide-up">
-                <h3 style="margin-bottom: 30px; display: flex; align-items: center; gap: 12px; font-size: 20px;">
-                    <i class="fa-solid fa-bell" style="color: var(--warning);"></i>
-                    Alertes Non-Conformités
-                </h3>
-                <div id="alertsContainer" class="alerts-grid"></div>
-            </div>
-
-            <div class="glass-panel animate-slide-up">
-                <h3 style="margin-bottom: 30px; font-size: 20px;">Performance par UAP</h3>
-                <div id="uapQuickStats" class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));"></div>
-            </div>
-        </div>
-
-        <!-- Audit Page -->
-        <div id="auditPage" class="page-section">
-            <div class="glass-panel">
-                <div class="stats-grid" style="margin-bottom: 30px;">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: var(--success-light); color: var(--success);">
-                            <i class="fa-solid fa-check"></i>
+                <!-- Section Détails d'audit -->
+                <div id="section-details" class="section">
+                    <h1>Détails des audits</h1>
+                    <div class="filter-bar">
+                        <div>
+                            <label>Filtrer par type :</label>
+                            <select id="filter-type" onchange="filterAudits()">
+                                <option value="all">Tous</option>
+                                <option value="Ligne">Ligne</option>
+                                <option value="Magasin">Magasin</option>
+                                <option value="Mur">Mur qualité</option>
+                            </select>
                         </div>
                         <div>
-                            <h3>Points OK</h3>
-                            <div class="value" id="count-ok" style="color:var(--success);">0</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: var(--danger-light); color: var(--danger);">
-                            <i class="fa-solid fa-xmark"></i>
-                        </div>
-                        <div>
-                            <h3>Points NOK</h3>
-                            <div class="value" id="count-nok" style="color:var(--danger);">0</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: var(--info-light); color: var(--info);">
-                            <i class="fa-solid fa-bolt"></i>
-                        </div>
-                        <div>
-                            <h3>Performance</h3>
-                            <div class="value" id="count-score">0%</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="audit-type-tabs">
-                    <div class="audit-tab active" onclick="switchAuditType('production')">🏭 Audit Production</div>
-                    <div class="audit-tab" onclick="switchAuditType('magasin')">📦 Audit Magasin</div>
-                    <div class="audit-tab" onclick="switchAuditType('mur')">🧱 Audit Mur Qualité</div>
-                </div>
-
-                <div class="form-row" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:25px; margin-bottom:35px;">
-                    <div class="input-group">
-                        <label><i class="fa-regular fa-calendar"></i> Date d'inspection</label>
-                        <input type="date" id="auditDate" value="2026-03-09">
-                    </div>
-                    <div class="input-group">
-                        <label><i class="fa-solid fa-building"></i> Secteur (UAP)</label>
-                        <select id="uapSelect" onchange="updateMurList()">
-                            <option value="UAP 1">UAP 1</option>
-                            <option value="UAP 2">UAP 2</option>
-                        </select>
-                    </div>
-                    <div class="input-group" id="ligneField">
-                        <label><i class="fa-solid fa-gear"></i> Numéro de Ligne</label>
-                        <input type="text" id="ligneInput" placeholder="Ex: Ligne 04">
-                    </div>
-                </div>
-
-                <!-- Production Form -->
-                <div id="productionAuditForm" class="audit-form">
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>N°</th>
-                                    <th>Critère d'évaluation</th>
-                                    <th>Statut</th>
-                                </tr>
-                            </thead>
-                            <tbody id="auditTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Magasin Form -->
-                <div id="magasinAuditForm" class="audit-form hidden">
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>N°</th>
-                                    <th>Critère d'évaluation</th>
-                                    <th>Statut</th>
-                                </tr>
-                            </thead>
-                            <tbody id="magasinTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Mur Form -->
-                <div id="murAuditForm" class="audit-form hidden">
-                    <div class="input-group" style="margin-bottom: 25px;">
-                        <label><i class="fa-solid fa-layer-group"></i> Mur Qualité</label>
-                        <select id="murSelect" class="sub-select">
-                            <option value="Mur Qualité UAP 1">Mur Qualité UAP 1</option>
-                            <option value="Mur Qualité UAP 2">Mur Qualité UAP 2</option>
-                        </select>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>N°</th>
-                                    <th>Critère d'évaluation</th>
-                                    <th>Statut</th>
-                                </tr>
-                            </thead>
-                            <tbody id="murTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <button class="login-btn" style="margin-top: 45px; max-width: 350px; float: right;" onclick="validateAndSave()">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Sauvegarder l'Audit
-                </button>
-                <div style="clear: both;"></div>
-            </div>
-        </div>
-
-        <!-- History Page -->
-        <div id="historyPage" class="page-section">
-            <div class="glass-panel">
-                <div class="filter-panel">
-                    <h4 style="margin-bottom: 25px; display:flex; align-items:center; gap:12px; font-size:18px;">
-                        <i class="fa-solid fa-sliders"></i> Filtres Avancés
-                    </h4>
-                    <div class="filter-row">
-                        <div class="input-group"><label>Date début</label><input type="date" id="filterDateStart" onchange="applyFilters()"></div>
-                        <div class="input-group"><label>Date fin</label><input type="date" id="filterDateEnd" onchange="applyFilters()"></div>
-                        <div class="input-group"><label>Score min (%)</label><input type="number" id="filterScoreMin" min="0" max="100" onchange="applyFilters()"></div>
-                        <div class="input-group"><label>Score max (%)</label><input type="number" id="filterScoreMax" min="0" max="100" onchange="applyFilters()"></div>
-                    </div>
-                    <div class="filter-row">
-                        <div class="input-group"><label>Auditeur</label><input type="text" id="filterAuditor" placeholder="Email..." onkeyup="applyFilters()"></div>
-                        <div class="input-group"><label>UAP</label><select id="filterUAP" onchange="applyFilters()"><option value="">Tous</option><option value="UAP 1">UAP 1</option><option value="UAP 2">UAP 2</option></select></div>
-                        <div class="input-group"><label>Ligne/Mur</label><input type="text" id="filterLigne" placeholder="Rechercher..." onkeyup="applyFilters()"></div>
-                        <div class="input-group"><label>Type audit</label><select id="filterType" onchange="applyFilters()"><option value="">Tous</option><option value="Production">Production</option><option value="Magasin">Magasin</option><option value="Mur Qualité">Mur Qualité</option></select></div>
-                    </div>
-                    <div style="display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap;">
-                        <button onclick="resetFilters()" class="export-btn">
-                            <i class="fa-solid fa-undo"></i> Réinitialiser
-                        </button>
-                        <button onclick="exportFilteredCSV()" class="export-btn">
-                            <i class="fa-solid fa-download"></i> Exporter CSV
-                        </button>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Type</th>
-                                <th>Date</th>
-                                <th>UAP</th>
-                                <th>Ligne</th>
-                                <th>OK</th>
-                                <th>NOK</th>
-                                <th>Score</th>
-                                <th>Auditeur</th>
-                                <th>Résultat</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyTableBody"></tbody>
-                    </table>
-                </div>
-
-                <div id="pagination"></div>
-            </div>
-        </div>
-
-        <!-- Analytics Page -->
-        <div id="analyticsPage" class="page-section">
-            <div class="glass-panel">
-                <h2 style="text-align:center; margin-bottom: 35px; font-size:32px; font-weight:800;">
-                    <i class="fa-solid fa-chart-simple" style="color:var(--primary);"></i> 
-                    Analyses & Statistiques
-                </h2>
-                
-                <!-- Analytics Filters -->
-                <div class="filter-panel">
-                    <div class="filter-title">
-                        <i class="fa-solid fa-filter"></i>
-                        Filtres d'analyse
-                    </div>
-                    
-                    <div class="filter-row">
-                        <div class="input-group">
-                            <label><i class="fa-solid fa-calendar"></i> Date début</label>
-                            <input type="date" id="analyticsDateStart" onchange="applyAnalyticsFilters()">
-                        </div>
-                        <div class="input-group">
-                            <label><i class="fa-solid fa-calendar"></i> Date fin</label>
-                            <input type="date" id="analyticsDateEnd" onchange="applyAnalyticsFilters()">
-                        </div>
-                        <div class="input-group">
-                            <label><i class="fa-solid fa-building"></i> UAP</label>
-                            <select id="analyticsUAP" onchange="applyAnalyticsFilters()">
-                                <option value="">Tous les UAP</option>
-                                <option value="UAP 1">UAP 1</option>
-                                <option value="UAP 2">UAP 2</option>
+                            <label>Filtrer par UAP/Ligne :</label>
+                            <select id="filter-uap" onchange="filterAudits()">
+                                <option value="all">Tous</option>
                             </select>
                         </div>
                     </div>
-                    
-                    <div class="filter-row">
-                        <div class="input-group">
-                            <label><i class="fa-solid fa-gear"></i> Ligne/Mur</label>
-                            <input type="text" id="analyticsLigne" placeholder="Rechercher ligne..." onkeyup="applyAnalyticsFilters()">
-                        </div>
-                        <div class="input-group">
-                            <label><i class="fa-solid fa-calendar-week"></i> Semaine</label>
-                            <select id="analyticsWeek" onchange="applyAnalyticsFilters()">
-                                <option value="">Toutes les semaines</option>
-                                <option value="current">Semaine en cours</option>
-                                <option value="last7">7 derniers jours</option>
-                                <option value="last30">30 derniers jours</option>
-                                <option value="last90">90 derniers jours</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label>&nbsp;</label>
-                            <button onclick="resetAnalyticsFilters()" class="export-btn" style="width:100%;">
-                                <i class="fa-solid fa-undo"></i> Réinitialiser
-                            </button>
-                        </div>
+                    <div class="auditor-table">
+                        <table id="audit-table">
+                            <thead>
+                                <tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr>
+                            </thead>
+                            <tbody id="audit-table-body"></tbody>
+                        </table>
                     </div>
-                    
-                    <!-- Active filters display -->
-                    <div id="activeAnalyticsFilters" class="active-filters"></div>
-                </div>
-                
-                <div class="stats-grid" style="margin-bottom: 35px;">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: var(--success-light); color: var(--success);">
-                            <i class="fa-solid fa-check-circle"></i>
-                        </div>
-                        <div>
-                            <h3>Total OK</h3>
-                            <div class="value" id="analytics-totalOk" style="color:var(--success);">0</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: var(--danger-light); color: var(--danger);">
-                            <i class="fa-solid fa-times-circle"></i>
-                        </div>
-                        <div>
-                            <h3>Total NOK</h3>
-                            <div class="value" id="analytics-totalNok" style="color:var(--danger);">0</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: var(--info-light); color: var(--info);">
-                            <i class="fa-solid fa-chart-line"></i>
-                        </div>
-                        <div>
-                            <h3>Moyenne Globale</h3>
-                            <div class="value" id="analytics-avg">0%</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="charts-grid">
-                    <div class="chart-container">
-                        <canvas id="nokByUAPChart"></canvas>
-                        <p class="chart-title">NOK par UAP</p>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="nokByLineChart"></canvas>
-                        <p class="chart-title">NOK par Ligne (Top 10)</p>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="scoreHistogramChart"></canvas>
-                        <p class="chart-title">Distribution des Scores</p>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="uapPerformanceChart"></canvas>
-                        <p class="chart-title">Performance UAP 1 vs UAP 2</p>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="criteriaSuccessChart"></canvas>
-                        <p class="chart-title">Pourcentage de Réussite par Question</p>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="monthlyTrendChart"></canvas>
-                        <p class="chart-title">Tendance Mensuelle</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Users Management Page (Admin Only) -->
-        <div id="usersPage" class="page-section">
-            <div class="glass-panel">
-                <h2 style="margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
-                    <i class="fa-solid fa-users-gear" style="color: var(--primary);"></i>
-                    Gestion des Utilisateurs
-                </h2>
-
-                <div class="filter-panel">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h4>Liste des utilisateurs</h4>
-                        <button class="export-btn" onclick="showAddUserModal()">
-                            <i class="fa-solid fa-user-plus"></i> Ajouter un utilisateur
-                        </button>
-                    </div>
-
-                    <div id="usersList"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Comment Modal -->
-    <div id="commentModal" class="modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeCommentModal()">&times;</span>
-            <h3 class="modal-title">Ajouter un commentaire</h3>
-            
-            <input type="hidden" id="commentAuditId">
-            <input type="hidden" id="commentCriterionId">
-            
-            <div class="input-group">
-                <label>Critère</label>
-                <input type="text" id="commentCriterionName" readonly disabled>
-            </div>
-            
-            <div class="input-group">
-                <label>Commentaire</label>
-                <textarea id="commentText" rows="4" placeholder="Décrivez le problème et l'action corrective..."></textarea>
-            </div>
-            
-            <div class="input-group">
-                <label>Statut</label>
-                <select id="commentStatus">
-                    <option value="open">Ouvert - À traiter</option>
-                    <option value="in-progress">En cours de traitement</option>
-                    <option value="closed">Fermé - Résolu</option>
-                </select>
-            </div>
-            
-            <div class="input-group">
-                <label>Assigné à</label>
-                <input type="text" id="commentAssignedTo" placeholder="Email de la personne responsable">
-            </div>
-            
-            <div class="input-group">
-                <label>Date d'échéance</label>
-                <input type="date" id="commentDueDate">
-            </div>
-            
-            <button class="login-btn" onclick="saveComment()">Sauvegarder le commentaire</button>
-        </div>
-    </div>
-
-    <!-- Add User Modal -->
-    <div id="addUserModal" class="modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeAddUserModal()">&times;</span>
-            <h3 class="modal-title">Ajouter un utilisateur</h3>
-            
-            <div class="input-group">
-                <label>Email</label>
-                <input type="email" id="newUserEmail" placeholder="email@wkw.fr">
-            </div>
-            
-            <div class="input-group">
-                <label>Mot de passe temporaire</label>
-                <input type="text" id="newUserPassword" value="Wkw2024!" readonly>
-                <small style="color: var(--gray);">L'utilisateur devra changer son mot de passe à la première connexion</small>
-            </div>
-            
-            <div class="input-group">
-                <label>Rôle</label>
-                <select id="newUserRole">
-                    <option value="auditor">Auditeur</option>
-                    <option value="manager">Manager</option>
-                    <option value="admin">Administrateur</option>
-                </select>
-            </div>
-            
-            <div class="input-group">
-                <label>Nom complet</label>
-                <input type="text" id="newUserName" placeholder="Prénom NOM">
-            </div>
-            
-            <button class="login-btn" onclick="createUser()">Créer l'utilisateur</button>
-        </div>
-    </div>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <script>
-        // Firebase config
+        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBCnvkriTgPdaE37DRkRHPcULCVAYfbUHE",
             authDomain: "portail-d-audit.firebaseapp.com",
@@ -2041,1281 +535,327 @@
             projectId: "portail-d-audit",
             storageBucket: "portail-d-audit.firebasestorage.app",
             messagingSenderId: "581725098490",
-            appId: "1:581725098490:web:70cd5d573787eb7530d443"
+            appId: "1:581725098490:web:70cd5d573787eb7530d443",
+            measurementId: "G-KCCRY45MNX"
         };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
-        const auditsRef = database.ref('audits');
-        const usersRef = database.ref('users');
 
-        // Criteria lists for each audit type
-        const productionCriteria = [
-            "Qualification Main d'œuvre", "État des Rebuts", "Dossier Fabrication",
-            "Normes HSE", "Validation Démarrage", "Formulaires Qualité",
-            "5S", "Maintenance N1", "Maintenance N2", "POKA YOKE"
-        ];
-        
-        const magasinCriteria = [
-            "Qualification", "Etiquette", "Instruction", "Stockage",
-            "Formulaire", "HSE", "5S", "Chariot élévateur"
-        ];
-        
-        const murCriteria = [
-            "Qualification", "Etat rebut", "OK démarrage", "Dossier Fabrication",
-            "Formulaire", "HSE", "5S"
-        ];
+        // Éléments DOM
+        const loginContainer = document.getElementById('login-container');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const authButton = document.getElementById('auth-button');
+        const formTitle = document.getElementById('form-title');
+        const toggleLink = document.getElementById('toggle-link');
+        const messageDiv = document.getElementById('message');
+        const forgotPasswordLink = document.querySelector('.forgot-password a');
+        const userEmailSpan = document.getElementById('user-email');
 
-        let db = [];
-        let filteredDb = [];
-        let analyticsFilteredDb = [];
-        let currentPage = 1;
-        const itemsPerPage = 10;
-        let charts = {};
-        let currentAuditType = 'production';
-        let currentUser = null;
-        let currentUserRole = 'auditor';
-        let currentUserData = null;
+        let isLoginMode = true;
+        let isForgotPasswordMode = false;
+        let chart = null;
+        let audits = []; // Données locales pour l'affichage (synchronisées avec Firebase)
 
-        // Analytics filters
-        let analyticsFilters = {
-            dateStart: '',
-            dateEnd: '',
-            uap: '',
-            ligne: '',
-            week: ''
-        };
-
-        // ============== AUTH FUNCTIONS ==============
-        function handleLogin() {
-            const email = document.getElementById('user').value;
-            const password = document.getElementById('pass').value;
-            
-            if (!email || !password) {
-                showToast("Email et mot de passe requis", true);
-                return;
-            }
-            
-            const btn = document.querySelector('.login-btn');
-            const loading = document.getElementById('loginLoading');
-            
-            btn.disabled = true;
-            loading.style.display = 'block';
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    currentUser = userCredential.user;
-                    loadUserRole(currentUser.uid);
-                    showToast("Connexion réussie", false);
-                })
-                .catch(error => {
-                    let errorMessage = "Erreur de connexion";
-                    switch(error.code) {
-                        case 'auth/invalid-email':
-                            errorMessage = "Email invalide";
-                            break;
-                        case 'auth/user-disabled':
-                            errorMessage = "Compte désactivé";
-                            break;
-                        case 'auth/user-not-found':
-                            errorMessage = "Utilisateur non trouvé";
-                            break;
-                        case 'auth/wrong-password':
-                            errorMessage = "Mot de passe incorrect";
-                            break;
-                        default:
-                            errorMessage = error.message;
-                    }
-                    showToast(errorMessage, true);
-                    btn.disabled = false;
-                    loading.style.display = 'none';
+        // Surveiller l'état de connexion
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loginContainer.style.display = 'none';
+                dashboardContainer.style.display = 'flex';
+                userEmailSpan.textContent = user.email;
+                if (!chart) initChart();
+                // Écouter les audits en temps réel
+                database.ref('audits').on('value', (snapshot) => {
+                    audits = [];
+                    snapshot.forEach((child) => {
+                        audits.push({ id: child.key, ...child.val() });
+                    });
+                    filterAudits(); // Met à jour le tableau avec les filtres actuels
                 });
-        }
-
-        function loadUserRole(uid) {
-            usersRef.child(uid).once('value')
-                .then(snapshot => {
-                    const userData = snapshot.val();
-                    if (userData) {
-                        currentUserRole = userData.role || 'auditor';
-                        currentUserData = userData;
-                        document.body.setAttribute('data-role', currentUserRole);
-                        
-                        // Update user info in sidebar
-                        document.getElementById('userName').textContent = userData.name || currentUser.email;
-                        const roleElement = document.getElementById('userRole');
-                        roleElement.textContent = getRoleLabel(currentUserRole);
-                        roleElement.className = `user-role ${currentUserRole}`;
-                        
-                        // Show/hide admin links
-                        if (currentUserRole === 'admin') {
-                            document.getElementById('usersPageLink').style.display = 'flex';
-                        } else {
-                            document.getElementById('usersPageLink').style.display = 'none';
-                        }
-                        
-                        initSystem();
-                    }
-                });
-        }
-
-        function getRoleLabel(role) {
-            switch(role) {
-                case 'admin': return 'Administrateur';
-                case 'manager': return 'Manager';
-                default: return 'Auditeur';
+            } else {
+                loginContainer.style.display = 'flex';
+                dashboardContainer.style.display = 'none';
+                // Détacher l'écoute si on veut (optionnel)
+                database.ref('audits').off();
             }
-        }
+        });
 
-        function resetPassword() {
-            const email = document.getElementById('user').value;
-            if (!email) {
-                showToast("Veuillez entrer votre email", true);
-                return;
+        // Fonctions de connexion
+        function toggleForm() {
+            isLoginMode = !isLoginMode;
+            isForgotPasswordMode = false;
+            if (isLoginMode) {
+                formTitle.textContent = 'Connexion';
+                authButton.textContent = 'Se connecter';
+                toggleLink.textContent = 'Créer un compte';
+                forgotPasswordLink.style.display = 'inline';
+                passwordInput.style.display = 'block';
+                document.querySelector('.forgot-password').style.display = 'block';
+            } else {
+                formTitle.textContent = 'Inscription';
+                authButton.textContent = "S'inscrire";
+                toggleLink.textContent = 'Déjà un compte ? Se connecter';
+                forgotPasswordLink.style.display = 'none';
+                passwordInput.style.display = 'block';
+                document.querySelector('.forgot-password').style.display = 'none';
             }
-            
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    showToast("Email de réinitialisation envoyé", false);
-                })
-                .catch(error => {
-                    showToast("Erreur: " + error.message, true);
-                });
+            clearForm();
+            hideMessage();
         }
 
-        function logout() { 
-            auth.signOut().then(() => {
-                showToast("Déconnexion réussie", false);
-                window.location.reload();
-            });
+        function showForgotPassword() {
+            isForgotPasswordMode = true;
+            formTitle.textContent = 'Réinitialisation';
+            authButton.textContent = 'Envoyer le lien';
+            toggleLink.textContent = 'Retour à la connexion';
+            passwordInput.style.display = 'none';
+            document.querySelector('.forgot-password').style.display = 'none';
+            clearForm();
+            hideMessage();
         }
 
-        // ============== INITIALIZATION ==============
-        function initSystem() {
-            initAuditForms();
-            
-            auditsRef.on('value', (snapshot) => {
-                db = snapshot.val() ? Object.values(snapshot.val()) : [];
-                
-                // Filter based on user role
-                if (currentUserRole === 'auditor') {
-                    // Auditors only see their own audits
-                    filteredDb = db.filter(a => a.createdBy === currentUser.email);
+        function clearForm() {
+            emailInput.value = '';
+            passwordInput.value = '';
+        }
+
+        function hideMessage() {
+            messageDiv.className = 'message';
+            messageDiv.textContent = '';
+        }
+
+        function showMessage(text, type) {
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+        }
+
+        async function handleAuth() {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            if (!email) { showMessage("Veuillez entrer votre email", "error"); return; }
+            if (!isForgotPasswordMode && !password) { showMessage("Veuillez entrer votre mot de passe", "error"); return; }
+            authButton.disabled = true;
+            try {
+                if (isForgotPasswordMode) {
+                    await auth.sendPasswordResetEmail(email);
+                    showMessage("Email de réinitialisation envoyé ! Vérifiez votre boîte mail.", "success");
+                    setTimeout(() => toggleForm(), 3000);
+                } else if (isLoginMode) {
+                    await auth.signInWithEmailAndPassword(email, password);
                 } else {
-                    // Managers and admins see all
-                    filteredDb = [...db];
+                    await auth.createUserWithEmailAndPassword(email, password);
                 }
-                
-                analyticsFilteredDb = [...filteredDb];
-                updateDashboard();
-                loadHistory();
-                renderAnalytics();
-                updateActiveFiltersDisplay();
-            });
-
-            // Load users if admin
-            if (currentUserRole === 'admin') {
-                loadUsers();
-            }
-
-            // Setup event listeners
-            setupEventListeners();
-        }
-
-        function setupEventListeners() {
-            // Login button
-            document.getElementById('loginButton').addEventListener('click', handleLogin);
-            
-            // Forgot password link
-            document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
-                e.preventDefault();
-                resetPassword();
-            });
-            
-            // Logout button
-            document.getElementById('logoutBtn').addEventListener('click', logout);
-            
-            // Menu toggle
-            document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
-            
-            // Theme toggle
-            document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
-            
-            // Nav items
-            document.querySelectorAll('.nav-item[data-page]').forEach(item => {
-                item.addEventListener('click', function() {
-                    const pageId = this.getAttribute('data-page');
-                    switchPage(pageId);
-                });
-            });
-            
-            // Enter key for login
-            document.getElementById('pass').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleLogin();
-            });
-        }
-
-        // ============== USER MANAGEMENT ==============
-        function loadUsers() {
-            usersRef.on('value', (snapshot) => {
-                const users = snapshot.val() || {};
-                displayUsers(users);
-            });
-        }
-
-        function displayUsers(users) {
-            const container = document.getElementById('usersList');
-            let html = '';
-            
-            Object.entries(users).forEach(([uid, userData]) => {
-                html += `
-                    <div class="user-row">
-                        <div>
-                            <div class="user-email">${userData.email || 'N/A'}</div>
-                            <small style="color: var(--gray);">${userData.name || ''}</small>
-                        </div>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <select class="user-role-select" onchange="updateUserRole('${uid}', this.value)">
-                                <option value="auditor" ${userData.role === 'auditor' ? 'selected' : ''}>Auditeur</option>
-                                <option value="manager" ${userData.role === 'manager' ? 'selected' : ''}>Manager</option>
-                                <option value="admin" ${userData.role === 'admin' ? 'selected' : ''}>Admin</option>
-                            </select>
-                            ${uid !== currentUser.uid ? `
-                                <i class="fa-solid fa-trash-can delete-user-btn" onclick="deleteUser('${uid}')"></i>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        function showAddUserModal() {
-            document.getElementById('addUserModal').classList.add('active');
-        }
-
-        function closeAddUserModal() {
-            document.getElementById('addUserModal').classList.remove('active');
-        }
-
-        function createUser() {
-            const email = document.getElementById('newUserEmail').value;
-            const password = document.getElementById('newUserPassword').value;
-            const role = document.getElementById('newUserRole').value;
-            const name = document.getElementById('newUserName').value;
-
-            if (!email || !name) {
-                showToast("Email et nom requis", true);
-                return;
-            }
-
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    
-                    // Store user data in database
-                    return usersRef.child(user.uid).set({
-                        email: email,
-                        name: name,
-                        role: role,
-                        createdAt: firebase.database.ServerValue.TIMESTAMP,
-                        createdBy: currentUser.email
-                    });
-                })
-                .then(() => {
-                    showToast("Utilisateur créé avec succès", false);
-                    closeAddUserModal();
-                    
-                    // Send password reset email to force change
-                    auth.sendPasswordResetEmail(email);
-                })
-                .catch(error => {
-                    showToast("Erreur: " + error.message, true);
-                });
-        }
-
-        function updateUserRole(uid, newRole) {
-            usersRef.child(uid).update({ role: newRole })
-                .then(() => {
-                    showToast("Rôle mis à jour", false);
-                })
-                .catch(error => {
-                    showToast("Erreur: " + error.message, true);
-                });
-        }
-
-        function deleteUser(uid) {
-            if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
-            
-            // Note: This requires a Firebase Cloud Function to delete auth users
-            // For now, just remove from database
-            usersRef.child(uid).remove()
-                .then(() => {
-                    showToast("Utilisateur supprimé", false);
-                })
-                .catch(error => {
-                    showToast("Erreur: " + error.message, true);
-                });
-        }
-
-        // ============== COMMENT FUNCTIONS ==============
-        function showCommentModal(auditId, criterionId, criterionName) {
-            document.getElementById('commentAuditId').value = auditId;
-            document.getElementById('commentCriterionId').value = criterionId;
-            document.getElementById('commentCriterionName').value = criterionName;
-            document.getElementById('commentText').value = '';
-            document.getElementById('commentStatus').value = 'open';
-            document.getElementById('commentAssignedTo').value = '';
-            document.getElementById('commentDueDate').value = '';
-            
-            document.getElementById('commentModal').classList.add('active');
-        }
-
-        function closeCommentModal() {
-            document.getElementById('commentModal').classList.remove('active');
-        }
-
-        function saveComment() {
-            const auditId = document.getElementById('commentAuditId').value;
-            const criterionId = document.getElementById('commentCriterionId').value;
-            const text = document.getElementById('commentText').value;
-            const status = document.getElementById('commentStatus').value;
-            const assignedTo = document.getElementById('commentAssignedTo').value;
-            const dueDate = document.getElementById('commentDueDate').value;
-
-            if (!text) {
-                showToast("Veuillez entrer un commentaire", true);
-                return;
-            }
-
-            const comment = {
-                text: text,
-                status: status,
-                assignedTo: assignedTo,
-                dueDate: dueDate,
-                createdAt: firebase.database.ServerValue.TIMESTAMP,
-                createdBy: currentUser.email
-            };
-
-            // Find the audit in the database
-            const auditRef = auditsRef.orderByKey().equalTo(auditId).once('value')
-                .then(snapshot => {
-                    snapshot.forEach(childSnapshot => {
-                        const key = childSnapshot.key;
-                        const commentsPath = `comments.${criterionId}`;
-                        auditsRef.child(key).child('comments').child(criterionId).set(comment);
-                    });
-                })
-                .then(() => {
-                    showToast("Commentaire ajouté", false);
-                    closeCommentModal();
-                })
-                .catch(error => {
-                    showToast("Erreur: " + error.message, true);
-                });
-        }
-
-        function getCommentsForAudit(audit) {
-            if (!audit.comments) return [];
-            return Object.entries(audit.comments).map(([criterionId, comment]) => ({
-                criterionId,
-                ...comment
-            }));
-        }
-
-        // ============== AUDIT FORM INIT ==============
-        function initAuditForms() {
-            // Production form
-            document.getElementById('auditTableBody').innerHTML = productionCriteria.map((q, i) => {
-                const id = i + 1;
-                return `<tr>
-                    <td>${id < 10 ? '0'+id : id}</td>
-                    <td>${q}</td>
-                    <td>
-                        <div class="custom-radio-group">
-                            <div class="radio-btn"><input type="radio" id="prod_ok${id}" name="prod_q${id}" value="1" onchange="calcScore()"><label for="prod_ok${id}" class="ok-label"><i class="fa-solid fa-check"></i> OK</label></div>
-                            <div class="radio-btn"><input type="radio" id="prod_nok${id}" name="prod_q${id}" value="0" onchange="calcScore()"><label for="prod_nok${id}" class="nok-label"><i class="fa-solid fa-xmark"></i> NOK</label></div>
-                            ${id === 10 ? `<div class="radio-btn"><input type="radio" id="prod_na${id}" name="prod_q${id}" value="na" onchange="calcScore()"><label for="prod_na${id}" class="na-label">N/A</label></div>` : ''}
-                        </div>
-                    </td>
-                </tr>`;
-            }).join('');
-
-            // Magasin form
-            document.getElementById('magasinTableBody').innerHTML = magasinCriteria.map((q, i) => {
-                const id = i + 1;
-                return `<tr>
-                    <td>M${id < 10 ? '0'+id : id}</td>
-                    <td>${q}</td>
-                    <td>
-                        <div class="custom-radio-group">
-                            <div class="radio-btn"><input type="radio" id="mag_ok${id}" name="mag_q${id}" value="1" onchange="calcScore()"><label for="mag_ok${id}" class="ok-label"><i class="fa-solid fa-check"></i> OK</label></div>
-                            <div class="radio-btn"><input type="radio" id="mag_nok${id}" name="mag_q${id}` value="0" onchange="calcScore()"><label for="mag_nok${id}" class="nok-label"><i class="fa-solid fa-xmark"></i> NOK</label></div>
-                            <div class="radio-btn"><input type="radio" id="mag_na${id}" name="mag_q${id}" value="na" onchange="calcScore()"><label for="mag_na${id}" class="na-label">N/A</label></div>
-                        </div>
-                    </td>
-                </tr>`;
-            }).join('');
-
-            // Mur form
-            document.getElementById('murTableBody').innerHTML = murCriteria.map((q, i) => {
-                const id = i + 1;
-                return `<tr>
-                    <td>MQ${id < 10 ? '0'+id : id}</td>
-                    <td>${q}</td>
-                    <td>
-                        <div class="custom-radio-group">
-                            <div class="radio-btn"><input type="radio" id="mur_ok${id}" name="mur_q${id}" value="1" onchange="calcScore()"><label for="mur_ok${id}" class="ok-label"><i class="fa-solid fa-check"></i> OK</label></div>
-                            <div class="radio-btn"><input type="radio" id="mur_nok${id}" name="mur_q${id}" value="0" onchange="calcScore()"><label for="mur_nok${id}" class="nok-label"><i class="fa-solid fa-xmark"></i> NOK</label></div>
-                            <div class="radio-btn"><input type="radio" id="mur_na${id}" name="mur_q${id}" value="na" onchange="calcScore()"><label for="mur_na${id}" class="na-label">N/A</label></div>
-                        </div>
-                    </td>
-                </tr>`;
-            }).join('');
-
-            updateMurList();
-        }
-
-        // ============== PAGE NAVIGATION ==============
-        function switchPage(pageId) {
-            // Hide all sections
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Show selected section
-            const selectedSection = document.getElementById(pageId);
-            if (selectedSection) {
-                selectedSection.classList.add('active');
-            }
-            
-            // Update nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            const activeNav = document.querySelector(`.nav-item[data-page="${pageId}"]`);
-            if (activeNav) {
-                activeNav.classList.add('active');
-            }
-            
-            // Update title
-            const titles = {
-                'dashboardPage': 'Dashboard Qualité',
-                'auditPage': 'Nouvel Audit',
-                'historyPage': 'Historique des Audits',
-                'analyticsPage': 'Analyses & Statistiques',
-                'usersPage': 'Gestion des Utilisateurs'
-            };
-            document.getElementById('pageTitle').innerText = titles[pageId] || 'WKW Audit';
-            
-            // Close mobile sidebar
-            document.getElementById('sidebar').classList.remove('mobile-show');
-            
-            // Render analytics if needed
-            if (pageId === 'analyticsPage') {
-                setTimeout(() => renderAnalytics(), 100);
-            }
-            
-            // Load users if admin page
-            if (pageId === 'usersPage' && currentUserRole === 'admin') {
-                loadUsers();
+            } catch (error) {
+                let errorMessage = "Une erreur est survenue.";
+                switch (error.code) {
+                    case 'auth/user-not-found': errorMessage = "Aucun compte trouvé avec cet email."; break;
+                    case 'auth/wrong-password': errorMessage = "Mot de passe incorrect."; break;
+                    case 'auth/email-already-in-use': errorMessage = "Cet email est déjà utilisé."; break;
+                    case 'auth/invalid-email': errorMessage = "Format d'email invalide."; break;
+                    case 'auth/weak-password': errorMessage = "Le mot de passe doit contenir au moins 6 caractères."; break;
+                    case 'auth/too-many-requests': errorMessage = "Trop de tentatives. Réessayez plus tard."; break;
+                    case 'auth/network-request-failed': errorMessage = "Erreur réseau. Vérifiez votre connexion."; break;
+                }
+                showMessage(errorMessage, "error");
+            } finally {
+                authButton.disabled = false;
             }
         }
 
-        // ============== AUDIT FUNCTIONS ==============
+        // Navigation sidebar
+        function switchSection(sectionName) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+            document.getElementById(`section-${sectionName}`).classList.add('active-section');
+            document.querySelectorAll('.sidebar-nav li').forEach(i => i.classList.remove('active'));
+            document.getElementById(`nav-${sectionName}`).classList.add('active');
+        }
+
+        // Changer d'onglet dans Nouvelle audit
         function switchAuditType(type) {
-            currentAuditType = type;
-            
-            document.querySelectorAll('.audit-tab').forEach(tab => tab.classList.remove('active'));
-            if (type === 'production') {
-                document.querySelectorAll('.audit-tab')[0].classList.add('active');
-                document.getElementById('productionAuditForm').classList.remove('hidden');
-                document.getElementById('magasinAuditForm').classList.add('hidden');
-                document.getElementById('murAuditForm').classList.add('hidden');
-                document.getElementById('ligneField').style.display = 'block';
-            } else if (type === 'magasin') {
-                document.querySelectorAll('.audit-tab')[1].classList.add('active');
-                document.getElementById('productionAuditForm').classList.add('hidden');
-                document.getElementById('magasinAuditForm').classList.remove('hidden');
-                document.getElementById('murAuditForm').classList.add('hidden');
-                document.getElementById('ligneField').style.display = 'block';
-            } else {
-                document.querySelectorAll('.audit-tab')[2].classList.add('active');
-                document.getElementById('productionAuditForm').classList.add('hidden');
-                document.getElementById('magasinAuditForm').classList.add('hidden');
-                document.getElementById('murAuditForm').classList.remove('hidden');
-                document.getElementById('ligneField').style.display = 'none';
-                updateMurList();
-            }
-            resetCounters();
+            document.querySelectorAll('.audit-content').forEach(c => c.classList.remove('active-content'));
+            document.querySelectorAll('.sub-nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(`audit-${type}`).classList.add('active-content');
+            document.getElementById(`tab-${type}`).classList.add('active');
         }
 
-        function updateMurList() {
-            const uap = document.getElementById('uapSelect').value;
-            const murSelect = document.getElementById('murSelect');
-            if (uap === 'UAP 1') {
-                murSelect.innerHTML = '<option value="Mur Qualité UAP 1">Mur Qualité UAP 1</option>';
-            } else {
-                murSelect.innerHTML = '<option value="Mur Qualité UAP 2">Mur Qualité UAP 2</option>';
+        // Fonctions de soumission avec sauvegarde Firebase
+        function soumettreLigne() {
+            const questions = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
+            let ok=0, nok=0, na=0;
+            for(let q of questions) {
+                let radios = document.getElementsByName(q);
+                let val = null;
+                for(let r of radios) if(r.checked) { val=r.value; break; }
+                if(!val) { alert('Répondez à toutes les questions'); return; }
+                if(val==='OK') ok++;
+                else if(val==='NOK') nok++;
+                else if(val==='N/A') na++;
             }
-        }
-
-        function calcScore() {
-            let ok = 0, nok = 0, na = 0;
-            let totalQuestions = currentAuditType === 'production' ? 10 : currentAuditType === 'magasin' ? 8 : 7;
-
-            if (currentAuditType === 'production') {
-                for(let i=1; i<=10; i++) {
-                    const sel = document.querySelector(`input[name="prod_q${i}"]:checked`);
-                    if(sel) {
-                        if(sel.value === "1") ok++;
-                        else if(sel.value === "0") nok++;
-                        else if(sel.value === "na") na++;
-                    }
-                }
-            } else if (currentAuditType === 'magasin') {
-                for(let i=1; i<=8; i++) {
-                    const sel = document.querySelector(`input[name="mag_q${i}"]:checked`);
-                    if(sel) {
-                        if(sel.value === "1") ok++;
-                        else if(sel.value === "0") nok++;
-                        else if(sel.value === "na") na++;
-                    }
-                }
-            } else {
-                for(let i=1; i<=7; i++) {
-                    const sel = document.querySelector(`input[name="mur_q${i}"]:checked`);
-                    if(sel) {
-                        if(sel.value === "1") ok++;
-                        else if(sel.value === "0") nok++;
-                        else if(sel.value === "na") na++;
-                    }
-                }
-            }
-
-            document.getElementById('count-ok').innerText = ok;
-            document.getElementById('count-nok').innerText = nok;
-            const divisor = (totalQuestions - na) > 0 ? (totalQuestions - na) : 1;
-            const score = (ok / divisor * 100).toFixed(1);
-            document.getElementById('count-score').innerText = score + "%";
-        }
-
-        function resetCounters() {
-            document.getElementById('count-ok').innerText = '0';
-            document.getElementById('count-nok').innerText = '0';
-            document.getElementById('count-score').innerText = '0%';
-        }
-
-        function validateAndSave() {
-            const ligne = document.getElementById('ligneInput').value.trim();
-            let totalQuestions = currentAuditType === 'production' ? 10 : currentAuditType === 'magasin' ? 8 : 7;
-            let selected = 0;
-            let auditTypeLabel = currentAuditType === 'production' ? 'Production' : currentAuditType === 'magasin' ? 'Magasin' : 'Mur Qualité';
-            let ligneValue = '';
-
-            if (currentAuditType === 'production' || currentAuditType === 'magasin') {
-                const prefix = currentAuditType === 'production' ? 'prod' : 'mag';
-                selected = document.querySelectorAll(`input[name^="${prefix}_q"]:checked`).length;
-                if (!ligne) return showToast("Veuillez indiquer la ligne", true);
-                ligneValue = ligne;
-            } else {
-                selected = document.querySelectorAll('input[name^="mur_q"]:checked').length;
-                ligneValue = document.getElementById('murSelect').value;
-            }
-
-            if (selected < totalQuestions) {
-                return showToast(`Veuillez compléter tous les critères (${totalQuestions})`, true);
-            }
-
-            const scoreStr = document.getElementById('count-score').innerText;
-            const scoreNum = parseFloat(scoreStr);
-
-            const newAudit = {
-                type: auditTypeLabel,
-                date: document.getElementById('auditDate').value,
-                uap: document.getElementById('uapSelect').value,
-                ligne: ligneValue,
-                ok: document.getElementById('count-ok').innerText,
-                nok: document.getElementById('count-nok').innerText,
-                score: scoreStr,
-                isPass: scoreNum >= 80,
-                createdAt: firebase.database.ServerValue.TIMESTAMP,
-                createdBy: currentUser.email,
-                comments: {} // Initialize empty comments object
-            };
-
-            const newRef = auditsRef.push();
-            const shortId = newRef.key.substring(0, 8).toUpperCase();
-
-            newRef.set({ ...newAudit, auditId: shortId })
-                .then(() => {
-                    showToast(`Audit #${shortId} enregistré !`);
-                    switchPage('historyPage');
-                })
-                .catch(err => showToast("Erreur: " + err.message, true));
-        }
-
-        // ============== DASHBOARD FUNCTIONS ==============
-        function updateDashboard() {
-            const dataToUse = currentUserRole === 'auditor' ? 
-                db.filter(a => a.createdBy === currentUser.email) : db;
+            const date = document.getElementById('date-ligne').value;
+            const zone = document.getElementById('zone-ligne').value;
+            const uap = document.querySelector('input[name="uapLigne"]:checked')?.value;
+            if(!date || !zone || !uap) { alert('Remplissez date, zone et UAP'); return; }
+            const total = questions.length;
+            const eligible = total - na;
+            const score = eligible>0 ? (ok/eligible)*100 : 0;
+            const detail = `OK: ${ok}, NOK: ${nok}, N/A: ${na} – Score: ${score.toFixed(1)}% (${ok}/${eligible})`;
             
-            if (dataToUse.length === 0) {
-                document.getElementById('kpi-total').textContent = '0';
-                document.getElementById('kpi-conformite').textContent = '0%';
-                document.getElementById('kpi-actions').textContent = '0';
-                document.getElementById('kpi-nok').textContent = '0';
-                
-                document.getElementById('best-score-value').textContent = '0%';
-                document.getElementById('best-score-date').textContent = '-';
-                document.getElementById('best-score-uap').textContent = '-';
-                document.getElementById('best-score-ligne').textContent = '-';
-                
-                document.getElementById('worst-score-value').textContent = '0%';
-                document.getElementById('worst-score-date').textContent = '-';
-                document.getElementById('worst-score-uap').textContent = '-';
-                document.getElementById('worst-score-ligne').textContent = '-';
-                
-                document.getElementById('alertsContainer').innerHTML = '<div class="no-data"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i><p>Aucune donnée</p></div>';
-                document.getElementById('uapQuickStats').innerHTML = '';
-                return;
-            }
+            // Afficher le résultat
+            document.getElementById('resultat-ligne').style.display='block';
+            document.getElementById('resultat-ligne').innerHTML = detail;
+            document.getElementById('resultat-ligne').className = 'resultat success';
 
-            const totalAudits = dataToUse.length;
-            const conforming = dataToUse.filter(a => parseFloat(a.score) >= 80).length;
-            const conformite = ((conforming / totalAudits) * 100).toFixed(1);
-            const actionsRequises = dataToUse.filter(a => parseFloat(a.score) < 80).length;
-            const totalNOK = dataToUse.reduce((sum, a) => sum + parseInt(a.nok || 0), 0);
-
-            document.getElementById('kpi-total').textContent = totalAudits;
-            document.getElementById('kpi-conformite').textContent = conformite + '%';
-            document.getElementById('kpi-actions').textContent = actionsRequises;
-            document.getElementById('kpi-nok').textContent = totalNOK;
-
-            const sortedByScore = [...dataToUse].sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
-            const bestScore = sortedByScore[0];
-            const worstScore = sortedByScore[sortedByScore.length - 1];
-
-            document.getElementById('best-score-value').textContent = bestScore.score;
-            document.getElementById('best-score-date').textContent = bestScore.date || '-';
-            document.getElementById('best-score-uap').textContent = bestScore.uap || '-';
-            document.getElementById('best-score-ligne').textContent = bestScore.ligne || '-';
-
-            document.getElementById('worst-score-value').textContent = worstScore.score;
-            document.getElementById('worst-score-date').textContent = worstScore.date || '-';
-            document.getElementById('worst-score-uap').textContent = worstScore.uap || '-';
-            document.getElementById('worst-score-ligne').textContent = worstScore.ligne || '-';
-
-            const recentAlerts = dataToUse.filter(a => parseFloat(a.score) < 80)
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .slice(0, 5);
-
-            document.getElementById('alertsContainer').innerHTML = recentAlerts.map(a => {
-                const score = parseFloat(a.score);
-                return `
-                    <div class="alert-card ${score < 60 ? 'danger' : 'warning'}">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                            <strong><i class="fa-regular fa-calendar"></i> ${a.date}</strong>
-                            <span class="badge ${score < 60 ? 'badge-danger' : 'badge-warning'}">Score: ${a.score}</span>
-                        </div>
-                        <p style="margin-bottom:10px;"><i class="fa-solid fa-location-dot" style="color:var(--gray);"></i> ${a.uap} - ${a.ligne}</p>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <small><i class="fa-regular fa-user"></i> ${a.type}</small>
-                            <small><i class="fa-regular fa-clock"></i> ${a.createdBy ? a.createdBy.split('@')[0] : ''}</small>
-                        </div>
-                    </div>
-                `;
-            }).join('') || '<div class="no-data"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i><p>Aucune alerte récente</p></div>';
-
-            const uapStats = {};
-            dataToUse.forEach(a => {
-                if (!uapStats[a.uap]) uapStats[a.uap] = { sum:0, count:0 };
-                uapStats[a.uap].sum += parseFloat(a.score);
-                uapStats[a.uap].count++;
-            });
-
-            document.getElementById('uapQuickStats').innerHTML = Object.entries(uapStats).map(([uap, data]) => `
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:rgba(192,57,43,0.1); color:var(--primary);">
-                        <i class="fa-solid fa-building"></i>
-                    </div>
-                    <div>
-                        <h3>${uap}</h3>
-                        <div class="value" style="font-size:2rem;">${(data.sum/data.count).toFixed(1)}%</div>
-                        <small>${data.count} audits</small>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // ============== HISTORY FUNCTIONS ==============
-        function applyFilters() {
-            const startDate = document.getElementById('filterDateStart').value;
-            const endDate = document.getElementById('filterDateEnd').value;
-            const scoreMin = document.getElementById('filterScoreMin').value;
-            const scoreMax = document.getElementById('filterScoreMax').value;
-            const auditor = document.getElementById('filterAuditor').value.toLowerCase();
-            const uap = document.getElementById('filterUAP').value;
-            const ligne = document.getElementById('filterLigne').value.toLowerCase();
-            const type = document.getElementById('filterType').value;
-
-            let baseData = [...db];
-            
-            // Apply role-based filtering first
-            if (currentUserRole === 'auditor') {
-                baseData = baseData.filter(a => a.createdBy === currentUser.email);
-            }
-
-            filteredDb = baseData.filter(a => {
-                if (startDate && a.date < startDate) return false;
-                if (endDate && a.date > endDate) return false;
-                if (scoreMin && parseFloat(a.score) < parseFloat(scoreMin)) return false;
-                if (scoreMax && parseFloat(a.score) > parseFloat(scoreMax)) return false;
-                if (auditor && (!a.createdBy || !a.createdBy.toLowerCase().includes(auditor))) return false;
-                if (uap && a.uap !== uap) return false;
-                if (ligne && !a.ligne.toLowerCase().includes(ligne)) return false;
-                if (type && a.type !== type) return false;
-                return true;
-            });
-
-            currentPage = 1;
-            loadHistory();
-        }
-
-        function resetFilters() {
-            document.getElementById('filterDateStart').value = '';
-            document.getElementById('filterDateEnd').value = '';
-            document.getElementById('filterScoreMin').value = '';
-            document.getElementById('filterScoreMax').value = '';
-            document.getElementById('filterAuditor').value = '';
-            document.getElementById('filterUAP').value = '';
-            document.getElementById('filterLigne').value = '';
-            document.getElementById('filterType').value = '';
-            
-            if (currentUserRole === 'auditor') {
-                filteredDb = db.filter(a => a.createdBy === currentUser.email);
-            } else {
-                filteredDb = [...db];
-            }
-            
-            currentPage = 1;
-            loadHistory();
-        }
-
-        function loadHistory() {
-            if (filteredDb.length === 0) {
-                document.getElementById('historyTableBody').innerHTML = '<tr><td colspan="11" class="no-data">Aucun audit trouvé</td></tr>';
-                document.getElementById('pagination').innerHTML = '';
-                return;
-            }
-
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageData = filteredDb.slice().reverse().slice(start, end);
-
-            document.getElementById('historyTableBody').innerHTML = pageData.map(a => {
-                const typeColor = a.type === 'Magasin' ? '#f59e0b' : a.type === 'Mur Qualité' ? '#8e44ad' : '#3b82f6';
-                const comments = a.comments ? Object.keys(a.comments).length : 0;
-                const canEdit = currentUserRole === 'admin' || currentUserRole === 'manager' || a.createdBy === currentUser.email;
-                
-                return `<tr>
-                    <td><strong>#${a.auditId || ''}</strong></td>
-                    <td><span style="background:${typeColor}; color:white; padding:6px 14px; border-radius:30px; font-size:12px; font-weight:600;">${a.type || 'Prod'}</span></td>
-                    <td>${a.date || ''}</td>
-                    <td>${a.uap || ''}</td>
-                    <td><b>${a.ligne || ''}</b></td>
-                    <td><span class="badge badge-success">${a.ok || 0}</span></td>
-                    <td><span class="badge badge-danger">${a.nok || 0}</span></td>
-                    <td style="font-weight:700; color:${parseFloat(a.score)>=80?'var(--success)':'var(--danger)'}">${a.score}</td>
-                    <td>${a.createdBy ? a.createdBy.split('@')[0] : ''}</td>
-                    <td><span class="badge ${parseFloat(a.score)>=80?'badge-success':'badge-danger'}">${parseFloat(a.score)>=80?'✓ Conforme':'⚠ Action'}</span></td>
-                    <td>
-                        ${comments > 0 ? 
-                            `<i class="fa-regular fa-comment has-comment" title="${comments} commentaire(s)"></i>` : 
-                            ''
-                        }
-                        <button class="add-comment-btn" onclick="showCommentModal('${a.auditId}', '1', 'Critère 1')">
-                            <i class="fa-regular fa-plus"></i>
-                        </button>
-                    </td>
-                </tr>`;
-            }).join('');
-
-            const totalPages = Math.ceil(filteredDb.length / itemsPerPage);
-            let paginationHtml = '';
-            for (let i = 1; i <= totalPages; i++) {
-                paginationHtml += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="currentPage=${i};loadHistory()">${i}</button>`;
-            }
-            document.getElementById('pagination').innerHTML = paginationHtml;
-        }
-
-        // ============== ANALYTICS FUNCTIONS ==============
-        function applyAnalyticsFilters() {
-            analyticsFilters.dateStart = document.getElementById('analyticsDateStart').value;
-            analyticsFilters.dateEnd = document.getElementById('analyticsDateEnd').value;
-            analyticsFilters.uap = document.getElementById('analyticsUAP').value;
-            analyticsFilters.ligne = document.getElementById('analyticsLigne').value.toLowerCase();
-            analyticsFilters.week = document.getElementById('analyticsWeek').value;
-
-            let weekStart = null;
-            let weekEnd = null;
-            
-            if (analyticsFilters.week === 'current') {
-                const today = new Date();
-                const startOfWeek = new Date(today);
-                startOfWeek.setDate(today.getDate() - today.getDay() + 1);
-                weekStart = startOfWeek.toISOString().split('T')[0];
-                weekEnd = today.toISOString().split('T')[0];
-            } else if (analyticsFilters.week === 'last7') {
-                const today = new Date();
-                const lastWeek = new Date(today);
-                lastWeek.setDate(today.getDate() - 7);
-                weekStart = lastWeek.toISOString().split('T')[0];
-                weekEnd = today.toISOString().split('T')[0];
-            } else if (analyticsFilters.week === 'last30') {
-                const today = new Date();
-                const lastMonth = new Date(today);
-                lastMonth.setDate(today.getDate() - 30);
-                weekStart = lastMonth.toISOString().split('T')[0];
-                weekEnd = today.toISOString().split('T')[0];
-            } else if (analyticsFilters.week === 'last90') {
-                const today = new Date();
-                const lastQuarter = new Date(today);
-                lastQuarter.setDate(today.getDate() - 90);
-                weekStart = lastQuarter.toISOString().split('T')[0];
-                weekEnd = today.toISOString().split('T')[0];
-            }
-
-            let baseData = [...db];
-            
-            // Apply role-based filtering first
-            if (currentUserRole === 'auditor') {
-                baseData = baseData.filter(a => a.createdBy === currentUser.email);
-            }
-
-            analyticsFilteredDb = baseData.filter(a => {
-                if (analyticsFilters.dateStart && a.date < analyticsFilters.dateStart) return false;
-                if (analyticsFilters.dateEnd && a.date > analyticsFilters.dateEnd) return false;
-                if (weekStart && a.date < weekStart) return false;
-                if (weekEnd && a.date > weekEnd) return false;
-                if (analyticsFilters.uap && a.uap !== analyticsFilters.uap) return false;
-                if (analyticsFilters.ligne && !a.ligne.toLowerCase().includes(analyticsFilters.ligne)) return false;
-                return true;
-            });
-
-            updateActiveFiltersDisplay();
-            renderAnalytics();
-        }
-
-        function resetAnalyticsFilters() {
-            document.getElementById('analyticsDateStart').value = '';
-            document.getElementById('analyticsDateEnd').value = '';
-            document.getElementById('analyticsUAP').value = '';
-            document.getElementById('analyticsLigne').value = '';
-            document.getElementById('analyticsWeek').value = '';
-            
-            analyticsFilters = {
-                dateStart: '',
-                dateEnd: '',
-                uap: '',
-                ligne: '',
-                week: ''
-            };
-            
-            if (currentUserRole === 'auditor') {
-                analyticsFilteredDb = db.filter(a => a.createdBy === currentUser.email);
-            } else {
-                analyticsFilteredDb = [...db];
-            }
-            
-            updateActiveFiltersDisplay();
-            renderAnalytics();
-        }
-
-        function updateActiveFiltersDisplay() {
-            const container = document.getElementById('activeAnalyticsFilters');
-            if (!container) return;
-            
-            const activeFilters = [];
-            
-            if (analyticsFilters.dateStart) {
-                activeFilters.push(`<span class="filter-tag">Date début: ${analyticsFilters.dateStart} <i class="fa-solid fa-xmark" onclick="clearFilter('dateStart')"></i></span>`);
-            }
-            if (analyticsFilters.dateEnd) {
-                activeFilters.push(`<span class="filter-tag">Date fin: ${analyticsFilters.dateEnd} <i class="fa-solid fa-xmark" onclick="clearFilter('dateEnd')"></i></span>`);
-            }
-            if (analyticsFilters.uap) {
-                activeFilters.push(`<span class="filter-tag">UAP: ${analyticsFilters.uap} <i class="fa-solid fa-xmark" onclick="clearFilter('uap')"></i></span>`);
-            }
-            if (analyticsFilters.ligne) {
-                activeFilters.push(`<span class="filter-tag">Ligne: ${analyticsFilters.ligne} <i class="fa-solid fa-xmark" onclick="clearFilter('ligne')"></i></span>`);
-            }
-            if (analyticsFilters.week) {
-                let weekText = '';
-                switch(analyticsFilters.week) {
-                    case 'current': weekText = 'Semaine en cours'; break;
-                    case 'last7': weekText = '7 derniers jours'; break;
-                    case 'last30': weekText = '30 derniers jours'; break;
-                    case 'last90': weekText = '90 derniers jours'; break;
-                }
-                activeFilters.push(`<span class="filter-tag">${weekText} <i class="fa-solid fa-xmark" onclick="clearFilter('week')"></i></span>`);
-            }
-            
-            if (activeFilters.length === 0) {
-                container.innerHTML = '<span style="color:var(--gray);">Aucun filtre actif</span>';
-            } else {
-                container.innerHTML = activeFilters.join('');
-            }
-        }
-
-        function clearFilter(filterName) {
-            if (filterName === 'dateStart') {
-                document.getElementById('analyticsDateStart').value = '';
-                analyticsFilters.dateStart = '';
-            } else if (filterName === 'dateEnd') {
-                document.getElementById('analyticsDateEnd').value = '';
-                analyticsFilters.dateEnd = '';
-            } else if (filterName === 'uap') {
-                document.getElementById('analyticsUAP').value = '';
-                analyticsFilters.uap = '';
-            } else if (filterName === 'ligne') {
-                document.getElementById('analyticsLigne').value = '';
-                analyticsFilters.ligne = '';
-            } else if (filterName === 'week') {
-                document.getElementById('analyticsWeek').value = '';
-                analyticsFilters.week = '';
-            }
-            
-            applyAnalyticsFilters();
-        }
-
-        function renderAnalytics() {
-            const dataToUse = analyticsFilteredDb.length > 0 ? analyticsFilteredDb : 
-                (currentUserRole === 'auditor' ? db.filter(a => a.createdBy === currentUser.email) : db);
-            
-            if (dataToUse.length === 0) {
-                document.querySelectorAll('#analyticsPage canvas').forEach(canvas => {
-                    if (charts[canvas.id]) charts[canvas.id].destroy();
+            // Sauvegarder dans Firebase
+            const user = auth.currentUser;
+            if (user) {
+                database.ref('audits').push({
+                    date: date,
+                    type: 'Ligne',
+                    uap: zone + ' (' + uap + ')',
+                    score: score.toFixed(1),
+                    detail: detail,
+                    uid: user.uid,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
                 });
-                document.getElementById('analytics-totalOk').textContent = '0';
-                document.getElementById('analytics-totalNok').textContent = '0';
-                document.getElementById('analytics-avg').textContent = '0%';
-                return;
             }
+        }
 
-            // Destroy existing charts
-            Object.values(charts).forEach(chart => chart?.destroy());
-            charts = {};
-
-            const totalOK = dataToUse.reduce((sum, a) => sum + parseInt(a.ok || 0), 0);
-            const totalNOK = dataToUse.reduce((sum, a) => sum + parseInt(a.nok || 0), 0);
-            const avgScore = (dataToUse.reduce((sum, a) => sum + parseFloat(a.score), 0) / dataToUse.length).toFixed(1);
-
-            document.getElementById('analytics-totalOk').textContent = totalOK;
-            document.getElementById('analytics-totalNok').textContent = totalNOK;
-            document.getElementById('analytics-avg').textContent = avgScore + '%';
-
-            // 1. NOK by UAP
-            const nokByUAP = {};
-            dataToUse.forEach(a => {
-                nokByUAP[a.uap] = (nokByUAP[a.uap] || 0) + parseInt(a.nok || 0);
-            });
-
-            charts.nokByUAPChart = new Chart(document.getElementById('nokByUAPChart'), {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(nokByUAP),
-                    datasets: [{
-                        label: 'Nombre de NOK',
-                        data: Object.values(nokByUAP),
-                        backgroundColor: ['#c0392b', '#e74c3c'],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, grid: { display: false } } }
-                }
-            });
-
-            // 2. NOK by Line (Top 10)
-            const nokByLine = {};
-            dataToUse.forEach(a => {
-                nokByLine[a.ligne] = (nokByLine[a.ligne] || 0) + parseInt(a.nok || 0);
-            });
-
-            const sortedLines = Object.entries(nokByLine)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 10);
-
-            charts.nokByLineChart = new Chart(document.getElementById('nokByLineChart'), {
-                type: 'bar',
-                data: {
-                    labels: sortedLines.map(l => l[0].substring(0, 12) + (l[0].length > 12 ? '...' : '')),
-                    datasets: [{
-                        label: 'NOK',
-                        data: sortedLines.map(l => l[1]),
-                        backgroundColor: '#c0392b',
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, grid: { display: false } } }
-                }
-            });
-
-            // 3. Score Histogram
-            const scoreRanges = { '0-20%': 0, '21-40%': 0, '41-60%': 0, '61-80%': 0, '81-100%': 0 };
-            dataToUse.forEach(a => {
-                const score = parseFloat(a.score);
-                if (score <= 20) scoreRanges['0-20%']++;
-                else if (score <= 40) scoreRanges['21-40%']++;
-                else if (score <= 60) scoreRanges['41-60%']++;
-                else if (score <= 80) scoreRanges['61-80%']++;
-                else scoreRanges['81-100%']++;
-            });
-
-            charts.scoreHistogramChart = new Chart(document.getElementById('scoreHistogramChart'), {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(scoreRanges),
-                    datasets: [{
-                        label: "Nombre d'audits",
-                        data: Object.values(scoreRanges),
-                        backgroundColor: ['#ef4444', '#f59e0b', '#fbbf24', '#10b981', '#059669'],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, grid: { display: false } } }
-                }
-            });
-
-            // 4. UAP Performance
-            const uapScores = {};
-            dataToUse.forEach(a => {
-                if (!uapScores[a.uap]) uapScores[a.uap] = { sum: 0, count: 0 };
-                uapScores[a.uap].sum += parseFloat(a.score);
-                uapScores[a.uap].count++;
-            });
-
-            charts.uapPerformanceChart = new Chart(document.getElementById('uapPerformanceChart'), {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(uapScores),
-                    datasets: [{
-                        label: 'Score moyen (%)',
-                        data: Object.values(uapScores).map(d => (d.sum / d.count).toFixed(1)),
-                        backgroundColor: ['#c0392b', '#e74c3c'],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: { y: { beginAtZero: true, max: 100, grid: { display: false } } }
-                }
-            });
-
-            // 5. Criteria Success Chart
-            const criteriaNames = [
-                ...productionCriteria.slice(0, 5),
-                ...magasinCriteria.slice(0, 3),
-                ...murCriteria.slice(0, 2)
-            ].slice(0, 10);
+        function soumettreMagasin() {
+            const questions = ['qualifMag','idMag','instructionMag','stockageMag','formulaireMag','hseMag','cinqSMag','chariotMag'];
+            let ok=0, nok=0, na=0;
+            for(let q of questions) {
+                let radios = document.getElementsByName(q);
+                let val = null;
+                for(let r of radios) if(r.checked) { val=r.value; break; }
+                if(!val) { alert('Répondez à toutes les questions'); return; }
+                if(val==='OK') ok++;
+                else if(val==='NOK') nok++;
+                else if(val==='N/A') na++;
+            }
+            const date = document.getElementById('date-magasin').value;
+            const magasin = document.getElementById('magasin-select').value;
+            if(!date || !magasin) { alert('Remplissez date et magasin'); return; }
+            const total = questions.length;
+            const eligible = total - na;
+            const score = eligible>0 ? (ok/eligible)*100 : 0;
+            const detail = `OK: ${ok}, NOK: ${nok}, N/A: ${na} – Score: ${score.toFixed(1)}% (${ok}/${eligible})`;
             
-            const successRates = criteriaNames.map(() => {
-                const baseScore = parseFloat(avgScore);
-                const variation = Math.floor(Math.random() * 20) - 10;
-                return Math.min(100, Math.max(0, baseScore + variation));
-            });
+            document.getElementById('resultat-magasin').style.display='block';
+            document.getElementById('resultat-magasin').innerHTML = detail;
+            document.getElementById('resultat-magasin').className = 'resultat success';
+
+            const user = auth.currentUser;
+            if (user) {
+                database.ref('audits').push({
+                    date: date,
+                    type: 'Magasin',
+                    uap: magasin,
+                    score: score.toFixed(1),
+                    detail: detail,
+                    uid: user.uid,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+            }
+        }
+
+        function soumettreMur() {
+            const questions = ['mainMur','matiereMur','demarrageMur','dossierMur','formulaireMur','hseMur','cinqSMur'];
+            let ok=0, nok=0;
+            for(let q of questions) {
+                let radios = document.getElementsByName(q);
+                let val = null;
+                for(let r of radios) if(r.checked) { val=r.value; break; }
+                if(!val) { alert('Répondez à toutes les questions'); return; }
+                if(val==='OK') ok++;
+                else if(val==='NOK') nok++;
+            }
+            const date = document.getElementById('date-mur').value;
+            const mur = document.getElementById('mur-select').value;
+            if(!date || !mur) { alert('Remplissez date et mur qualité'); return; }
+            const total = questions.length;
+            const score = (ok/total)*100;
+            const detail = `OK: ${ok}, NOK: ${nok} – Score: ${score.toFixed(1)}% (${ok}/${total})`;
             
-            charts.criteriaSuccessChart = new Chart(document.getElementById('criteriaSuccessChart'), {
-                type: 'bar',
-                data: {
-                    labels: criteriaNames.map(name => name.length > 20 ? name.substring(0, 18) + '...' : name),
-                    datasets: [{
-                        label: 'Taux de réussite (%)',
-                        data: successRates,
-                        backgroundColor: successRates.map(rate => 
-                            rate >= 80 ? '#10b981' : rate >= 60 ? '#f59e0b' : '#ef4444'
-                        ),
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => `${context.raw}% OK`
-                            }
-                        }
-                    },
-                    scales: { 
-                        x: { 
-                            beginAtZero: true, 
-                            max: 100,
-                            title: { display: true, text: 'Pourcentage de OK (%)' }
-                        },
-                        y: {
-                            grid: { display: false }
-                        }
-                    }
-                }
+            document.getElementById('resultat-mur').style.display='block';
+            document.getElementById('resultat-mur').innerHTML = detail;
+            document.getElementById('resultat-mur').className = 'resultat success';
+
+            const user = auth.currentUser;
+            if (user) {
+                database.ref('audits').push({
+                    date: date,
+                    type: 'Mur',
+                    uap: mur,
+                    score: score.toFixed(1),
+                    detail: detail,
+                    uid: user.uid,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+            }
+        }
+
+        // Mise à jour du tableau avec filtres
+        function filterAudits() {
+            const filterType = document.getElementById('filter-type').value;
+            const filterUap = document.getElementById('filter-uap').value;
+            let filtered = audits;
+            if (filterType !== 'all') {
+                filtered = filtered.filter(a => a.type === filterType);
+            }
+            if (filterUap !== 'all') {
+                filtered = filtered.filter(a => a.uap === filterUap);
+            }
+            const tbody = document.getElementById('audit-table-body');
+            tbody.innerHTML = '';
+            filtered.forEach(a => {
+                const row = tbody.insertRow();
+                row.insertCell().textContent = a.date;
+                row.insertCell().textContent = a.type;
+                row.insertCell().textContent = a.uap;
+                row.insertCell().textContent = a.score + '%';
+                row.insertCell().innerHTML = `<button onclick="alert('${a.detail}')">Voir</button>`;
             });
 
-            // 6. Monthly trend
-            const monthlyData = {};
-            dataToUse.forEach(a => {
-                const month = a.date.substring(0, 7);
-                if (!monthlyData[month]) monthlyData[month] = { sum: 0, count: 0 };
-                monthlyData[month].sum += parseFloat(a.score);
-                monthlyData[month].count++;
-            });
+            // Mettre à jour les options du filtre UAP
+            const uapSelect = document.getElementById('filter-uap');
+            const currentUap = uapSelect.value;
+            const allUaps = [...new Set(audits.map(a => a.uap))];
+            uapSelect.innerHTML = '<option value="all">Tous</option>' + allUaps.map(u => `<option value="${u}" ${u===currentUap?'selected':''}>${u}</option>`).join('');
+        }
 
-            const months = Object.keys(monthlyData).sort().slice(-6);
-            const monthlyAvg = months.map(m => (monthlyData[m].sum / monthlyData[m].count).toFixed(1));
+        // Déconnexion
+        function logout() {
+            auth.signOut().catch(err => alert('Erreur lors de la déconnexion.'));
+        }
 
-            charts.monthlyTrendChart = new Chart(document.getElementById('monthlyTrendChart'), {
+        // Initialisation du graphique
+        function initChart() {
+            const ctx = document.getElementById('auditChart').getContext('2d');
+            chart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: months,
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
                     datasets: [{
-                        label: 'Score moyen',
-                        data: monthlyAvg,
-                        borderColor: '#c0392b',
-                        backgroundColor: 'rgba(192,57,43,0.1)',
+                        label: 'Audits réalisés',
+                        data: [12, 19, 15, 17, 24, 23],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102,126,234,0.1)',
                         tension: 0.4,
                         fill: true
                     }]
                 },
-                options: {
-                    responsive: true,
-                    scales: { y: { beginAtZero: true, max: 100, grid: { display: false } } }
-                }
+                options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
-        // ============== EXPORT FUNCTIONS ==============
-        function exportFilteredCSV() {
-            if (filteredDb.length === 0) {
-                showToast("Aucune donnée à exporter", true);
-                return;
-            }
-            
-            const headers = ["ID","Type","Date","UAP","Ligne","OK","NOK","Score","Auditeur","Résultat"];
-            const rows = filteredDb.map(a => [
-                a.auditId, a.type, a.date, a.uap, a.ligne, a.ok, a.nok, a.score,
-                a.createdBy, parseFloat(a.score) >= 80 ? 'Conforme' : 'Action Requise'
-            ].map(v => `"${v || ''}"`).join(';'));
-
-            const csv = [headers.join(';'), ...rows].join('\n');
-            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `audits_${new Date().toISOString().slice(0,10)}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast(`Export de ${filteredDb.length} audits`);
-        }
-
-        // ============== UI HELPER FUNCTIONS ==============
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            const icon = toast.querySelector('i');
-            
-            toastMsg.innerText = message;
-            toast.style.borderLeftColor = isError ? 'var(--warning)' : 'var(--success)';
-            icon.className = isError ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-check';
-            icon.style.color = isError ? 'var(--warning)' : 'var(--success)';
-            
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainWrapper = document.getElementById('mainWrapper');
-            
-            if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('mobile-show');
-            } else {
-                sidebar.classList.toggle('collapsed');
-                mainWrapper.classList.toggle('expanded');
-            }
-        }
-
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark');
-            const icon = document.querySelector('#themeToggle i');
-            icon.className = document.body.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-        }
-
-        // ============== AUTH STATE ==============
-        auth.onAuthStateChanged(user => {
-            const overlay = document.getElementById('loginOverlay');
-            if (user) {
-                currentUser = user;
-                loadUserRole(user.uid);
-                overlay.style.opacity = '0';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                }, 400);
-                showToast(`Connecté • ${user.email}`, false);
-            } else {
-                overlay.style.display = 'flex';
-                setTimeout(() => overlay.style.opacity = '1', 10);
-            }
+        // Entrée sur formulaire de connexion
+        document.addEventListener('keypress', (e) => {
+            if (e.target.closest('#login-container') && e.key === 'Enter') handleAuth();
         });
-
-        // Initialize theme
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark');
-            document.querySelector('#themeToggle i').className = 'fa-solid fa-sun';
-        }
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                document.getElementById('sidebar').classList.remove('mobile-show');
-            }
-        });
-
-        // Make functions globally available for onclick handlers
-        window.switchAuditType = switchAuditType;
-        window.updateMurList = updateMurList;
-        window.calcScore = calcScore;
-        window.validateAndSave = validateAndSave;
-        window.applyFilters = applyFilters;
-        window.resetFilters = resetFilters;
-        window.exportFilteredCSV = exportFilteredCSV;
-        window.applyAnalyticsFilters = applyAnalyticsFilters;
-        window.resetAnalyticsFilters = resetAnalyticsFilters;
-        window.clearFilter = clearFilter;
-        window.loadHistory = loadHistory;
-        window.showCommentModal = showCommentModal;
-        window.closeCommentModal = closeCommentModal;
-        window.saveComment = saveComment;
-        window.showAddUserModal = showAddUserModal;
-        window.closeAddUserModal = closeAddUserModal;
-        window.createUser = createUser;
-        window.updateUserRole = updateUserRole;
-        window.deleteUser = deleteUser;
-        window.currentPage = currentPage;
     </script>
 </body>
 </html>
