@@ -7,665 +7,278 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
-        }
-        body {
-            background: #f0f5fa;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        #app {
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            position: relative;
-        }
-
-        /* --- PAGE DE CONNEXION WKW AUTOMOTIVE (gris & rouge) --- */
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', 'Segoe UI', Roboto, sans-serif; }
+        body { background:#f0f5fa; min-height:100vh; overflow-x:hidden; }
+        #app { width:100%; min-height:100vh; display:flex; position:relative; }
+        
+        /* --- PAGE DE CONNEXION --- */
         #login-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #4a4a4a 0%, #2d2d2d 100%);
-            padding: 20px;
-            min-height: 100vh;
+            width:100%; display:flex; justify-content:center; align-items:center;
+            background:linear-gradient(135deg, #4a4a4a 0%, #2d2d2d 100%);
+            padding:20px; min-height:100vh;
         }
         .login-box {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            width: 100%;
-            max-width: 420px;
-            border: 1px solid #e0e0e0;
-            text-align: center;
+            background:rgba(255,255,255,0.98); backdrop-filter:blur(10px);
+            padding:40px; border-radius:20px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);
+            width:100%; max-width:420px; border:1px solid #e0e0e0; text-align:center;
         }
-        .login-logo {
-            margin-bottom: 20px;
-        }
-        .login-logo img {
-            max-width: 180px;
-            height: auto;
+        .login-icon {
+            width:80px; height:80px; background:#cc0000; color:white;
+            border-radius:50%; display:flex; align-items:center; justify-content:center;
+            margin:0 auto 20px; font-size:40px; box-shadow:0 10px 15px -3px rgba(204,0,0,0.3);
         }
         .login-box h2 {
-            color: #cc0000;
-            margin-bottom: 30px;
-            font-size: 26px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color:#cc0000; margin-bottom:30px; font-size:26px; font-weight:700;
+            text-transform:uppercase; letter-spacing:1px;
         }
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
+        .input-group { margin-bottom:20px; text-align:left; }
         .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 14px;
+            display:block; margin-bottom:8px; color:#333; font-weight:600; font-size:14px;
         }
         .input-group input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #d0d0d0;
-            border-radius: 12px;
-            font-size: 15px;
-            transition: all 0.3s;
-            background: white;
+            width:100%; padding:14px 16px; border:2px solid #d0d0d0; border-radius:12px;
+            font-size:15px; transition:all 0.3s; background:white;
         }
         .input-group input:focus {
-            outline: none;
-            border-color: #cc0000;
-            box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.1);
+            outline:none; border-color:#cc0000; box-shadow:0 0 0 4px rgba(204,0,0,0.1);
         }
         .login-box button {
-            width: 100%;
-            padding: 14px;
-            background: #cc0000;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 15px -3px rgba(204, 0, 0, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            width:100%; padding:14px; background:#cc0000; color:white; border:none;
+            border-radius:12px; font-size:16px; font-weight:700; cursor:pointer;
+            transition:all 0.3s; box-shadow:0 10px 15px -3px rgba(204,0,0,0.4);
+            text-transform:uppercase; letter-spacing:1px;
         }
-        .login-box button:hover {
-            background: #a30000;
-            transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px rgba(204, 0, 0, 0.5);
-        }
-        .login-box button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .message {
-            margin-top: 20px;
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 600;
-            display: none;
-        }
-        .message.error { background-color: #fee; color: #cc0000; border: 1px solid #fcc; display: block; }
-        .message.success { background-color: #e6fffa; color: #2c7a7b; border: 1px solid #b2f5ea; display: block; }
-        .message.info { background-color: #e6f3ff; color: #2c7be0; border: 1px solid #b8daff; display: block; }
-        .toggle-form, .forgot-password { text-align: center; margin-top: 20px; }
-        .toggle-form a, .forgot-password a { color: #cc0000; text-decoration: none; font-weight: 600; font-size: 14px; }
-        .toggle-form a:hover, .forgot-password a:hover { text-decoration: underline; }
-        .forgot-password { text-align: right; margin-top: 5px; }
+        .login-box button:hover { background:#a30000; transform:translateY(-2px); box-shadow:0 20px 25px -5px rgba(204,0,0,0.5); }
+        .login-box button:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+        .message { margin-top:20px; padding:12px; border-radius:10px; text-align:center; font-weight:600; display:none; }
+        .message.error { background-color:#fee; color:#cc0000; border:1px solid #fcc; display:block; }
+        .message.success { background-color:#e6fffa; color:#2c7a7b; border:1px solid #b2f5ea; display:block; }
+        .message.info { background-color:#e6f3ff; color:#2c7be0; border:1px solid #b8daff; display:block; }
+        .toggle-form, .forgot-password { text-align:center; margin-top:20px; }
+        .toggle-form a, .forgot-password a { color:#cc0000; text-decoration:none; font-weight:600; font-size:14px; }
+        .toggle-form a:hover, .forgot-password a:hover { text-decoration:underline; }
+        .forgot-password { text-align:right; margin-top:5px; }
 
-        /* --- TABLEAU DE BORD AVEC SIDEBAR TOGGLE --- */
-        #dashboard-container {
-            display: none;
-            width: 100%;
-            background: #f0f5fa;
-            position: relative;
-        }
-
-        /* Bouton menu hamburger */
+        /* --- TABLEAU DE BORD --- */
+        #dashboard-container { display:none; width:100%; background:#f0f5fa; position:relative; }
         .menu-toggle {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            background: white;
-            border: none;
-            border-radius: 12px;
-            width: 48px;
-            height: 48px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: #cc0000;
-            transition: all 0.3s;
+            position:fixed; top:20px; left:20px; z-index:1000; background:white; border:none;
+            border-radius:12px; width:48px; height:48px; box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            cursor:pointer; display:flex; align-items:center; justify-content:center;
+            font-size:24px; color:#cc0000; transition:all 0.3s;
         }
-        .menu-toggle:hover {
-            background: #cc0000;
-            color: white;
-        }
+        .menu-toggle:hover { background:#cc0000; color:white; }
 
-        /* Sidebar */
         .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100vh;
-            z-index: 999;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
+            width:280px; background:linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%);
+            color:white; display:flex; flex-direction:column;
+            box-shadow:4px 0 20px rgba(0,0,0,0.1); position:fixed; left:0; top:0;
+            height:100vh; z-index:999; transform:translateX(-100%); transition:transform 0.3s ease;
         }
-        .sidebar.open {
-            transform: translateX(0);
-        }
+        .sidebar.open { transform:translateX(0); }
 
         .sidebar-header {
-            padding: 30px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding:30px 20px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.1);
         }
-        .sidebar-header img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-bottom: 15px;
-            border: 3px solid #cc0000;
-            object-fit: contain;
-            background: white;
-            padding: 5px;
+        .sidebar-icon {
+            width:80px; height:80px; background:#cc0000; color:white;
+            border-radius:50%; display:flex; align-items:center; justify-content:center;
+            margin:0 auto 15px; font-size:40px; box-shadow:0 10px 15px -3px rgba(204,0,0,0.3);
         }
-        .sidebar-header h2 {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: white;
-        }
-        .sidebar-header p {
-            font-size: 14px;
-            opacity: 0.8;
-            color: #ccc;
-        }
-        .sidebar-nav {
-            flex: 1;
-            padding: 20px 0;
-        }
-        .sidebar-nav ul {
-            list-style: none;
-        }
+        .sidebar-header h2 { font-size:22px; font-weight:700; margin-bottom:5px; color:white; }
+        .sidebar-header p { font-size:14px; opacity:0.8; color:#ccc; }
+
+        .sidebar-nav { flex:1; padding:20px 0; }
+        .sidebar-nav ul { list-style:none; }
         .sidebar-nav li {
-            padding: 15px 25px;
-            margin: 5px 0;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            font-size: 16px;
-            border-left: 4px solid transparent;
+            padding:15px 25px; margin:5px 0; cursor:pointer; transition:all 0.3s;
+            display:flex; align-items:center; font-size:16px; border-left:4px solid transparent;
         }
         .sidebar-nav li i {
-            margin-right: 15px;
-            width: 22px;
-            text-align: center;
-            font-size: 18px;
-            color: #cc0000;
+            margin-right:15px; width:22px; text-align:center; font-size:18px; color:#cc0000;
         }
-        .sidebar-nav li:hover {
-            background: rgba(204, 0, 0, 0.1);
-            border-left-color: #cc0000;
-        }
-        .sidebar-nav li.active {
-            background: rgba(204, 0, 0, 0.2);
-            border-left-color: #cc0000;
-        }
-        .sidebar-footer {
-            padding: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
+        .sidebar-nav li:hover { background:rgba(204,0,0,0.1); border-left-color:#cc0000; }
+        .sidebar-nav li.active { background:rgba(204,0,0,0.2); border-left-color:#cc0000; }
+        .sidebar-footer { padding:20px; border-top:1px solid rgba(255,255,255,0.1); }
         .logout-btn {
-            width: 100%;
-            padding: 12px;
-            background: rgba(204, 0, 0, 0.2);
-            border: 1px solid #cc0000;
-            color: white;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width:100%; padding:12px; background:rgba(204,0,0,0.2); border:1px solid #cc0000;
+            color:white; border-radius:10px; cursor:pointer; font-size:16px; font-weight:600;
+            transition:all 0.3s; display:flex; align-items:center; justify-content:center;
         }
-        .logout-btn i {
-            margin-right: 10px;
-        }
-        .logout-btn:hover {
-            background: #cc0000;
-        }
+        .logout-btn i { margin-right:10px; }
+        .logout-btn:hover { background:#cc0000; }
 
-        /* Contenu principal */
         .main-content {
-            flex: 1;
-            margin-left: 0;
-            padding: 80px 20px 30px 20px;
-            transition: margin-left 0.3s ease;
-            width: 100%;
-            overflow-x: auto;
+            flex:1; margin-left:0; padding:80px 20px 30px 20px;
+            transition:margin-left 0.3s ease; width:100%; overflow-x:auto;
         }
-
         @media (min-width: 1024px) {
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            .main-content.shifted {
-                margin-left: 280px;
-            }
+            .sidebar.open { transform:translateX(0); }
+            .main-content.shifted { margin-left:280px; }
         }
 
-        .section {
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
-        .section.active-section {
-            display: block;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .section { display:none; animation:slideIn 0.3s ease; }
+        .section.active-section { display:block; }
+        @keyframes slideIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
         .section h1 {
-            color: #1a202c;
-            margin-bottom: 30px;
-            font-size: 28px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            color:#1a202c; margin-bottom:30px; font-size:28px; font-weight:700;
+            display:flex; align-items:center; gap:10px; flex-wrap:wrap;
         }
         .section h1 i {
-            color: #cc0000;
-            background: white;
-            padding: 12px;
-            border-radius: 50%;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            color:#cc0000; background:white; padding:12px; border-radius:50%;
+            box-shadow:0 4px 6px rgba(0,0,0,0.05);
         }
         .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
+            display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:25px; margin-top:20px;
         }
         .card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            border: 1px solid rgba(0,0,0,0.03);
+            background:white; border-radius:20px; padding:25px;
+            box-shadow:0 10px 25px -5px rgba(0,0,0,0.1);
+            transition:transform 0.3s, box-shadow 0.3s; border:1px solid rgba(0,0,0,0.03);
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 30px -5px rgba(204, 0, 0, 0.2);
-        }
-        .card h3 {
-            color: #4a5568;
-            margin-bottom: 15px;
-            font-size: 16px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .card .stat-value {
-            font-size: 40px;
-            font-weight: 800;
-            color: #1a202c;
-            line-height: 1.2;
-        }
-        .card i {
-            font-size: 48px;
-            color: #cc0000;
-            margin-bottom: 15px;
-            opacity: 0.8;
-        }
+        .card:hover { transform:translateY(-8px); box-shadow:0 25px 30px -5px rgba(204,0,0,0.2); }
+        .card h3 { color:#4a5568; margin-bottom:15px; font-size:16px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+        .card .stat-value { font-size:40px; font-weight:800; color:#1a202c; line-height:1.2; }
+        .card i { font-size:48px; color:#cc0000; margin-bottom:15px; opacity:0.8; }
 
-        /* Sous-navigation des audits */
         .sub-nav {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
-            background: white;
-            padding: 15px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            flex-wrap: wrap;
+            display:flex; gap:12px; margin-bottom:30px; background:white; padding:15px;
+            border-radius:16px; box-shadow:0 4px 6px rgba(0,0,0,0.05); flex-wrap:wrap;
         }
         .sub-nav button {
-            padding: 12px 24px;
-            border: none;
-            background: transparent;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #4a5568;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1 1 auto;
+            padding:12px 24px; border:none; background:transparent; border-radius:12px;
+            font-size:15px; font-weight:600; color:#4a5568; cursor:pointer;
+            transition:all 0.3s; display:flex; align-items:center; gap:8px; flex:1 1 auto;
         }
-        .sub-nav button i {
-            font-size: 16px;
-        }
+        .sub-nav button i { font-size:16px; }
         .sub-nav button.active {
-            background: #cc0000;
-            color: white;
-            box-shadow: 0 10px 15px -3px rgba(204, 0, 0, 0.4);
+            background:#cc0000; color:white; box-shadow:0 10px 15px -3px rgba(204,0,0,0.4);
         }
-        .sub-nav button:hover:not(.active) {
-            background: #f7fafc;
-        }
-        .audit-content {
-            display: none;
-        }
-        .audit-content.active-content {
-            display: block;
-        }
+        .sub-nav button:hover:not(.active) { background:#f7fafc; }
+        .audit-content { display:none; }
+        .audit-content.active-content { display:block; }
 
-        /* Formulaire d'audit */
         .audit-form {
-            background: white;
-            padding: 30px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
+            background:white; padding:30px; border-radius:24px;
+            box-shadow:0 20px 40px -10px rgba(0,0,0,0.15); position:relative;
         }
-        .audit-form h3 {
-            font-size: 24px;
-            color: #1a202c;
-            margin-bottom: 25px;
-            font-weight: 700;
+        .audit-form h3 { font-size:24px; color:#1a202c; margin-bottom:25px; font-weight:700; }
+        .score-live {
+            background:#f0f0f0; padding:15px 20px; border-radius:40px;
+            display:inline-flex; align-items:center; gap:15px; margin-bottom:20px; font-weight:600;
         }
+        .score-live .badge-score {
+            background:#cc0000; color:white; padding:8px 20px; border-radius:40px; font-size:20px;
+        }
+        .progress { height:10px; background:#e0e0e0; border-radius:5px; margin:10px 0 20px; overflow:hidden; }
+        .progress-bar { height:100%; background:#cc0000; width:0%; transition:width 0.3s; }
         .question-group {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #f8fafd;
-            border-radius: 16px;
-            border: 1px solid #edf2f7;
+            margin-bottom:30px; padding:20px; background:#f8fafd; border-radius:16px;
+            border:1px solid #edf2f7; transition:box-shadow 0.2s;
         }
-        .question-group label {
-            display: block;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        .radio-group {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+        .question-group:hover { box-shadow:0 5px 15px rgba(0,0,0,0.05); }
+        .question-group label { display:block; font-weight:600; color:#2d3748; margin-bottom:15px; font-size:16px; }
+        .radio-group { display:flex; gap:20px; flex-wrap:wrap; }
         .radio-group div {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: white;
-            border-radius: 30px;
-            border: 2px solid #e2e8f0;
-            transition: all 0.2s;
+            display:flex; align-items:center; gap:8px; padding:8px 16px; background:white;
+            border-radius:30px; border:2px solid #e2e8f0; transition:all 0.2s;
         }
-        .radio-group div:hover {
-            border-color: #cc0000;
-        }
-        .radio-group input[type="radio"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #cc0000;
-        }
+        .radio-group div:hover { border-color:#cc0000; background:#fff5f5; }
+        .radio-group input[type="radio"] { width:18px; height:18px; accent-color:#cc0000; }
         .text-input, select, textarea {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            font-size: 15px;
-            transition: all 0.3s;
-            background: white;
+            width:100%; padding:14px 18px; border:2px solid #e2e8f0; border-radius:14px;
+            font-size:15px; transition:all 0.3s; background:white;
         }
         .text-input:focus, select:focus {
-            outline: none;
-            border-color: #cc0000;
-            box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.1);
+            outline:none; border-color:#cc0000; box-shadow:0 0 0 4px rgba(204,0,0,0.1);
         }
         .btn-submit {
-            background: #cc0000;
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            border-radius: 40px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 15px -3px rgba(204, 0, 0, 0.4);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
+            background:#cc0000; color:white; border:none; padding:16px 32px; border-radius:40px;
+            font-size:16px; font-weight:700; cursor:pointer; transition:all 0.3s;
+            box-shadow:0 10px 15px -3px rgba(204,0,0,0.4);
+            display:inline-flex; align-items:center; gap:10px; margin-top:20px;
         }
-        .btn-submit:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 30px -5px rgba(204, 0, 0, 0.6);
-        }
+        .btn-submit:hover { transform:scale(1.05); box-shadow:0 20px 30px -5px rgba(204,0,0,0.6); }
 
-        /* Résultat après soumission */
         .resultat-card {
-            margin-top: 30px;
-            padding: 25px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
-            border: 2px solid #9ae6b4;
-            box-shadow: 0 10px 20px -5px rgba(72, 187, 120, 0.3);
-            display: none;
+            margin-top:30px; padding:25px; border-radius:20px;
+            background:linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+            border:2px solid #9ae6b4; box-shadow:0 10px 20px -5px rgba(72,187,120,0.3);
+            display:none;
         }
-        .resultat-card.show {
-            display: block;
-            animation: scaleIn 0.3s;
-        }
-        @keyframes scaleIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .resultat-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        .resultat-header i {
-            font-size: 32px;
-            color: #38a169;
-        }
-        .resultat-header h4 {
-            font-size: 20px;
-            color: #22543d;
-            font-weight: 700;
-        }
-        .resultat-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .stat-badge {
-            background: white;
-            padding: 15px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .stat-badge.ok { border-left: 4px solid #38a169; }
-        .stat-badge.nok { border-left: 4px solid #e53e3e; }
-        .stat-badge.na { border-left: 4px solid #d69e2e; }
-        .stat-badge span {
-            display: block;
-            font-size: 28px;
-            font-weight: 800;
-            margin: 5px 0;
-        }
-        .stat-badge small {
-            color: #718096;
-            font-size: 14px;
-        }
-        .resultat-score {
-            font-size: 36px;
-            font-weight: 800;
-            color: #22543d;
-            text-align: center;
-        }
+        .resultat-card.show { display:block; animation:scaleIn 0.3s; }
+        @keyframes scaleIn { from { transform:scale(0.9); opacity:0; } to { transform:scale(1); opacity:1; } }
+        .resultat-header { display:flex; align-items:center; gap:15px; margin-bottom:15px; }
+        .resultat-header i { font-size:32px; color:#38a169; }
+        .resultat-header h4 { font-size:20px; color:#22543d; font-weight:700; }
+        .resultat-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin:20px 0; }
+        .stat-badge { background:white; padding:15px; border-radius:16px; text-align:center; box-shadow:0 4px 6px rgba(0,0,0,0.05); }
+        .stat-badge.ok { border-left:4px solid #38a169; }
+        .stat-badge.nok { border-left:4px solid #e53e3e; }
+        .stat-badge.na { border-left:4px solid #d69e2e; }
+        .stat-badge span { display:block; font-size:28px; font-weight:800; margin:5px 0; }
+        .stat-badge small { color:#718096; font-size:14px; }
+        .resultat-score { font-size:36px; font-weight:800; color:#22543d; text-align:center; }
 
-        /* Tableaux */
         .auditor-table {
-            background: white;
-            border-radius: 20px;
-            overflow-x: auto;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            background:white; border-radius:20px; overflow-x:auto;
+            box-shadow:0 10px 25px -5px rgba(0,0,0,0.1);
         }
-        .auditor-table table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
+        .auditor-table table { width:100%; border-collapse:collapse; min-width:600px; }
         .auditor-table th {
-            background: #f7fafc;
-            color: #4a5568;
-            padding: 18px;
-            text-align: left;
-            font-weight: 700;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            background:#f7fafc; color:#4a5568; padding:18px; text-align:left;
+            font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:0.5px;
         }
-        .auditor-table td {
-            padding: 16px 18px;
-            border-bottom: 1px solid #edf2f7;
-        }
-        .auditor-table tr:hover td {
-            background: #f8fafd;
-        }
+        .auditor-table td { padding:16px 18px; border-bottom:1px solid #edf2f7; }
+        .auditor-table tr:hover td { background:#f8fafd; }
         .badge {
-            background: #e6fffa;
-            color: #2c7a7b;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
+            background:#e6fffa; color:#2c7a7b; padding:6px 12px; border-radius:30px;
+            font-size:12px; font-weight:700; border:none; cursor:pointer;
         }
         .btn-excel {
-            background: #27ae60;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-            margin-left: auto;
+            background:#27ae60; color:white; border:none; padding:10px 20px; border-radius:40px;
+            font-size:14px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center;
+            gap:8px; transition:all 0.3s; margin-left:auto;
         }
-        .btn-excel:hover {
-            background: #219653;
-            transform: scale(1.05);
-        }
+        .btn-excel:hover { background:#219653; transform:scale(1.05); }
 
-        /* Graphiques */
         .chart-container {
-            background: white;
-            border-radius: 24px;
-            padding: 25px;
-            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            overflow-x: auto;
+            background:white; border-radius:24px; padding:25px;
+            box-shadow:0 15px 30px -10px rgba(0,0,0,0.1); margin-bottom:30px; overflow-x:auto;
+            transition:box-shadow 0.3s;
         }
+        .chart-container:hover { box-shadow:0 20px 40px -10px rgba(204,0,0,0.2); }
 
-        /* Barre de filtres */
         .filter-bar {
-            margin-bottom: 25px;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            align-items: center;
-            background: white;
-            padding: 18px 25px;
-            border-radius: 18px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.03);
+            margin-bottom:25px; display:flex; gap:20px; flex-wrap:wrap; align-items:center;
+            background:white; padding:18px 25px; border-radius:18px;
+            box-shadow:0 5px 10px rgba(0,0,0,0.03);
         }
-        .filter-bar label {
-            font-weight: 600;
-            color: #4a5568;
-        }
+        .filter-bar label { font-weight:600; color:#4a5568; }
         .filter-bar select, .filter-bar button {
-            padding: 10px 18px;
-            border: 2px solid #e2e8f0;
-            border-radius: 40px;
-            background: white;
-            font-size: 14px;
-            font-weight: 500;
+            padding:10px 18px; border:2px solid #e2e8f0; border-radius:40px;
+            background:white; font-size:14px; font-weight:500; transition:all 0.2s;
         }
-        .filter-bar button {
-            background: #cc0000;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .filter-bar button:hover {
-            background: #a30000;
-        }
+        .filter-bar select:focus { border-color:#cc0000; outline:none; }
+        .filter-bar button { background:#cc0000; color:white; border:none; cursor:pointer; transition:all 0.3s; }
+        .filter-bar button:hover { background:#a30000; transform:scale(1.02); }
 
         @media (max-width: 768px) {
-            .section h1 { font-size: 24px; }
-            .card-container { grid-template-columns: 1fr; }
-            .sub-nav button { width: 100%; justify-content: center; }
-            .filter-bar { flex-direction: column; align-items: stretch; }
-            .resultat-stats { grid-template-columns: 1fr; }
+            .section h1 { font-size:24px; }
+            .card-container { grid-template-columns:1fr; }
+            .sub-nav button { width:100%; justify-content:center; }
+            .filter-bar { flex-direction:column; align-items:stretch; }
+            .resultat-stats { grid-template-columns:1fr; }
         }
     </style>
 </head>
 <body>
     <div id="app">
-        <!-- PAGE DE CONNEXION WKW AUTOMOTIVE -->
+        <!-- PAGE DE CONNEXION (icône au lieu d'image) -->
         <div id="login-container">
             <div class="login-box">
-                <div class="login-logo">
-                    <!-- Logo WKW Automotive (remplacez l'URL par votre logo) -->
-                    <img src="https://www.electrive.net/media/2017/04/wkw-automotive-logo-symbolbild.png" alt="WKW Automotive">
+                <div class="login-icon">
+                    <i class="fas fa-industry"></i>
                 </div>
                 <h2 id="form-title"><i class="fas fa-lock"></i> Connexion</h2>
                 <div class="input-group">
@@ -689,43 +302,28 @@
 
         <!-- TABLEAU DE BORD -->
         <div id="dashboard-container">
-            <!-- Bouton menu hamburger -->
-            <button class="menu-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <!-- Sidebar -->
+            <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <!-- Logo (remplacez par votre logo) -->
-                    <img src="https://media.licdn.com/dms/image/v2/C510BAQFv4NwvhYRq8Q/company-logo_200_200/company-logo_200_200/0/1631351838133?e=2147483647&v=beta&t=pE5-TQRX2fd9oIfzQypoBLterLoj-X4wOnC3C8MMI4Q">
+                    <div class="sidebar-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
                     <h2>WKW Audit</h2>
                     <p id="user-email">Espace auditeur</p>
                 </div>
                 <div class="sidebar-nav">
                     <ul>
-                        <li id="nav-dashboard" class="active" onclick="switchSection('dashboard'); if(window.innerWidth<1024) toggleSidebar();">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </li>
-                        <li id="nav-courbes" onclick="switchSection('courbes'); if(window.innerWidth<1024) toggleSidebar();">
-                            <i class="fas fa-chart-line"></i> Courbes
-                        </li>
-                        <li id="nav-auditeurs" onclick="switchSection('auditeurs'); if(window.innerWidth<1024) toggleSidebar();">
-                            <i class="fas fa-pen-alt"></i> Nouvelle audit
-                        </li>
-                        <li id="nav-details" onclick="switchSection('details'); if(window.innerWidth<1024) toggleSidebar();">
-                            <i class="fas fa-list-alt"></i> Détails d'audit
-                        </li>
+                        <li id="nav-dashboard" class="active" onclick="switchSection('dashboard'); if(window.innerWidth<1024) toggleSidebar();"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+                        <li id="nav-courbes" onclick="switchSection('courbes'); if(window.innerWidth<1024) toggleSidebar();"><i class="fas fa-chart-line"></i> Courbes</li>
+                        <li id="nav-auditeurs" onclick="switchSection('auditeurs'); if(window.innerWidth<1024) toggleSidebar();"><i class="fas fa-pen-alt"></i> Nouvelle audit</li>
+                        <li id="nav-details" onclick="switchSection('details'); if(window.innerWidth<1024) toggleSidebar();"><i class="fas fa-list-alt"></i> Détails d'audit</li>
                     </ul>
                 </div>
                 <div class="sidebar-footer">
-                    <button class="logout-btn" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i> Déconnexion
-                    </button>
+                    <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
                 </div>
             </div>
 
-            <!-- Contenu principal -->
             <div class="main-content" id="mainContent">
                 <!-- Section Dashboard -->
                 <div id="section-dashboard" class="section active-section">
@@ -738,12 +336,9 @@
                         <div class="card"><i class="fas fa-industry"></i><h3>Moyenne UAP2</h3><p class="stat-value" id="stat-moyenne-uap2">0%</p></div>
                         <div class="card"><i class="fas fa-warehouse"></i><h3>Moyenne Magasin</h3><p class="stat-value" id="stat-moyenne-magasin">0%</p></div>
                         <div class="card"><i class="fas fa-building"></i><h3>Moyenne Usine</h3><p class="stat-value" id="stat-moyenne-usine">0%</p></div>
-                        <!-- Meilleur et pire score -->
                         <div class="card"><i class="fas fa-trophy" style="color:#f1c40f;"></i><h3>Meilleur score</h3><p class="stat-value" id="stat-best-score">-</p></div>
                         <div class="card"><i class="fas fa-skull-crosswalk" style="color:#e74c3c;"></i><h3>Pire score</h3><p class="stat-value" id="stat-worst-score">-</p></div>
                     </div>
-
-                    <!-- 5 pires résultats -->
                     <div style="margin-top: 50px;">
                         <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
                             <i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> 5 pires résultats
@@ -763,22 +358,8 @@
                 <div id="section-courbes" class="section">
                     <h1><i class="fas fa-chart-line"></i> Courbes et statistiques</h1>
                     <div class="filter-bar">
-                        <div>
-                            <label><i class="fas fa-calendar-alt"></i> Période :</label>
-                            <select id="periode-type">
-                                <option value="mois">Par mois</option>
-                                <option value="semaine">Par semaine</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label><i class="fas fa-filter"></i> Filtre :</label>
-                            <select id="courbes-filtre">
-                                <option value="all">Tous</option>
-                                <option value="UAP1">UAP1</option>
-                                <option value="UAP2">UAP2</option>
-                                <option value="Magasin">Magasin</option>
-                            </select>
-                        </div>
+                        <div><label><i class="fas fa-calendar-alt"></i> Période :</label><select id="periode-type"><option value="mois">Par mois</option><option value="semaine">Par semaine</option></select></div>
+                        <div><label><i class="fas fa-filter"></i> Filtre :</label><select id="courbes-filtre"><option value="all">Tous</option><option value="UAP1">UAP1</option><option value="UAP2">UAP2</option><option value="Magasin">Magasin</option></select></div>
                         <button onclick="updateCourbesCharts()"><i class="fas fa-sync-alt"></i> Actualiser</button>
                     </div>
                     <div class="chart-container">
@@ -787,9 +368,25 @@
                     <div class="chart-container">
                         <canvas id="chart-questions" style="width:100%; max-height:300px;"></canvas>
                     </div>
+                    <div class="chart-container">
+                        <canvas id="chart-repartition-type" style="width:100%; max-height:300px;"></canvas>
+                    </div>
+                    <!-- Graphique Pourcentage par question (basé sur les réponses individuelles) -->
+                    <div class="chart-container">
+                        <h3 style="margin-bottom:15px;">Pourcentage de réponses par question</h3>
+                        <div style="display:flex; gap:10px; margin-bottom:15px;">
+                            <label>Type d'audit :</label>
+                            <select id="question-type-select" onchange="updateQuestionChart()">
+                                <option value="Ligne">Ligne</option>
+                                <option value="Magasin">Magasin</option>
+                                <option value="Mur">Mur qualité</option>
+                            </select>
+                        </div>
+                        <canvas id="chart-questions-per-question" style="width:100%; max-height:400px;"></canvas>
+                    </div>
                 </div>
 
-                <!-- Section Nouvelle audit -->
+                <!-- Section Nouvelle audit avec score live -->
                 <div id="section-auditeurs" class="section">
                     <h1><i class="fas fa-pen-alt"></i> Nouvelle audit Gemba</h1>
                     <div class="sub-nav">
@@ -802,32 +399,34 @@
                     <div id="audit-ligne" class="audit-content active-content">
                         <div class="audit-form">
                             <h3><i class="fas fa-bolt"></i> Audit Ligne de production</h3>
+                            <div class="score-live">
+                                <span>Score actuel :</span>
+                                <span class="badge-score" id="ligne-score">-</span>
+                                <span id="ligne-answered">0/10</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" id="ligne-progress" style="width:0%"></div>
+                            </div>
                             <form id="form-audit-ligne">
-                                <div class="question-group">
-                                    <label>Date</label>
-                                    <input type="date" id="date-ligne" class="text-input" required>
+                                <div class="question-group"><label>Date</label><input type="date" id="date-ligne" class="text-input" required></div>
+                                <div class="question-group"><label>Zone / Ligne / Poste</label><input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required></div>
+                                <div class="question-group"><label>UAP</label>
+                                    <select id="uap-ligne" class="text-input" required>
+                                        <option value="">Sélectionnez</option>
+                                        <option value="UAP1">UAP1</option>
+                                        <option value="UAP2">UAP2</option>
+                                    </select>
                                 </div>
-                                <div class="question-group">
-                                    <label>Zone / Ligne / Poste</label>
-                                    <input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required>
-                                </div>
-                                <div class="question-group">
-                                    <label>UAP</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="uapLigne" value="UAP1" required> UAP1</div>
-                                        <div><input type="radio" name="uapLigne" value="UAP2"> UAP2</div>
-                                    </div>
-                                </div>
-                                <div class="question-group"><label>Main d'œuvre : Qualification (Grille de polyvalence)</label><div class="radio-group"><div><input type="radio" name="mainLigne" value="OK" required> OK</div><div><input type="radio" name="mainLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>matière : Etat de rebut</label><div class="radio-group"><div><input type="radio" name="matiereLigne" value="OK" required> OK</div><div><input type="radio" name="matiereLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : OK démarrage</label><div class="radio-group"><div><input type="radio" name="demarrageLigne" value="OK" required> OK</div><div><input type="radio" name="demarrageLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : Dossier de Fabrication</label><div class="radio-group"><div><input type="radio" name="dossierLigne" value="OK" required> OK</div><div><input type="radio" name="dossierLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : Formulaire (Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireLigne" value="OK" required> OK</div><div><input type="radio" name="formulaireLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : HSE</label><div class="radio-group"><div><input type="radio" name="hseLigne" value="OK" required> OK</div><div><input type="radio" name="hseLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Milieu : 5S</label><div class="radio-group"><div><input type="radio" name="cinqSLigne" value="OK" required> OK</div><div><input type="radio" name="cinqSLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Machine : Préventif niveau 1</label><div class="radio-group"><div><input type="radio" name="prev1Ligne" value="OK" required> OK</div><div><input type="radio" name="prev1Ligne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Préventif niveau 2</label><div class="radio-group"><div><input type="radio" name="prev2Ligne" value="OK" required> OK</div><div><input type="radio" name="prev2Ligne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>POKA YOKE</label><div class="radio-group"><div><input type="radio" name="pokaLigne" value="OK" required> OK</div><div><input type="radio" name="pokaLigne" value="NOK"> NOK</div><div><input type="radio" name="pokaLigne" value="N/A"> N/A</div></div></div>
+                                <div class="question-group"><label>Main d'œuvre : Qualification</label><div class="radio-group"><div><input type="radio" name="mainLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="mainLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>matière : Etat de rebut</label><div class="radio-group"><div><input type="radio" name="matiereLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="matiereLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : OK démarrage</label><div class="radio-group"><div><input type="radio" name="demarrageLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="demarrageLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : Dossier de Fabrication</label><div class="radio-group"><div><input type="radio" name="dossierLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="dossierLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : Formulaire (Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="formulaireLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : HSE</label><div class="radio-group"><div><input type="radio" name="hseLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="hseLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Milieu : 5S</label><div class="radio-group"><div><input type="radio" name="cinqSLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="cinqSLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Machine : Préventif niveau 1</label><div class="radio-group"><div><input type="radio" name="prev1Ligne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="prev1Ligne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Préventif niveau 2</label><div class="radio-group"><div><input type="radio" name="prev2Ligne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="prev2Ligne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>POKA YOKE</label><div class="radio-group"><div><input type="radio" name="pokaLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="pokaLigne" value="NOK" onchange="updateLigneScore()"> NOK</div><div><input type="radio" name="pokaLigne" value="N/A" onchange="updateLigneScore()"> N/A</div></div></div>
                                 <button type="button" class="btn-submit" onclick="soumettreLigne()"><i class="fas fa-save"></i> Soumettre l'audit</button>
                             </form>
                             <div id="resultat-ligne" class="resultat-card"></div>
@@ -838,17 +437,25 @@
                     <div id="audit-magasin" class="audit-content">
                         <div class="audit-form">
                             <h3><i class="fas fa-boxes"></i> Audit Magasin / Stock</h3>
+                            <div class="score-live">
+                                <span>Score actuel :</span>
+                                <span class="badge-score" id="magasin-score">-</span>
+                                <span id="magasin-answered">0/8</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" id="magasin-progress" style="width:0%"></div>
+                            </div>
                             <form id="form-audit-magasin">
                                 <div class="question-group"><label>Date</label><input type="date" id="date-magasin" class="text-input" required></div>
-                                <div class="question-group"><label>Magasin</label><select id="magasin-select" required><option value="">Sélectionnez</option><option value="Magasin general">Magasin général</option><option value="Magasin P1">Magasin P1</option><option value="Magasin P2">Magasin P2</option></select></div>
-                                <div class="question-group"><label>1. Qualification (Grille de polyvalence)</label><div class="radio-group"><div><input type="radio" name="qualifMag" value="OK" required> OK</div><div><input type="radio" name="qualifMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>2. Identification (Etiquette)</label><div class="radio-group"><div><input type="radio" name="idMag" value="OK" required> OK</div><div><input type="radio" name="idMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>3. Méthode (Instruction)</label><div class="radio-group"><div><input type="radio" name="instructionMag" value="OK" required> OK</div><div><input type="radio" name="instructionMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>4. Méthode (Stockage)</label><div class="radio-group"><div><input type="radio" name="stockageMag" value="OK" required> OK</div><div><input type="radio" name="stockageMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>5. Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMag" value="OK" required> OK</div><div><input type="radio" name="formulaireMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>6. Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMag" value="OK" required> OK</div><div><input type="radio" name="hseMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>7. Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMag" value="OK" required> OK</div><div><input type="radio" name="cinqSMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>8. Chariot élévateur (Préventif niveau 1)</label><div class="radio-group"><div><input type="radio" name="chariotMag" value="OK" required> OK</div><div><input type="radio" name="chariotMag" value="NOK"> NOK</div><div><input type="radio" name="chariotMag" value="N/A"> N/A</div></div></div>
+                                <div class="question-group"><label>Magasin</label><select id="magasin-select" required onchange="updateMagasinScore()"><option value="">Sélectionnez</option><option value="Magasin general">Magasin général</option><option value="Magasin P1">Magasin P1</option><option value="Magasin P2">Magasin P2</option></select></div>
+                                <div class="question-group"><label>1. Qualification</label><div class="radio-group"><div><input type="radio" name="qualifMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="qualifMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>2. Identification</label><div class="radio-group"><div><input type="radio" name="idMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="idMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>3. Méthode (Instruction)</label><div class="radio-group"><div><input type="radio" name="instructionMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="instructionMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>4. Méthode (Stockage)</label><div class="radio-group"><div><input type="radio" name="stockageMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="stockageMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>5. Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="formulaireMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>6. Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="hseMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>7. Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="cinqSMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>8. Chariot élévateur</label><div class="radio-group"><div><input type="radio" name="chariotMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="chariotMag" value="NOK" onchange="updateMagasinScore()"> NOK</div><div><input type="radio" name="chariotMag" value="N/A" onchange="updateMagasinScore()"> N/A</div></div></div>
                                 <button type="button" class="btn-submit" onclick="soumettreMagasin()"><i class="fas fa-save"></i> Soumettre l'audit</button>
                             </form>
                             <div id="resultat-magasin" class="resultat-card"></div>
@@ -859,16 +466,24 @@
                     <div id="audit-mur" class="audit-content">
                         <div class="audit-form">
                             <h3><i class="fas fa-chalkboard"></i> Audit Mur qualité</h3>
+                            <div class="score-live">
+                                <span>Score actuel :</span>
+                                <span class="badge-score" id="mur-score">-</span>
+                                <span id="mur-answered">0/7</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" id="mur-progress" style="width:0%"></div>
+                            </div>
                             <form id="form-audit-mur">
                                 <div class="question-group"><label>Date</label><input type="date" id="date-mur" class="text-input" required></div>
-                                <div class="question-group"><label>Mur qualité</label><select id="mur-select" required><option value="">Sélectionnez</option><option value="Mur qualite uap1">Mur qualité UAP1</option><option value="Mur qualite uap2">Mur qualité UAP2</option></select></div>
-                                <div class="question-group"><label>Main d'œuvre (Qualification)</label><div class="radio-group"><div><input type="radio" name="mainMur" value="OK" required> OK</div><div><input type="radio" name="mainMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>matière (Etat de rebut)</label><div class="radio-group"><div><input type="radio" name="matiereMur" value="OK" required> OK</div><div><input type="radio" name="matiereMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (OK démarrage)</label><div class="radio-group"><div><input type="radio" name="demarrageMur" value="OK" required> OK</div><div><input type="radio" name="demarrageMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (Dossier de Fabrication)</label><div class="radio-group"><div><input type="radio" name="dossierMur" value="OK" required> OK</div><div><input type="radio" name="dossierMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (Formulaire Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireMur" value="OK" required> OK</div><div><input type="radio" name="formulaireMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMur" value="OK" required> OK</div><div><input type="radio" name="hseMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMur" value="OK" required> OK</div><div><input type="radio" name="cinqSMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Mur qualité</label><select id="mur-select" required onchange="updateMurScore()"><option value="">Sélectionnez</option><option value="Mur qualite uap1">Mur qualité UAP1</option><option value="Mur qualite uap2">Mur qualité UAP2</option></select></div>
+                                <div class="question-group"><label>Main d'œuvre</label><div class="radio-group"><div><input type="radio" name="mainMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="mainMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>matière (Etat rebut)</label><div class="radio-group"><div><input type="radio" name="matiereMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="matiereMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (OK démarrage)</label><div class="radio-group"><div><input type="radio" name="demarrageMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="demarrageMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (Dossier)</label><div class="radio-group"><div><input type="radio" name="dossierMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="dossierMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="formulaireMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="hseMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
+                                <div class="question-group"><label>Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="cinqSMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
                                 <button type="button" class="btn-submit" onclick="soumettreMur()"><i class="fas fa-save"></i> Soumettre l'audit</button>
                             </form>
                             <div id="resultat-mur" class="resultat-card"></div>
@@ -876,28 +491,13 @@
                     </div>
                 </div>
 
-                <!-- Section Détails d'audit avec bouton d'export Excel -->
+                <!-- Section Détails d'audit -->
                 <div id="section-details" class="section">
                     <h1><i class="fas fa-list-alt"></i> Détails des audits</h1>
                     <div class="filter-bar">
-                        <div>
-                            <label>Filtrer par type :</label>
-                            <select id="filter-type" onchange="filterAudits()">
-                                <option value="all">Tous</option>
-                                <option value="Ligne">Ligne</option>
-                                <option value="Magasin">Magasin</option>
-                                <option value="Mur">Mur qualité</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Filtrer par UAP/Ligne :</label>
-                            <select id="filter-uap" onchange="filterAudits()">
-                                <option value="all">Tous</option>
-                            </select>
-                        </div>
-                        <button class="btn-excel" onclick="exportToExcel()">
-                            <i class="fas fa-file-excel"></i> Exporter Excel
-                        </button>
+                        <div><label>Filtrer par type :</label><select id="filter-type" onchange="filterAudits()"><option value="all">Tous</option><option value="Ligne">Ligne</option><option value="Magasin">Magasin</option><option value="Mur">Mur qualité</option></select></div>
+                        <div><label>Filtrer par UAP/Ligne :</label><select id="filter-uap" onchange="filterAudits()"><option value="all">Tous</option></select></div>
+                        <button class="btn-excel" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Exporter Excel</button>
                     </div>
                     <div class="auditor-table">
                         <table id="audit-table">
@@ -949,7 +549,7 @@
         let isLoginMode = true;
         let isForgotPasswordMode = false;
         let audits = [];
-        let chartAudits, chartQuestions;
+        let chartAudits, chartQuestions, chartRepartition, chartPerQuestion;
 
         // Stats dashboard
         const statTotalAudits = document.getElementById('stat-total-audits');
@@ -962,7 +562,7 @@
         const statBestScore = document.getElementById('stat-best-score');
         const statWorstScore = document.getElementById('stat-worst-score');
 
-        // ---- Fonctions d'authentification ----
+        // Fonctions d'authentification
         function toggleForm() {
             isLoginMode = !isLoginMode;
             isForgotPasswordMode = false;
@@ -1044,7 +644,7 @@
             }
         }
 
-        // ---- Gestion de la sidebar ----
+        // Gestion de la sidebar
         function toggleSidebar() {
             sidebar.classList.toggle('open');
             if (window.innerWidth >= 1024) {
@@ -1071,7 +671,7 @@
             }
         });
 
-        // ---- Navigation ----
+        // Navigation
         function switchSection(sectionName) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
             document.getElementById(`section-${sectionName}`).classList.add('active-section');
@@ -1086,7 +686,7 @@
             document.getElementById(`tab-${type}`).classList.add('active');
         }
 
-        // ---- Surveillance de l'état de connexion ----
+        // Surveillance de l'état de connexion
         auth.onAuthStateChanged((user) => {
             if (user) {
                 loginContainer.style.display = 'none';
@@ -1101,6 +701,8 @@
                     updateDashboardStats();
                     updateWorstResults();
                     updateCourbesCharts();
+                    updateRepartitionChart();
+                    updateQuestionChart();
                 });
             } else {
                 loginContainer.style.display = 'flex';
@@ -1109,22 +711,89 @@
             }
         });
 
-        // ---- Fonctions de soumission des audits (inchangées) ----
-        function soumettreLigne() {
+        // ---- Fonctions de mise à jour live du score ----
+        function updateLigneScore() {
             const questions = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
-            let ok=0, nok=0, na=0;
+            let ok = 0, nok = 0, na = 0, answered = 0;
             for(let q of questions) {
                 let radios = document.getElementsByName(q);
                 let val = null;
-                for(let r of radios) if(r.checked) { val=r.value; break; }
+                for(let r of radios) if(r.checked) { val = r.value; break; }
+                if(val) {
+                    answered++;
+                    if(val === 'OK') ok++;
+                    else if(val === 'NOK') nok++;
+                    else if(val === 'N/A') na++;
+                }
+            }
+            const totalAnswered = answered;
+            const eligible = totalAnswered - na;
+            const score = eligible > 0 ? (ok / eligible) * 100 : 0;
+            document.getElementById('ligne-answered').textContent = `${totalAnswered}/${questions.length}`;
+            document.getElementById('ligne-score').textContent = totalAnswered === questions.length ? score.toFixed(1) + '%' : 'En attente';
+            document.getElementById('ligne-progress').style.width = (totalAnswered / questions.length * 100) + '%';
+        }
+
+        function updateMagasinScore() {
+            const questions = ['qualifMag','idMag','instructionMag','stockageMag','formulaireMag','hseMag','cinqSMag','chariotMag'];
+            let ok = 0, nok = 0, na = 0, answered = 0;
+            for(let q of questions) {
+                let radios = document.getElementsByName(q);
+                let val = null;
+                for(let r of radios) if(r.checked) { val = r.value; break; }
+                if(val) {
+                    answered++;
+                    if(val === 'OK') ok++;
+                    else if(val === 'NOK') nok++;
+                    else if(val === 'N/A') na++;
+                }
+            }
+            const totalAnswered = answered;
+            const eligible = totalAnswered - na;
+            const score = eligible > 0 ? (ok / eligible) * 100 : 0;
+            document.getElementById('magasin-answered').textContent = `${totalAnswered}/${questions.length}`;
+            document.getElementById('magasin-score').textContent = totalAnswered === questions.length ? score.toFixed(1) + '%' : 'En attente';
+            document.getElementById('magasin-progress').style.width = (totalAnswered / questions.length * 100) + '%';
+        }
+
+        function updateMurScore() {
+            const questions = ['mainMur','matiereMur','demarrageMur','dossierMur','formulaireMur','hseMur','cinqSMur'];
+            let ok = 0, nok = 0, answered = 0;
+            for(let q of questions) {
+                let radios = document.getElementsByName(q);
+                let val = null;
+                for(let r of radios) if(r.checked) { val = r.value; break; }
+                if(val) {
+                    answered++;
+                    if(val === 'OK') ok++;
+                    else if(val === 'NOK') nok++;
+                }
+            }
+            const totalAnswered = answered;
+            const score = totalAnswered > 0 ? (ok / totalAnswered) * 100 : 0;
+            document.getElementById('mur-answered').textContent = `${totalAnswered}/${questions.length}`;
+            document.getElementById('mur-score').textContent = totalAnswered === questions.length ? score.toFixed(1) + '%' : 'En attente';
+            document.getElementById('mur-progress').style.width = (totalAnswered / questions.length * 100) + '%';
+        }
+
+        // ---- Fonctions de soumission des audits (avec enregistrement des réponses individuelles) ----
+        function soumettreLigne() {
+            const questions = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
+            let ok=0, nok=0, na=0;
+            let reponses = {};
+            for(let q of questions) {
+                let radios = document.getElementsByName(q);
+                let val = null;
+                for(let r of radios) if(r.checked) { val = r.value; break; }
                 if(!val) { alert('Répondez à toutes les questions'); return; }
+                reponses[q] = val;
                 if(val==='OK') ok++;
                 else if(val==='NOK') nok++;
                 else if(val==='N/A') na++;
             }
             const date = document.getElementById('date-ligne').value;
             const zone = document.getElementById('zone-ligne').value;
-            const uap = document.querySelector('input[name="uapLigne"]:checked')?.value;
+            const uap = document.getElementById('uap-ligne').value;
             if(!date || !zone || !uap) { alert('Remplissez date, zone et UAP'); return; }
             const total = questions.length;
             const eligible = total - na;
@@ -1154,6 +823,7 @@
                     nokCount: nok,
                     naCount: na,
                     totalQuestions: total,
+                    reponses: reponses,
                     detail: detail,
                     uid: user.uid,
                     timestamp: firebase.database.ServerValue.TIMESTAMP
@@ -1164,11 +834,13 @@
         function soumettreMagasin() {
             const questions = ['qualifMag','idMag','instructionMag','stockageMag','formulaireMag','hseMag','cinqSMag','chariotMag'];
             let ok=0, nok=0, na=0;
+            let reponses = {};
             for(let q of questions) {
                 let radios = document.getElementsByName(q);
                 let val = null;
-                for(let r of radios) if(r.checked) { val=r.value; break; }
+                for(let r of radios) if(r.checked) { val = r.value; break; }
                 if(!val) { alert('Répondez à toutes les questions'); return; }
+                reponses[q] = val;
                 if(val==='OK') ok++;
                 else if(val==='NOK') nok++;
                 else if(val==='N/A') na++;
@@ -1204,6 +876,7 @@
                     nokCount: nok,
                     naCount: na,
                     totalQuestions: total,
+                    reponses: reponses,
                     detail: detail,
                     uid: user.uid,
                     timestamp: firebase.database.ServerValue.TIMESTAMP
@@ -1214,11 +887,13 @@
         function soumettreMur() {
             const questions = ['mainMur','matiereMur','demarrageMur','dossierMur','formulaireMur','hseMur','cinqSMur'];
             let ok=0, nok=0;
+            let reponses = {};
             for(let q of questions) {
                 let radios = document.getElementsByName(q);
                 let val = null;
-                for(let r of radios) if(r.checked) { val=r.value; break; }
+                for(let r of radios) if(r.checked) { val = r.value; break; }
                 if(!val) { alert('Répondez à toutes les questions'); return; }
+                reponses[q] = val;
                 if(val==='OK') ok++;
                 else if(val==='NOK') nok++;
             }
@@ -1251,6 +926,7 @@
                     nokCount: nok,
                     naCount: 0,
                     totalQuestions: total,
+                    reponses: reponses,
                     detail: detail,
                     uid: user.uid,
                     timestamp: firebase.database.ServerValue.TIMESTAMP
@@ -1358,7 +1034,7 @@
             uapSelect.innerHTML = '<option value="all">Tous</option>' + allUaps.map(u => `<option value="${u}" ${u===currentUap?'selected':''}>${u}</option>`).join('');
         }
 
-        // ---- Export Excel (CSV) ----
+        // ---- Export Excel ----
         function exportToExcel() {
             const filterType = document.getElementById('filter-type').value;
             const filterUap = document.getElementById('filter-uap').value;
@@ -1371,23 +1047,20 @@
                 return;
             }
 
-            // Entêtes CSV
             const headers = ['Date', 'Type', 'UAP/Ligne', 'Score (%)', 'Détail'];
             const rows = filtered.map(a => [
                 a.date || '',
                 a.type || '',
                 a.uap || '',
                 (!isNaN(Number(a.score)) ? Number(a.score).toFixed(1) : ''),
-                (a.detail || '').replace(/"/g, '""') // échapper les guillemets pour CSV
+                (a.detail || '').replace(/"/g, '""')
             ]);
 
-            // Création du contenu CSV
             let csvContent = headers.join(';') + '\n';
             rows.forEach(row => {
                 csvContent += row.map(cell => `"${cell}"`).join(';') + '\n';
             });
 
-            // Téléchargement
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
@@ -1399,7 +1072,7 @@
             document.body.removeChild(link);
         }
 
-        // ---- Mise à jour des graphiques ----
+        // ---- Graphiques ----
         function updateCourbesCharts() {
             const periodeType = document.getElementById('periode-type').value;
             const filtre = document.getElementById('courbes-filtre').value;
@@ -1467,10 +1140,161 @@
             });
         }
 
+        function updateRepartitionChart() {
+            const types = ['Ligne', 'Magasin', 'Mur'];
+            const okData = [], nokData = [], naData = [];
+
+            types.forEach(type => {
+                const auditsType = audits.filter(a => a.type === type);
+                let ok = 0, nok = 0, na = 0;
+                auditsType.forEach(a => {
+                    ok += a.okCount || 0;
+                    nok += a.nokCount || 0;
+                    na += a.naCount || 0;
+                });
+                okData.push(ok);
+                nokData.push(nok);
+                naData.push(na);
+            });
+
+            if (chartRepartition) chartRepartition.destroy();
+            const ctx = document.getElementById('chart-repartition-type').getContext('2d');
+            chartRepartition = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: types,
+                    datasets: [
+                        { label: 'OK', data: okData, backgroundColor: '#38a169', borderRadius: 8 },
+                        { label: 'NOK', data: nokData, backgroundColor: '#e53e3e', borderRadius: 8 },
+                        { label: 'N/A', data: naData, backgroundColor: '#d69e2e', borderRadius: 8 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: 'Répartition des réponses par type d\'audit', font: { size: 16 } }
+                    },
+                    scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+                }
+            });
+        }
+
+        // Graphique par question (basé sur les réponses individuelles)
+        function updateQuestionChart() {
+            const type = document.getElementById('question-type-select').value;
+            let questionsLabels = [];
+            let questionKeys = [];
+            if (type === 'Ligne') {
+                questionsLabels = [
+                    'Main d\'œuvre (Qualification)',
+                    'Matière (Etat rebut)',
+                    'Méthode (OK démarrage)',
+                    'Méthode (Dossier)',
+                    'Méthode (Formulaire)',
+                    'Méthode (HSE)',
+                    'Milieu (5S)',
+                    'Machine (Prév. niveau 1)',
+                    'Prév. niveau 2',
+                    'POKA YOKE'
+                ];
+                questionKeys = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
+            } else if (type === 'Magasin') {
+                questionsLabels = [
+                    'Qualification',
+                    'Identification',
+                    'Méthode (Instruction)',
+                    'Méthode (Stockage)',
+                    'Méthode (Formulaire)',
+                    'Méthode (HSE)',
+                    'Milieu (5S)',
+                    'Chariot élévateur'
+                ];
+                questionKeys = ['qualifMag','idMag','instructionMag','stockageMag','formulaireMag','hseMag','cinqSMag','chariotMag'];
+            } else { // Mur
+                questionsLabels = [
+                    'Main d\'œuvre',
+                    'Matière (Etat rebut)',
+                    'Méthode (OK démarrage)',
+                    'Méthode (Dossier)',
+                    'Méthode (Formulaire)',
+                    'Méthode (HSE)',
+                    'Milieu (5S)'
+                ];
+                questionKeys = ['mainMur','matiereMur','demarrageMur','dossierMur','formulaireMur','hseMur','cinqSMur'];
+            }
+
+            let okCounts = new Array(questionKeys.length).fill(0);
+            let nokCounts = new Array(questionKeys.length).fill(0);
+            let naCounts = new Array(questionKeys.length).fill(0);
+
+            const filteredAudits = audits.filter(a => a.type === type);
+            filteredAudits.forEach(a => {
+                if (a.reponses) {
+                    for (let i = 0; i < questionKeys.length; i++) {
+                        const key = questionKeys[i];
+                        const val = a.reponses[key];
+                        if (val === 'OK') okCounts[i]++;
+                        else if (val === 'NOK') nokCounts[i]++;
+                        else if (val === 'N/A') naCounts[i]++;
+                    }
+                }
+            });
+
+            let okPercent = [];
+            let nokPercent = [];
+            let naPercent = [];
+            for (let i = 0; i < questionKeys.length; i++) {
+                const total = okCounts[i] + nokCounts[i] + naCounts[i];
+                if (total > 0) {
+                    okPercent.push((okCounts[i] / total) * 100);
+                    nokPercent.push((nokCounts[i] / total) * 100);
+                    naPercent.push((naCounts[i] / total) * 100);
+                } else {
+                    okPercent.push(0);
+                    nokPercent.push(0);
+                    naPercent.push(0);
+                }
+            }
+
+            if (chartPerQuestion) chartPerQuestion.destroy();
+            const ctx = document.getElementById('chart-questions-per-question').getContext('2d');
+            chartPerQuestion = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: questionsLabels,
+                    datasets: [
+                        { label: 'OK (%)', data: okPercent, backgroundColor: '#38a169', borderRadius: 8 },
+                        { label: 'NOK (%)', data: nokPercent, backgroundColor: '#e53e3e', borderRadius: 8 },
+                        { label: 'N/A (%)', data: naPercent, backgroundColor: '#d69e2e', borderRadius: 8 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        title: { display: true, text: `Pourcentage par question - ${type}`, font: { size: 16 } }
+                    },
+                    scales: {
+                        x: { stacked: true, beginAtZero: true, max: 100, title: { display: true, text: 'Pourcentage' } },
+                        y: { stacked: true }
+                    }
+                }
+            });
+        }
+
         // ---- Déconnexion ----
         function logout() {
             auth.signOut().catch(err => alert('Erreur lors de la déconnexion.'));
         }
+
+        // ---- Initialisation des scores live au chargement ----
+        window.addEventListener('load', function() {
+            updateLigneScore();
+            updateMagasinScore();
+            updateMurScore();
+        });
 
         // ---- Gestion de la touche Entrée sur le formulaire de connexion ----
         document.addEventListener('keypress', (e) => {
