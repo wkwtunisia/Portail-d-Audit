@@ -1,16 +1,25 @@
 <!DOCTYPE html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="WKW Audit">
     <meta name="theme-color" content="#c0392b">
-    
-    <!-- Dynamically create manifest -->
-    <link rel="manifest" id="manifest-link">
-    
+    <link rel="manifest" href='data:application/manifest+json,{
+        "name": "WKW Automotive Audit",
+        "short_name": "WKW Audit",
+        "start_url": ".",
+        "display": "standalone",
+        "background_color": "#f1f5f9",
+        "theme_color": "#c0392b",
+        "orientation": "portrait-primary",
+        "icons": [
+            {"src": "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png", "sizes": "192x192", "type": "image/png"},
+            {"src": "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png", "sizes": "512x512", "type": "image/png"}
+        ]
+    }'>
     <title>WKW Automotive | Audit Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,38 +27,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-    
-    <script>
-        // Create manifest dynamically to avoid encoding issues
-        const manifest = {
-            name: "WKW Automotive Audit",
-            short_name: "WKW Audit",
-            start_url: ".",
-            display: "standalone",
-            background_color: "#f1f5f9",
-            theme_color: "#c0392b",
-            orientation: "portrait-primary",
-            icons: [
-                {
-                    src: "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png",
-                    sizes: "192x192",
-                    type: "image/png"
-                },
-                {
-                    src: "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png",
-                    sizes: "512x512",
-                    type: "image/png"
-                }
-            ]
-        };
-        
-        // Convert to JSON string and create data URI
-        const manifestString = JSON.stringify(manifest);
-        const manifestLink = document.getElementById('manifest-link');
-        manifestLink.href = 'data:application/manifest+json,' + encodeURIComponent(manifestString);
-    </script>
     <style>
-        /* [All CSS styles remain exactly the same as before] */
         * {
             margin: 0;
             padding: 0;
@@ -355,6 +333,31 @@
             transform: translateX(8px);
         }
 
+        /* User Info in Sidebar */
+        .user-info {
+            padding: 20px 15px;
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .user-name {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .user-role {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            background: var(--primary);
+        }
+
+        .user-role.admin { background: var(--purple); }
+        .user-role.manager { background: var(--info); }
+        .user-role.auditor { background: var(--success); }
+
         /* Main Content */
         .main-wrapper {
             flex: 1;
@@ -650,7 +653,8 @@
         }
 
         .input-group input,
-        .input-group select {
+        .input-group select,
+        .input-group textarea {
             width: 100%;
             padding: 16px 18px;
             border: 2px solid var(--gray-light);
@@ -661,18 +665,183 @@
         }
 
         body.dark .input-group input,
-        body.dark .input-group select {
+        body.dark .input-group select,
+        body.dark .input-group textarea {
             background: var(--dark-light);
             border-color: #334155;
             color: var(--light);
         }
 
         .input-group input:focus,
-        .input-group select:focus {
+        .input-group select:focus,
+        .input-group textarea:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.1);
             transform: translateY(-2px);
+        }
+
+        /* Comment Section */
+        .comment-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(192,57,43,0.05);
+            border-radius: var(--border-radius-md);
+            border-left: 3px solid var(--primary);
+        }
+
+        .comment-item {
+            background: white;
+            padding: 15px;
+            border-radius: var(--border-radius-md);
+            margin-bottom: 10px;
+            border: 1px solid var(--gray-light);
+        }
+
+        body.dark .comment-item {
+            background: var(--dark-light);
+            border-color: #334155;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .comment-text {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .comment-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-open { background: var(--warning-light); color: var(--warning); }
+        .status-progress { background: var(--info-light); color: var(--info); }
+        .status-closed { background: var(--success-light); color: var(--success); }
+
+        .add-comment-btn {
+            background: var(--primary-light);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--border-radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .add-comment-btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: var(--border-radius-xl);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        body.dark .modal-content {
+            background: var(--dark-light);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        /* User Management */
+        .user-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: white;
+            border-radius: var(--border-radius-md);
+            margin-bottom: 10px;
+            border: 1px solid var(--gray-light);
+        }
+
+        body.dark .user-row {
+            background: var(--dark-light);
+            border-color: #334155;
+        }
+
+        .user-email {
+            font-weight: 600;
+        }
+
+        .user-role-select {
+            padding: 8px 12px;
+            border-radius: var(--border-radius-md);
+            border: 2px solid var(--gray-light);
+            background: white;
+        }
+
+        body.dark .user-role-select {
+            background: var(--dark-light);
+            color: var(--light);
+            border-color: #334155;
+        }
+
+        .delete-user-btn {
+            color: var(--danger);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .delete-user-btn:hover {
+            background: var(--danger-light);
+            transform: scale(1.1);
         }
 
         /* Week Selector */
@@ -871,6 +1040,23 @@
         td:last-child {
             border-top-right-radius: var(--border-radius-md);
             border-bottom-right-radius: var(--border-radius-md);
+        }
+
+        /* Comment Indicator */
+        .has-comment {
+            color: var(--info);
+            margin-right: 5px;
+            cursor: pointer;
+        }
+
+        .comment-badge {
+            background: var(--info-light);
+            color: var(--info);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 5px;
         }
 
         /* Badges */
@@ -1137,6 +1323,16 @@
             display: none !important;
         }
 
+        /* Admin Only Elements */
+        .admin-only {
+            display: none;
+        }
+
+        body[data-role="admin"] .admin-only,
+        body[data-role="manager"] .manager-only {
+            display: block;
+        }
+
         /* Animations */
         @keyframes slideUp {
             from {
@@ -1313,10 +1509,21 @@
                 <i class="fa-solid fa-chart-bar"></i>
                 <span>Analyses</span>
             </div>
+            <!-- Admin only link -->
+            <div class="nav-item admin-only" data-page="usersPage" id="usersPageLink">
+                <i class="fa-solid fa-users-gear"></i>
+                <span>Gestion Utilisateurs</span>
+            </div>
             <div class="nav-item" style="margin-top: auto;" id="logoutBtn">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 <span>Déconnexion</span>
             </div>
+        </div>
+        
+        <!-- User Info in Sidebar -->
+        <div class="user-info" id="userInfo">
+            <div class="user-name" id="userName">Chargement...</div>
+            <div class="user-role" id="userRole">Auditeur</div>
         </div>
     </nav>
 
@@ -1590,6 +1797,7 @@
                                 <th>Score</th>
                                 <th>Auditeur</th>
                                 <th>Résultat</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="historyTableBody"></tbody>
@@ -1724,6 +1932,104 @@
                 </div>
             </div>
         </div>
+
+        <!-- Users Management Page (Admin Only) -->
+        <div id="usersPage" class="page-section">
+            <div class="glass-panel">
+                <h2 style="margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-users-gear" style="color: var(--primary);"></i>
+                    Gestion des Utilisateurs
+                </h2>
+
+                <div class="filter-panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h4>Liste des utilisateurs</h4>
+                        <button class="export-btn" onclick="showAddUserModal()">
+                            <i class="fa-solid fa-user-plus"></i> Ajouter un utilisateur
+                        </button>
+                    </div>
+
+                    <div id="usersList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeCommentModal()">&times;</span>
+            <h3 class="modal-title">Ajouter un commentaire</h3>
+            
+            <input type="hidden" id="commentAuditId">
+            <input type="hidden" id="commentCriterionId">
+            
+            <div class="input-group">
+                <label>Critère</label>
+                <input type="text" id="commentCriterionName" readonly disabled>
+            </div>
+            
+            <div class="input-group">
+                <label>Commentaire</label>
+                <textarea id="commentText" rows="4" placeholder="Décrivez le problème et l'action corrective..."></textarea>
+            </div>
+            
+            <div class="input-group">
+                <label>Statut</label>
+                <select id="commentStatus">
+                    <option value="open">Ouvert - À traiter</option>
+                    <option value="in-progress">En cours de traitement</option>
+                    <option value="closed">Fermé - Résolu</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Assigné à</label>
+                <input type="text" id="commentAssignedTo" placeholder="Email de la personne responsable">
+            </div>
+            
+            <div class="input-group">
+                <label>Date d'échéance</label>
+                <input type="date" id="commentDueDate">
+            </div>
+            
+            <button class="login-btn" onclick="saveComment()">Sauvegarder le commentaire</button>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeAddUserModal()">&times;</span>
+            <h3 class="modal-title">Ajouter un utilisateur</h3>
+            
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="newUserEmail" placeholder="email@wkw.fr">
+            </div>
+            
+            <div class="input-group">
+                <label>Mot de passe temporaire</label>
+                <input type="text" id="newUserPassword" value="Wkw2024!" readonly>
+                <small style="color: var(--gray);">L'utilisateur devra changer son mot de passe à la première connexion</small>
+            </div>
+            
+            <div class="input-group">
+                <label>Rôle</label>
+                <select id="newUserRole">
+                    <option value="auditor">Auditeur</option>
+                    <option value="manager">Manager</option>
+                    <option value="admin">Administrateur</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Nom complet</label>
+                <input type="text" id="newUserName" placeholder="Prénom NOM">
+            </div>
+            
+            <button class="login-btn" onclick="createUser()">Créer l'utilisateur</button>
+        </div>
     </div>
 
     <script>
@@ -1741,7 +2047,9 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const auditsRef = firebase.database().ref('audits');
+        const database = firebase.database();
+        const auditsRef = database.ref('audits');
+        const usersRef = database.ref('users');
 
         // Criteria lists for each audit type
         const productionCriteria = [
@@ -1767,6 +2075,9 @@
         const itemsPerPage = 10;
         let charts = {};
         let currentAuditType = 'production';
+        let currentUser = null;
+        let currentUserRole = 'auditor';
+        let currentUserData = null;
 
         // Analytics filters
         let analyticsFilters = {
@@ -1794,7 +2105,9 @@
             loading.style.display = 'block';
 
             auth.signInWithEmailAndPassword(email, password)
-                .then(() => {
+                .then((userCredential) => {
+                    currentUser = userCredential.user;
+                    loadUserRole(currentUser.uid);
                     showToast("Connexion réussie", false);
                 })
                 .catch(error => {
@@ -1821,6 +2134,41 @@
                 });
         }
 
+        function loadUserRole(uid) {
+            usersRef.child(uid).once('value')
+                .then(snapshot => {
+                    const userData = snapshot.val();
+                    if (userData) {
+                        currentUserRole = userData.role || 'auditor';
+                        currentUserData = userData;
+                        document.body.setAttribute('data-role', currentUserRole);
+                        
+                        // Update user info in sidebar
+                        document.getElementById('userName').textContent = userData.name || currentUser.email;
+                        const roleElement = document.getElementById('userRole');
+                        roleElement.textContent = getRoleLabel(currentUserRole);
+                        roleElement.className = `user-role ${currentUserRole}`;
+                        
+                        // Show/hide admin links
+                        if (currentUserRole === 'admin') {
+                            document.getElementById('usersPageLink').style.display = 'flex';
+                        } else {
+                            document.getElementById('usersPageLink').style.display = 'none';
+                        }
+                        
+                        initSystem();
+                    }
+                });
+        }
+
+        function getRoleLabel(role) {
+            switch(role) {
+                case 'admin': return 'Administrateur';
+                case 'manager': return 'Manager';
+                default: return 'Auditeur';
+            }
+        }
+
         function resetPassword() {
             const email = document.getElementById('user').value;
             if (!email) {
@@ -1840,6 +2188,7 @@
         function logout() { 
             auth.signOut().then(() => {
                 showToast("Déconnexion réussie", false);
+                window.location.reload();
             });
         }
 
@@ -1849,13 +2198,27 @@
             
             auditsRef.on('value', (snapshot) => {
                 db = snapshot.val() ? Object.values(snapshot.val()) : [];
-                filteredDb = [...db];
-                analyticsFilteredDb = [...db];
+                
+                // Filter based on user role
+                if (currentUserRole === 'auditor') {
+                    // Auditors only see their own audits
+                    filteredDb = db.filter(a => a.createdBy === currentUser.email);
+                } else {
+                    // Managers and admins see all
+                    filteredDb = [...db];
+                }
+                
+                analyticsFilteredDb = [...filteredDb];
                 updateDashboard();
                 loadHistory();
                 renderAnalytics();
                 updateActiveFiltersDisplay();
             });
+
+            // Load users if admin
+            if (currentUserRole === 'admin') {
+                loadUsers();
+            }
 
             // Setup event listeners
             setupEventListeners();
@@ -1894,6 +2257,175 @@
             });
         }
 
+        // ============== USER MANAGEMENT ==============
+        function loadUsers() {
+            usersRef.on('value', (snapshot) => {
+                const users = snapshot.val() || {};
+                displayUsers(users);
+            });
+        }
+
+        function displayUsers(users) {
+            const container = document.getElementById('usersList');
+            let html = '';
+            
+            Object.entries(users).forEach(([uid, userData]) => {
+                html += `
+                    <div class="user-row">
+                        <div>
+                            <div class="user-email">${userData.email || 'N/A'}</div>
+                            <small style="color: var(--gray);">${userData.name || ''}</small>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <select class="user-role-select" onchange="updateUserRole('${uid}', this.value)">
+                                <option value="auditor" ${userData.role === 'auditor' ? 'selected' : ''}>Auditeur</option>
+                                <option value="manager" ${userData.role === 'manager' ? 'selected' : ''}>Manager</option>
+                                <option value="admin" ${userData.role === 'admin' ? 'selected' : ''}>Admin</option>
+                            </select>
+                            ${uid !== currentUser.uid ? `
+                                <i class="fa-solid fa-trash-can delete-user-btn" onclick="deleteUser('${uid}')"></i>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function showAddUserModal() {
+            document.getElementById('addUserModal').classList.add('active');
+        }
+
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').classList.remove('active');
+        }
+
+        function createUser() {
+            const email = document.getElementById('newUserEmail').value;
+            const password = document.getElementById('newUserPassword').value;
+            const role = document.getElementById('newUserRole').value;
+            const name = document.getElementById('newUserName').value;
+
+            if (!email || !name) {
+                showToast("Email et nom requis", true);
+                return;
+            }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    // Store user data in database
+                    return usersRef.child(user.uid).set({
+                        email: email,
+                        name: name,
+                        role: role,
+                        createdAt: firebase.database.ServerValue.TIMESTAMP,
+                        createdBy: currentUser.email
+                    });
+                })
+                .then(() => {
+                    showToast("Utilisateur créé avec succès", false);
+                    closeAddUserModal();
+                    
+                    // Send password reset email to force change
+                    auth.sendPasswordResetEmail(email);
+                })
+                .catch(error => {
+                    showToast("Erreur: " + error.message, true);
+                });
+        }
+
+        function updateUserRole(uid, newRole) {
+            usersRef.child(uid).update({ role: newRole })
+                .then(() => {
+                    showToast("Rôle mis à jour", false);
+                })
+                .catch(error => {
+                    showToast("Erreur: " + error.message, true);
+                });
+        }
+
+        function deleteUser(uid) {
+            if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
+            
+            // Note: This requires a Firebase Cloud Function to delete auth users
+            // For now, just remove from database
+            usersRef.child(uid).remove()
+                .then(() => {
+                    showToast("Utilisateur supprimé", false);
+                })
+                .catch(error => {
+                    showToast("Erreur: " + error.message, true);
+                });
+        }
+
+        // ============== COMMENT FUNCTIONS ==============
+        function showCommentModal(auditId, criterionId, criterionName) {
+            document.getElementById('commentAuditId').value = auditId;
+            document.getElementById('commentCriterionId').value = criterionId;
+            document.getElementById('commentCriterionName').value = criterionName;
+            document.getElementById('commentText').value = '';
+            document.getElementById('commentStatus').value = 'open';
+            document.getElementById('commentAssignedTo').value = '';
+            document.getElementById('commentDueDate').value = '';
+            
+            document.getElementById('commentModal').classList.add('active');
+        }
+
+        function closeCommentModal() {
+            document.getElementById('commentModal').classList.remove('active');
+        }
+
+        function saveComment() {
+            const auditId = document.getElementById('commentAuditId').value;
+            const criterionId = document.getElementById('commentCriterionId').value;
+            const text = document.getElementById('commentText').value;
+            const status = document.getElementById('commentStatus').value;
+            const assignedTo = document.getElementById('commentAssignedTo').value;
+            const dueDate = document.getElementById('commentDueDate').value;
+
+            if (!text) {
+                showToast("Veuillez entrer un commentaire", true);
+                return;
+            }
+
+            const comment = {
+                text: text,
+                status: status,
+                assignedTo: assignedTo,
+                dueDate: dueDate,
+                createdAt: firebase.database.ServerValue.TIMESTAMP,
+                createdBy: currentUser.email
+            };
+
+            // Find the audit in the database
+            const auditRef = auditsRef.orderByKey().equalTo(auditId).once('value')
+                .then(snapshot => {
+                    snapshot.forEach(childSnapshot => {
+                        const key = childSnapshot.key;
+                        const commentsPath = `comments.${criterionId}`;
+                        auditsRef.child(key).child('comments').child(criterionId).set(comment);
+                    });
+                })
+                .then(() => {
+                    showToast("Commentaire ajouté", false);
+                    closeCommentModal();
+                })
+                .catch(error => {
+                    showToast("Erreur: " + error.message, true);
+                });
+        }
+
+        function getCommentsForAudit(audit) {
+            if (!audit.comments) return [];
+            return Object.entries(audit.comments).map(([criterionId, comment]) => ({
+                criterionId,
+                ...comment
+            }));
+        }
+
         // ============== AUDIT FORM INIT ==============
         function initAuditForms() {
             // Production form
@@ -1921,7 +2453,7 @@
                     <td>
                         <div class="custom-radio-group">
                             <div class="radio-btn"><input type="radio" id="mag_ok${id}" name="mag_q${id}" value="1" onchange="calcScore()"><label for="mag_ok${id}" class="ok-label"><i class="fa-solid fa-check"></i> OK</label></div>
-                            <div class="radio-btn"><input type="radio" id="mag_nok${id}" name="mag_q${id}" value="0" onchange="calcScore()"><label for="mag_nok${id}" class="nok-label"><i class="fa-solid fa-xmark"></i> NOK</label></div>
+                            <div class="radio-btn"><input type="radio" id="mag_nok${id}" name="mag_q${id}` value="0" onchange="calcScore()"><label for="mag_nok${id}" class="nok-label"><i class="fa-solid fa-xmark"></i> NOK</label></div>
                             <div class="radio-btn"><input type="radio" id="mag_na${id}" name="mag_q${id}" value="na" onchange="calcScore()"><label for="mag_na${id}" class="na-label">N/A</label></div>
                         </div>
                     </td>
@@ -1975,7 +2507,8 @@
                 'dashboardPage': 'Dashboard Qualité',
                 'auditPage': 'Nouvel Audit',
                 'historyPage': 'Historique des Audits',
-                'analyticsPage': 'Analyses & Statistiques'
+                'analyticsPage': 'Analyses & Statistiques',
+                'usersPage': 'Gestion des Utilisateurs'
             };
             document.getElementById('pageTitle').innerText = titles[pageId] || 'WKW Audit';
             
@@ -1985,6 +2518,11 @@
             // Render analytics if needed
             if (pageId === 'analyticsPage') {
                 setTimeout(() => renderAnalytics(), 100);
+            }
+            
+            // Load users if admin page
+            if (pageId === 'usersPage' && currentUserRole === 'admin') {
+                loadUsers();
             }
         }
 
@@ -2106,7 +2644,8 @@
                 score: scoreStr,
                 isPass: scoreNum >= 80,
                 createdAt: firebase.database.ServerValue.TIMESTAMP,
-                createdBy: auth.currentUser ? auth.currentUser.email : 'unknown'
+                createdBy: currentUser.email,
+                comments: {} // Initialize empty comments object
             };
 
             const newRef = auditsRef.push();
@@ -2122,7 +2661,10 @@
 
         // ============== DASHBOARD FUNCTIONS ==============
         function updateDashboard() {
-            if (db.length === 0) {
+            const dataToUse = currentUserRole === 'auditor' ? 
+                db.filter(a => a.createdBy === currentUser.email) : db;
+            
+            if (dataToUse.length === 0) {
                 document.getElementById('kpi-total').textContent = '0';
                 document.getElementById('kpi-conformite').textContent = '0%';
                 document.getElementById('kpi-actions').textContent = '0';
@@ -2143,18 +2685,18 @@
                 return;
             }
 
-            const totalAudits = db.length;
-            const conforming = db.filter(a => parseFloat(a.score) >= 80).length;
+            const totalAudits = dataToUse.length;
+            const conforming = dataToUse.filter(a => parseFloat(a.score) >= 80).length;
             const conformite = ((conforming / totalAudits) * 100).toFixed(1);
-            const actionsRequises = db.filter(a => parseFloat(a.score) < 80).length;
-            const totalNOK = db.reduce((sum, a) => sum + parseInt(a.nok || 0), 0);
+            const actionsRequises = dataToUse.filter(a => parseFloat(a.score) < 80).length;
+            const totalNOK = dataToUse.reduce((sum, a) => sum + parseInt(a.nok || 0), 0);
 
             document.getElementById('kpi-total').textContent = totalAudits;
             document.getElementById('kpi-conformite').textContent = conformite + '%';
             document.getElementById('kpi-actions').textContent = actionsRequises;
             document.getElementById('kpi-nok').textContent = totalNOK;
 
-            const sortedByScore = [...db].sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
+            const sortedByScore = [...dataToUse].sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
             const bestScore = sortedByScore[0];
             const worstScore = sortedByScore[sortedByScore.length - 1];
 
@@ -2168,7 +2710,7 @@
             document.getElementById('worst-score-uap').textContent = worstScore.uap || '-';
             document.getElementById('worst-score-ligne').textContent = worstScore.ligne || '-';
 
-            const recentAlerts = db.filter(a => parseFloat(a.score) < 80)
+            const recentAlerts = dataToUse.filter(a => parseFloat(a.score) < 80)
                 .sort((a, b) => new Date(b.date) - new Date(a.date))
                 .slice(0, 5);
 
@@ -2190,7 +2732,7 @@
             }).join('') || '<div class="no-data"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i><p>Aucune alerte récente</p></div>';
 
             const uapStats = {};
-            db.forEach(a => {
+            dataToUse.forEach(a => {
                 if (!uapStats[a.uap]) uapStats[a.uap] = { sum:0, count:0 };
                 uapStats[a.uap].sum += parseFloat(a.score);
                 uapStats[a.uap].count++;
@@ -2221,7 +2763,14 @@
             const ligne = document.getElementById('filterLigne').value.toLowerCase();
             const type = document.getElementById('filterType').value;
 
-            filteredDb = db.filter(a => {
+            let baseData = [...db];
+            
+            // Apply role-based filtering first
+            if (currentUserRole === 'auditor') {
+                baseData = baseData.filter(a => a.createdBy === currentUser.email);
+            }
+
+            filteredDb = baseData.filter(a => {
                 if (startDate && a.date < startDate) return false;
                 if (endDate && a.date > endDate) return false;
                 if (scoreMin && parseFloat(a.score) < parseFloat(scoreMin)) return false;
@@ -2246,14 +2795,20 @@
             document.getElementById('filterUAP').value = '';
             document.getElementById('filterLigne').value = '';
             document.getElementById('filterType').value = '';
-            filteredDb = [...db];
+            
+            if (currentUserRole === 'auditor') {
+                filteredDb = db.filter(a => a.createdBy === currentUser.email);
+            } else {
+                filteredDb = [...db];
+            }
+            
             currentPage = 1;
             loadHistory();
         }
 
         function loadHistory() {
             if (filteredDb.length === 0) {
-                document.getElementById('historyTableBody').innerHTML = '<tr><td colspan="10" class="no-data">Aucun audit trouvé</td></tr>';
+                document.getElementById('historyTableBody').innerHTML = '<tr><td colspan="11" class="no-data">Aucun audit trouvé</td></tr>';
                 document.getElementById('pagination').innerHTML = '';
                 return;
             }
@@ -2264,6 +2819,9 @@
 
             document.getElementById('historyTableBody').innerHTML = pageData.map(a => {
                 const typeColor = a.type === 'Magasin' ? '#f59e0b' : a.type === 'Mur Qualité' ? '#8e44ad' : '#3b82f6';
+                const comments = a.comments ? Object.keys(a.comments).length : 0;
+                const canEdit = currentUserRole === 'admin' || currentUserRole === 'manager' || a.createdBy === currentUser.email;
+                
                 return `<tr>
                     <td><strong>#${a.auditId || ''}</strong></td>
                     <td><span style="background:${typeColor}; color:white; padding:6px 14px; border-radius:30px; font-size:12px; font-weight:600;">${a.type || 'Prod'}</span></td>
@@ -2275,6 +2833,15 @@
                     <td style="font-weight:700; color:${parseFloat(a.score)>=80?'var(--success)':'var(--danger)'}">${a.score}</td>
                     <td>${a.createdBy ? a.createdBy.split('@')[0] : ''}</td>
                     <td><span class="badge ${parseFloat(a.score)>=80?'badge-success':'badge-danger'}">${parseFloat(a.score)>=80?'✓ Conforme':'⚠ Action'}</span></td>
+                    <td>
+                        ${comments > 0 ? 
+                            `<i class="fa-regular fa-comment has-comment" title="${comments} commentaire(s)"></i>` : 
+                            ''
+                        }
+                        <button class="add-comment-btn" onclick="showCommentModal('${a.auditId}', '1', 'Critère 1')">
+                            <i class="fa-regular fa-plus"></i>
+                        </button>
+                    </td>
                 </tr>`;
             }).join('');
 
@@ -2323,7 +2890,14 @@
                 weekEnd = today.toISOString().split('T')[0];
             }
 
-            analyticsFilteredDb = db.filter(a => {
+            let baseData = [...db];
+            
+            // Apply role-based filtering first
+            if (currentUserRole === 'auditor') {
+                baseData = baseData.filter(a => a.createdBy === currentUser.email);
+            }
+
+            analyticsFilteredDb = baseData.filter(a => {
                 if (analyticsFilters.dateStart && a.date < analyticsFilters.dateStart) return false;
                 if (analyticsFilters.dateEnd && a.date > analyticsFilters.dateEnd) return false;
                 if (weekStart && a.date < weekStart) return false;
@@ -2352,7 +2926,12 @@
                 week: ''
             };
             
-            analyticsFilteredDb = [...db];
+            if (currentUserRole === 'auditor') {
+                analyticsFilteredDb = db.filter(a => a.createdBy === currentUser.email);
+            } else {
+                analyticsFilteredDb = [...db];
+            }
+            
             updateActiveFiltersDisplay();
             renderAnalytics();
         }
@@ -2415,7 +2994,8 @@
         }
 
         function renderAnalytics() {
-            const dataToUse = analyticsFilteredDb.length > 0 ? analyticsFilteredDb : db;
+            const dataToUse = analyticsFilteredDb.length > 0 ? analyticsFilteredDb : 
+                (currentUserRole === 'auditor' ? db.filter(a => a.createdBy === currentUser.email) : db);
             
             if (dataToUse.length === 0) {
                 document.querySelectorAll('#analyticsPage canvas').forEach(canvas => {
@@ -2689,10 +3269,11 @@
         auth.onAuthStateChanged(user => {
             const overlay = document.getElementById('loginOverlay');
             if (user) {
+                currentUser = user;
+                loadUserRole(user.uid);
                 overlay.style.opacity = '0';
                 setTimeout(() => {
                     overlay.style.display = 'none';
-                    initSystem();
                 }, 400);
                 showToast(`Connecté • ${user.email}`, false);
             } else {
@@ -2726,6 +3307,14 @@
         window.resetAnalyticsFilters = resetAnalyticsFilters;
         window.clearFilter = clearFilter;
         window.loadHistory = loadHistory;
+        window.showCommentModal = showCommentModal;
+        window.closeCommentModal = closeCommentModal;
+        window.saveComment = saveComment;
+        window.showAddUserModal = showAddUserModal;
+        window.closeAddUserModal = closeAddUserModal;
+        window.createUser = createUser;
+        window.updateUserRole = updateUserRole;
+        window.deleteUser = deleteUser;
         window.currentPage = currentPage;
     </script>
 </body>
