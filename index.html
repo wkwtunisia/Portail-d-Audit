@@ -7,27 +7,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="WKW Audit">
     <meta name="theme-color" content="#c0392b">
-    <link rel="manifest" href='data:application/manifest+json,{
-        "name": "WKW Automotive Audit",
-        "short_name": "WKW Audit",
-        "start_url": ".",
-        "display": "standalone",
-        "background_color": "#f1f5f9",
-        "theme_color": "#c0392b",
-        "orientation": "portrait-primary",
-        "icons": [
-            {
-                "src": "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png",
-                "sizes": "192x192",
-                "type": "image/png"
-            },
-            {
-                "src": "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png",
-                "sizes": "512x512",
-                "type": "image/png"
-            }
-        ]
-    }'>
+    
+    <!-- Dynamically create manifest -->
+    <link rel="manifest" id="manifest-link">
+    
     <title>WKW Automotive | Audit Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -35,6 +18,36 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Create manifest dynamically to avoid encoding issues
+        const manifest = {
+            name: "WKW Automotive Audit",
+            short_name: "WKW Audit",
+            start_url: ".",
+            display: "standalone",
+            background_color: "#f1f5f9",
+            theme_color: "#c0392b",
+            orientation: "portrait-primary",
+            icons: [
+                {
+                    src: "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png",
+                    sizes: "192x192",
+                    type: "image/png"
+                },
+                {
+                    src: "https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png",
+                    sizes: "512x512",
+                    type: "image/png"
+                }
+            ]
+        };
+        
+        // Convert to JSON string and create data URI
+        const manifestString = JSON.stringify(manifest);
+        const manifestLink = document.getElementById('manifest-link');
+        manifestLink.href = 'data:application/manifest+json,' + encodeURIComponent(manifestString);
+    </script>
     <style>
         /* [All CSS styles remain exactly the same as before] */
         * {
