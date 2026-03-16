@@ -163,33 +163,69 @@
         .audit-content { display:none; }
         .audit-content.active-content { display:block; }
 
+        /* --- Amélioration du design des formulaires d'audit --- */
         .audit-form {
             background:white; padding:30px; border-radius:24px;
             box-shadow:0 20px 40px -10px rgba(0,0,0,0.15); position:relative;
         }
-        .audit-form h3 { font-size:24px; color:#1a202c; margin-bottom:25px; font-weight:700; }
+        .audit-form h3 {
+            font-size:24px; color:#1a202c; margin-bottom:25px; font-weight:700;
+            border-left:5px solid #cc0000; padding-left:15px;
+        }
         .score-live {
             background:#f0f0f0; padding:15px 20px; border-radius:40px;
             display:inline-flex; align-items:center; gap:15px; margin-bottom:20px; font-weight:600;
+            border:1px solid #d0d0d0;
         }
         .score-live .badge-score {
             background:#cc0000; color:white; padding:8px 20px; border-radius:40px; font-size:20px;
         }
         .progress { height:10px; background:#e0e0e0; border-radius:5px; margin:10px 0 20px; overflow:hidden; }
         .progress-bar { height:100%; background:#cc0000; width:0%; transition:width 0.3s; }
+        
+        /* Style des questions */
         .question-group {
             margin-bottom:30px; padding:20px; background:#f8fafd; border-radius:16px;
-            border:1px solid #edf2f7; transition:box-shadow 0.2s;
+            border:1px solid #e0e0e0; transition:box-shadow 0.2s;
         }
-        .question-group:hover { box-shadow:0 5px 15px rgba(0,0,0,0.05); }
-        .question-group label { display:block; font-weight:600; color:#2d3748; margin-bottom:15px; font-size:16px; }
-        .radio-group { display:flex; gap:20px; flex-wrap:wrap; }
+        .question-group:hover { box-shadow:0 8px 20px rgba(0,0,0,0.08); }
+        .question-group label {
+            display:block; font-weight:700; color:#1976d2; /* Bleu pour les questions */
+            margin-bottom:15px; font-size:16px; letter-spacing:0.3px;
+        }
+        .radio-group { display:flex; gap:15px; flex-wrap:wrap; }
         .radio-group div {
-            display:flex; align-items:center; gap:8px; padding:8px 16px; background:white;
-            border-radius:30px; border:2px solid #e2e8f0; transition:all 0.2s;
+            display:flex; align-items:center; gap:8px; padding:8px 18px;
+            border-radius:40px; border:2px solid #e2e8f0;
+            transition:all 0.2s; font-weight:600;
         }
-        .radio-group div:hover { border-color:#cc0000; background:#fff5f5; }
-        .radio-group input[type="radio"] { width:18px; height:18px; accent-color:#cc0000; }
+        /* Couleurs des options */
+        .radio-group div:has(input[value="OK"]) {
+            background: #e8f5e9; border-color: #2e7d32;
+        }
+        .radio-group div:has(input[value="OK"]):hover {
+            background: #c8e6c9; border-color: #1b5e20;
+        }
+        .radio-group div:has(input[value="NOK"]) {
+            background: #ffebee; border-color: #c62828;
+        }
+        .radio-group div:has(input[value="NOK"]):hover {
+            background: #ffcdd2; border-color: #b71c1c;
+        }
+        .radio-group div:has(input[value="N/A"]) {
+            background: #fff8e1; border-color: #ff8f00;
+        }
+        .radio-group div:has(input[value="N/A"]):hover {
+            background: #ffecb3; border-color: #ff6f00;
+        }
+        .radio-group input[type="radio"] {
+            width:18px; height:18px; accent-color:#cc0000; margin-right:5px;
+        }
+        /* Texte des options coloré */
+        .radio-group div:has(input[value="OK"]) span { color: #2e7d32; font-weight:700; }
+        .radio-group div:has(input[value="NOK"]) span { color: #c62828; font-weight:700; }
+        .radio-group div:has(input[value="N/A"]) span { color: #ff8f00; font-weight:700; }
+        
         .text-input, select, textarea {
             width:100%; padding:14px 18px; border:2px solid #e2e8f0; border-radius:14px;
             font-size:15px; transition:all 0.3s; background:white;
@@ -279,7 +315,7 @@
 </head>
 <body>
     <div id="app">
-        <!-- PAGE DE CONNEXION (icône au lieu d'image) -->
+        <!-- PAGE DE CONNEXION -->
         <div id="login-container">
             <div class="login-box">
                 <div class="login-icon">
@@ -376,7 +412,7 @@
                     <div class="chart-container">
                         <canvas id="chart-repartition-type" style="width:100%; max-height:300px;"></canvas>
                     </div>
-                    <!-- Graphique Pourcentage par question (basé sur les réponses individuelles) -->
+                    <!-- Graphique Pourcentage par question -->
                     <div class="chart-container">
                         <h3 style="margin-bottom:15px;">Pourcentage de réponses par question</h3>
                         <div style="display:flex; gap:10px; margin-bottom:15px;">
@@ -389,14 +425,14 @@
                         </div>
                         <canvas id="chart-questions-per-question" style="width:100%; max-height:400px;"></canvas>
                     </div>
-                    <!-- Nouveau graphique : Tendance des scores par mois -->
+                    <!-- Graphique de tendance -->
                     <div class="chart-container">
                         <h3 style="margin-bottom:15px;">Évolution des scores moyens par mois</h3>
                         <canvas id="chart-trend" style="width:100%; max-height:400px;"></canvas>
                     </div>
                 </div>
 
-                <!-- Section Nouvelle audit avec score live -->
+                <!-- Section Nouvelle audit avec design amélioré -->
                 <div id="section-auditeurs" class="section">
                     <h1><i class="fas fa-pen-alt"></i> Nouvelle audit Gemba</h1>
                     <div class="sub-nav">
@@ -418,25 +454,25 @@
                                 <div class="progress-bar" id="ligne-progress" style="width:0%"></div>
                             </div>
                             <form id="form-audit-ligne">
-                                <div class="question-group"><label>Date</label><input type="date" id="date-ligne" class="text-input" required></div>
-                                <div class="question-group"><label>Zone / Ligne / Poste</label><input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required></div>
-                                <div class="question-group"><label>UAP</label>
+                                <div class="question-group"><label><i class="fas fa-calendar-alt" style="margin-right:8px;"></i>Date</label><input type="date" id="date-ligne" class="text-input" required></div>
+                                <div class="question-group"><label><i class="fas fa-map-marker-alt" style="margin-right:8px;"></i>Zone / Ligne / Poste</label><input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required></div>
+                                <div class="question-group"><label><i class="fas fa-tag" style="margin-right:8px;"></i>UAP</label>
                                     <select id="uap-ligne" class="text-input" required>
                                         <option value="">Sélectionnez</option>
                                         <option value="UAP1">UAP1</option>
                                         <option value="UAP2">UAP2</option>
                                     </select>
                                 </div>
-                                <div class="question-group"><label>Main d'œuvre : Qualification</label><div class="radio-group"><div><input type="radio" name="mainLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="mainLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>matière : Etat de rebut</label><div class="radio-group"><div><input type="radio" name="matiereLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="matiereLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : OK démarrage</label><div class="radio-group"><div><input type="radio" name="demarrageLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="demarrageLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : Dossier de Fabrication</label><div class="radio-group"><div><input type="radio" name="dossierLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="dossierLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : Formulaire (Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="formulaireLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : HSE</label><div class="radio-group"><div><input type="radio" name="hseLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="hseLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Milieu : 5S</label><div class="radio-group"><div><input type="radio" name="cinqSLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="cinqSLigne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Machine : Préventif niveau 1</label><div class="radio-group"><div><input type="radio" name="prev1Ligne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="prev1Ligne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Préventif niveau 2</label><div class="radio-group"><div><input type="radio" name="prev2Ligne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="prev2Ligne" value="NOK" onchange="updateLigneScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>POKA YOKE</label><div class="radio-group"><div><input type="radio" name="pokaLigne" value="OK" required onchange="updateLigneScore()"> OK</div><div><input type="radio" name="pokaLigne" value="NOK" onchange="updateLigneScore()"> NOK</div><div><input type="radio" name="pokaLigne" value="N/A" onchange="updateLigneScore()"> N/A</div></div></div>
+                                <div class="question-group"><label><i class="fas fa-user" style="margin-right:8px;"></i>Main d'œuvre : Qualification</label><div class="radio-group"><div><input type="radio" name="mainLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="mainLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-box" style="margin-right:8px;"></i>matière : Etat de rebut</label><div class="radio-group"><div><input type="radio" name="matiereLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="matiereLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-play" style="margin-right:8px;"></i>Méthode : OK démarrage</label><div class="radio-group"><div><input type="radio" name="demarrageLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="demarrageLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-folder" style="margin-right:8px;"></i>Méthode : Dossier de Fabrication</label><div class="radio-group"><div><input type="radio" name="dossierLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="dossierLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-file-alt" style="margin-right:8px;"></i>Méthode : Formulaire (Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="formulaireLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-shield-alt" style="margin-right:8px;"></i>Méthode : HSE</label><div class="radio-group"><div><input type="radio" name="hseLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="hseLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-tshirt" style="margin-right:8px;"></i>Milieu : 5S</label><div class="radio-group"><div><input type="radio" name="cinqSLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="cinqSLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-cogs" style="margin-right:8px;"></i>Machine : Préventif niveau 1</label><div class="radio-group"><div><input type="radio" name="prev1Ligne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="prev1Ligne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-cog" style="margin-right:8px;"></i>Préventif niveau 2</label><div class="radio-group"><div><input type="radio" name="prev2Ligne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="prev2Ligne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i>POKA YOKE</label><div class="radio-group"><div><input type="radio" name="pokaLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="pokaLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div><div><input type="radio" name="pokaLigne" value="N/A" onchange="updateLigneScore()"><span>N/A</span></div></div></div>
                                 <button type="button" class="btn-submit" onclick="soumettreLigne()"><i class="fas fa-save"></i> Soumettre l'audit</button>
                             </form>
                             <div id="resultat-ligne" class="resultat-card"></div>
@@ -456,16 +492,16 @@
                                 <div class="progress-bar" id="magasin-progress" style="width:0%"></div>
                             </div>
                             <form id="form-audit-magasin">
-                                <div class="question-group"><label>Date</label><input type="date" id="date-magasin" class="text-input" required></div>
-                                <div class="question-group"><label>Magasin</label><select id="magasin-select" required onchange="updateMagasinScore()"><option value="">Sélectionnez</option><option value="Magasin general">Magasin général</option><option value="Magasin P1">Magasin P1</option><option value="Magasin P2">Magasin P2</option></select></div>
-                                <div class="question-group"><label>1. Qualification</label><div class="radio-group"><div><input type="radio" name="qualifMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="qualifMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>2. Identification</label><div class="radio-group"><div><input type="radio" name="idMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="idMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>3. Méthode (Instruction)</label><div class="radio-group"><div><input type="radio" name="instructionMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="instructionMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>4. Méthode (Stockage)</label><div class="radio-group"><div><input type="radio" name="stockageMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="stockageMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>5. Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="formulaireMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>6. Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="hseMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>7. Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="cinqSMag" value="NOK" onchange="updateMagasinScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>8. Chariot élévateur</label><div class="radio-group"><div><input type="radio" name="chariotMag" value="OK" required onchange="updateMagasinScore()"> OK</div><div><input type="radio" name="chariotMag" value="NOK" onchange="updateMagasinScore()"> NOK</div><div><input type="radio" name="chariotMag" value="N/A" onchange="updateMagasinScore()"> N/A</div></div></div>
+                                <div class="question-group"><label><i class="fas fa-calendar-alt" style="margin-right:8px;"></i>Date</label><input type="date" id="date-magasin" class="text-input" required></div>
+                                <div class="question-group"><label><i class="fas fa-warehouse" style="margin-right:8px;"></i>Magasin</label><select id="magasin-select" required onchange="updateMagasinScore()"><option value="">Sélectionnez</option><option value="Magasin general">Magasin général</option><option value="Magasin P1">Magasin P1</option><option value="Magasin P2">Magasin P2</option></select></div>
+                                <div class="question-group"><label>1. Qualification</label><div class="radio-group"><div><input type="radio" name="qualifMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="qualifMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>2. Identification</label><div class="radio-group"><div><input type="radio" name="idMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="idMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>3. Méthode (Instruction)</label><div class="radio-group"><div><input type="radio" name="instructionMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="instructionMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>4. Méthode (Stockage)</label><div class="radio-group"><div><input type="radio" name="stockageMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="stockageMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>5. Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="formulaireMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>6. Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="hseMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>7. Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="cinqSMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>8. Chariot élévateur</label><div class="radio-group"><div><input type="radio" name="chariotMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="chariotMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div><div><input type="radio" name="chariotMag" value="N/A" onchange="updateMagasinScore()"><span>N/A</span></div></div></div>
                                 <button type="button" class="btn-submit" onclick="soumettreMagasin()"><i class="fas fa-save"></i> Soumettre l'audit</button>
                             </form>
                             <div id="resultat-magasin" class="resultat-card"></div>
@@ -485,15 +521,15 @@
                                 <div class="progress-bar" id="mur-progress" style="width:0%"></div>
                             </div>
                             <form id="form-audit-mur">
-                                <div class="question-group"><label>Date</label><input type="date" id="date-mur" class="text-input" required></div>
-                                <div class="question-group"><label>Mur qualité</label><select id="mur-select" required onchange="updateMurScore()"><option value="">Sélectionnez</option><option value="Mur qualite uap1">Mur qualité UAP1</option><option value="Mur qualite uap2">Mur qualité UAP2</option></select></div>
-                                <div class="question-group"><label>Main d'œuvre</label><div class="radio-group"><div><input type="radio" name="mainMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="mainMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>matière (Etat rebut)</label><div class="radio-group"><div><input type="radio" name="matiereMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="matiereMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (OK démarrage)</label><div class="radio-group"><div><input type="radio" name="demarrageMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="demarrageMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (Dossier)</label><div class="radio-group"><div><input type="radio" name="dossierMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="dossierMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="formulaireMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="hseMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
-                                <div class="question-group"><label>Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMur" value="OK" required onchange="updateMurScore()"> OK</div><div><input type="radio" name="cinqSMur" value="NOK" onchange="updateMurScore()"> NOK</div></div></div>
+                                <div class="question-group"><label><i class="fas fa-calendar-alt" style="margin-right:8px;"></i>Date</label><input type="date" id="date-mur" class="text-input" required></div>
+                                <div class="question-group"><label><i class="fas fa-chalkboard" style="margin-right:8px;"></i>Mur qualité</label><select id="mur-select" required onchange="updateMurScore()"><option value="">Sélectionnez</option><option value="Mur qualite uap1">Mur qualité UAP1</option><option value="Mur qualite uap2">Mur qualité UAP2</option></select></div>
+                                <div class="question-group"><label><i class="fas fa-user" style="margin-right:8px;"></i>Main d'œuvre</label><div class="radio-group"><div><input type="radio" name="mainMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="mainMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-box" style="margin-right:8px;"></i>matière (Etat rebut)</label><div class="radio-group"><div><input type="radio" name="matiereMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="matiereMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-play" style="margin-right:8px;"></i>Méthode (OK démarrage)</label><div class="radio-group"><div><input type="radio" name="demarrageMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="demarrageMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-folder" style="margin-right:8px;"></i>Méthode (Dossier)</label><div class="radio-group"><div><input type="radio" name="dossierMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="dossierMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-file-alt" style="margin-right:8px;"></i>Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="formulaireMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-shield-alt" style="margin-right:8px;"></i>Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="hseMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-tshirt" style="margin-right:8px;"></i>Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="cinqSMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
                                 <button type="button" class="btn-submit" onclick="soumettreMur()"><i class="fas fa-save"></i> Soumettre l'audit</button>
                             </form>
                             <div id="resultat-mur" class="resultat-card"></div>
@@ -730,7 +766,7 @@
                     updateCourbesCharts();
                     updateRepartitionChart();
                     updateQuestionChart();
-                    updateTrendChart(); // Nouveau graphique de tendance
+                    updateTrendChart();
                 });
             } else {
                 loginContainer.style.display = 'flex';
@@ -992,7 +1028,6 @@
             statTotalOk.textContent = totalOk;
             statTotalNok.textContent = totalNok;
             
-            // Moyennes avec coloration
             const moyU1 = moyenne(scoresUap1);
             const moyU2 = moyenne(scoresUap2);
             const moyMag = moyenne(scoresMagasin);
@@ -1001,7 +1036,6 @@
             statMoyenneUap2.textContent = (moyU2 !== 'N/A' ? moyU2 + '%' : 'N/A');
             statMoyenneMagasin.textContent = (moyMag !== 'N/A' ? moyMag + '%' : 'N/A');
             
-            // Appliquer la couleur
             applyScoreColor(statMoyenneUap1, moyU1);
             applyScoreColor(statMoyenneUap2, moyU2);
             applyScoreColor(statMoyenneMagasin, moyMag);
@@ -1014,7 +1048,6 @@
             statMoyenneUsine.textContent = (moyUsine !== 'N/A' ? moyUsine + '%' : 'N/A');
             applyScoreColor(statMoyenneUsine, moyUsine);
 
-            // Meilleur et pire score
             if (allScores.length > 0) {
                 let best = Math.max(...allScores);
                 let worst = Math.min(...allScores);
@@ -1239,7 +1272,7 @@
             });
         }
 
-        // Graphique par question (basé sur les réponses individuelles)
+        // Graphique par question
         function updateQuestionChart() {
             const type = document.getElementById('question-type-select').value;
             let questionsLabels = [];
@@ -1270,7 +1303,7 @@
                     'Chariot élévateur'
                 ];
                 questionKeys = ['qualifMag','idMag','instructionMag','stockageMag','formulaireMag','hseMag','cinqSMag','chariotMag'];
-            } else { // Mur
+            } else {
                 questionsLabels = [
                     'Main d\'œuvre',
                     'Matière (Etat rebut)',
@@ -1343,15 +1376,14 @@
             });
         }
 
-        // Nouveau graphique de tendance : scores moyens par mois par type
+        // Graphique de tendance
         function updateTrendChart() {
             const types = ['Ligne', 'Magasin', 'Mur'];
             const months = {};
             
-            // Parcourir tous les audits et grouper par mois et type
             audits.forEach(a => {
                 if (!a.date || a.score === undefined || isNaN(Number(a.score))) return;
-                const month = a.date.substring(0, 7); // YYYY-MM
+                const month = a.date.substring(0, 7);
                 if (!months[month]) {
                     months[month] = { Ligne: { sum: 0, count: 0 }, Magasin: { sum: 0, count: 0 }, Mur: { sum: 0, count: 0 } };
                 }
@@ -1362,10 +1394,8 @@
                 }
             });
 
-            // Trier les mois
             const sortedMonths = Object.keys(months).sort();
             
-            // Pour chaque type, calculer la moyenne par mois
             const ligneData = [];
             const magasinData = [];
             const murData = [];
