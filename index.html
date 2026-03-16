@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portail d'Audit Gemba</title>
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
@@ -25,7 +27,8 @@
             min-height: 100vh;
             display: flex;
         }
-        /* Page de connexion */
+
+        /* --- PAGE DE CONNEXION --- */
         #login-container {
             width: 100%;
             display: flex;
@@ -105,7 +108,7 @@
         .toggle-form a:hover, .forgot-password a:hover { text-decoration: underline; }
         .forgot-password { text-align: right; margin-top: 5px; }
 
-        /* Dashboard */
+        /* --- TABLEAU DE BORD --- */
         #dashboard-container {
             display: none;
             width: 100%;
@@ -126,10 +129,22 @@
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.2);
         }
-        .sidebar-header h2 { font-size: 24px; font-weight: 600; }
-        .sidebar-header p { font-size: 14px; opacity: 0.8; margin-top: 5px; }
-        .sidebar-nav { flex: 1; padding: 20px 0; }
-        .sidebar-nav ul { list-style: none; }
+        .sidebar-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .sidebar-header p {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+        }
+        .sidebar-nav ul {
+            list-style: none;
+        }
         .sidebar-nav li {
             padding: 15px 25px;
             margin: 5px 0;
@@ -139,10 +154,22 @@
             align-items: center;
             font-size: 16px;
         }
-        .sidebar-nav li:hover { background: rgba(255,255,255,0.2); }
-        .sidebar-nav li.active { background: rgba(255,255,255,0.3); border-left: 4px solid white; }
-        .sidebar-nav li i { margin-right: 15px; font-style: normal; font-size: 20px; }
-        .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.2); }
+        .sidebar-nav li i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar-nav li:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .sidebar-nav li.active {
+            background: rgba(255,255,255,0.3);
+            border-left: 4px solid white;
+        }
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
         .logout-btn {
             width: 100%;
             padding: 12px;
@@ -158,17 +185,29 @@
             align-items: center;
             justify-content: center;
         }
-        .logout-btn i { margin-right: 10px; font-style: normal; }
-        .logout-btn:hover { background: rgba(255,255,255,0.3); }
+        .logout-btn i {
+            margin-right: 10px;
+        }
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
         .main-content {
             flex: 1;
             margin-left: 260px;
             padding: 30px;
             overflow-y: auto;
         }
-        .section { display: none; animation: fadeIn 0.3s; }
-        .section.active-section { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .section.active-section {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .section h1 {
             color: #333;
             margin-bottom: 30px;
@@ -177,7 +216,12 @@
             padding-bottom: 10px;
             display: inline-block;
         }
-        .card-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
         .card {
             background: white;
             border-radius: 10px;
@@ -185,9 +229,25 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        .card h3 { color: #667eea; margin-bottom: 10px; }
-        .card p { color: #666; line-height: 1.6; }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .card .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+        }
+        .card i {
+            font-size: 40px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
 
         /* Sous-navigation */
         .sub-nav {
@@ -210,10 +270,22 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        .sub-nav button.active { background: #667eea; color: white; }
-        .sub-nav button:hover:not(.active) { background: #f0f0f0; }
-        .audit-content { display: none; }
-        .audit-content.active-content { display: block; }
+        .sub-nav button i {
+            margin-right: 8px;
+        }
+        .sub-nav button.active {
+            background: #667eea;
+            color: white;
+        }
+        .sub-nav button:hover:not(.active) {
+            background: #f0f0f0;
+        }
+        .audit-content {
+            display: none;
+        }
+        .audit-content.active-content {
+            display: block;
+        }
 
         /* Formulaire d'audit */
         .audit-form {
@@ -222,16 +294,36 @@
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        .audit-form h3 { margin-bottom: 20px; color: #333; }
+        .audit-form h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
         .question-group {
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 1px solid #eee;
         }
-        .question-group label { display: block; font-weight: 600; color: #444; margin-bottom: 10px; }
-        .radio-group { display: flex; gap: 20px; align-items: center; }
-        .radio-group div { display: flex; align-items: center; gap: 5px; }
-        .radio-group input[type="radio"] { width: auto; margin-right: 5px; }
+        .question-group label {
+            display: block;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 10px;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .radio-group div {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin-right: 5px;
+        }
         .text-input, select, textarea {
             width: 100%;
             padding: 10px;
@@ -240,7 +332,10 @@
             border-radius: 5px;
             font-size: 14px;
         }
-        .text-input:focus, select:focus { outline: none; border-color: #667eea; }
+        .text-input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
         .btn-submit {
             background: #667eea;
             color: white;
@@ -253,7 +348,12 @@
             transition: background 0.3s;
             margin-top: 20px;
         }
-        .btn-submit:hover { background: #5a67d8; }
+        .btn-submit i {
+            margin-right: 8px;
+        }
+        .btn-submit:hover {
+            background: #5a67d8;
+        }
         .resultat {
             margin-top: 20px;
             padding: 15px;
@@ -262,7 +362,10 @@
             text-align: center;
             font-size: 18px;
         }
-        .resultat.success { background: #efe; color: #2e7d32; }
+        .resultat.success {
+            background: #efe;
+            color: #2e7d32;
+        }
 
         /* Tableau des audits */
         .auditor-table {
@@ -272,7 +375,10 @@
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        .auditor-table table { width: 100%; border-collapse: collapse; }
+        .auditor-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
         .auditor-table th {
             background: #667eea;
             color: white;
@@ -284,8 +390,12 @@
             padding: 15px;
             border-bottom: 1px solid #eee;
         }
-        .auditor-table tr:last-child td { border-bottom: none; }
-        .auditor-table tr:hover td { background: #f9f9f9; }
+        .auditor-table tr:last-child td {
+            border-bottom: none;
+        }
+        .auditor-table tr:hover td {
+            background: #f9f9f9;
+        }
         .badge {
             background: #e0f2fe;
             color: #0369a1;
@@ -305,6 +415,32 @@
             margin-bottom: 20px;
             display: flex;
             gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .filter-bar label {
+            font-weight: 600;
+            color: #555;
+        }
+        .filter-bar select, .filter-bar button {
+            padding: 8px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            background: white;
+            font-size: 14px;
+        }
+        .filter-bar button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .filter-bar button:hover {
+            background: #5a67d8;
         }
     </style>
 </head>
@@ -313,21 +449,21 @@
         <!-- Conteneur de connexion -->
         <div id="login-container">
             <div class="login-box">
-                <h2 id="form-title">Connexion</h2>
+                <h2 id="form-title"><i class="fas fa-lock"></i> Connexion</h2>
                 <div class="input-group">
-                    <label for="email">Email</label>
+                    <label><i class="fas fa-envelope"></i> Email</label>
                     <input type="email" id="email" placeholder="votre@email.com" required>
                 </div>
                 <div class="input-group">
-                    <label for="password">Mot de passe</label>
+                    <label><i class="fas fa-key"></i> Mot de passe</label>
                     <input type="password" id="password" placeholder="••••••••" required>
                 </div>
                 <div class="forgot-password">
-                    <a onclick="showForgotPassword()">Mot de passe oublié ?</a>
+                    <a onclick="showForgotPassword()"><i class="fas fa-question-circle"></i> Mot de passe oublié ?</a>
                 </div>
-                <button onclick="handleAuth()" id="auth-button">Se connecter</button>
+                <button onclick="handleAuth()" id="auth-button"><i class="fas fa-sign-in-alt"></i> Se connecter</button>
                 <div class="toggle-form">
-                    <a onclick="toggleForm()" id="toggle-link">Créer un compte</a>
+                    <a onclick="toggleForm()" id="toggle-link"><i class="fas fa-user-plus"></i> Créer un compte</a>
                 </div>
                 <div id="message" class="message"></div>
             </div>
@@ -337,58 +473,124 @@
         <div id="dashboard-container">
             <div class="sidebar">
                 <div class="sidebar-header">
-                    <h2>Portail Audit</h2>
+                    <h2><i class="fas fa-clipboard-check"></i> Portail Audit</h2>
                     <p id="user-email">Espace administrateur</p>
                 </div>
                 <div class="sidebar-nav">
                     <ul>
-                        <li id="nav-dashboard" class="active" onclick="switchSection('dashboard')"><i>📊</i> Dashboard</li>
-                        <li id="nav-courbes" onclick="switchSection('courbes')"><i>📈</i> Courbes</li>
-                        <li id="nav-auditeurs" onclick="switchSection('auditeurs')"><i>📝</i> Nouvelle audit</li>
-                        <li id="nav-details" onclick="switchSection('details')"><i>📋</i> Détails d'audit</li>
+                        <li id="nav-dashboard" class="active" onclick="switchSection('dashboard')">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </li>
+                        <li id="nav-courbes" onclick="switchSection('courbes')">
+                            <i class="fas fa-chart-line"></i> Courbes
+                        </li>
+                        <li id="nav-auditeurs" onclick="switchSection('auditeurs')">
+                            <i class="fas fa-pen-alt"></i> Nouvelle audit
+                        </li>
+                        <li id="nav-details" onclick="switchSection('details')">
+                            <i class="fas fa-list-alt"></i> Détails d'audit
+                        </li>
                     </ul>
                 </div>
                 <div class="sidebar-footer">
-                    <button class="logout-btn" onclick="logout()"><i>🚪</i> Déconnexion</button>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </button>
                 </div>
             </div>
 
             <div class="main-content">
                 <!-- Section Dashboard -->
                 <div id="section-dashboard" class="section active-section">
-                    <h1>Dashboard</h1>
+                    <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
                     <div class="card-container">
-                        <div class="card"><h3>Auditeurs actifs</h3><p style="font-size:36px;">12</p><p>+3 cette semaine</p></div>
-                        <div class="card"><h3>Audits en cours</h3><p style="font-size:36px;">8</p><p>Dont 2 critiques</p></div>
-                        <div class="card"><h3>Audits terminés</h3><p style="font-size:36px;">47</p><p>Ce mois-ci</p></div>
-                        <div class="card"><h3>Taux de conformité</h3><p style="font-size:36px;">85%</p><p>En hausse de 5%</p></div>
+                        <div class="card">
+                            <i class="fas fa-calendar-check"></i>
+                            <h3>Audits réalisés</h3>
+                            <p class="stat-value" id="stat-total-audits">0</p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-check-circle" style="color:#2ecc71;"></i>
+                            <h3>Questions OK</h3>
+                            <p class="stat-value" id="stat-total-ok">0</p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-times-circle" style="color:#e74c3c;"></i>
+                            <h3>Questions NOK</h3>
+                            <p class="stat-value" id="stat-total-nok">0</p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-industry"></i>
+                            <h3>Moyenne UAP1</h3>
+                            <p class="stat-value" id="stat-moyenne-uap1">0%</p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-industry"></i>
+                            <h3>Moyenne UAP2</h3>
+                            <p class="stat-value" id="stat-moyenne-uap2">0%</p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-warehouse"></i>
+                            <h3>Moyenne Magasin</h3>
+                            <p class="stat-value" id="stat-moyenne-magasin">0%</p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-building"></i>
+                            <h3>Moyenne Usine</h3>
+                            <p class="stat-value" id="stat-moyenne-usine">0%</p>
+                        </div>
                     </div>
-                    <div class="card" style="margin-top:20px;"><h3>Activité récente</h3><p>• Audit #124 terminé par Jean Dupont</p><p>• Nouvel auditeur : Marie Martin</p><p>• Rapport d'audit #123 généré</p></div>
                 </div>
 
                 <!-- Section Courbes -->
                 <div id="section-courbes" class="section">
-                    <h1>Courbes et statistiques</h1>
-                    <div class="chart-container"><canvas id="auditChart" style="width:100%; max-height:400px;"></canvas></div>
-                    <div class="card-container" style="margin-top:20px;">
-                        <div class="card"><h3>Audits par mois</h3><p>Jan: 12, Fév: 15, Mar: 20</p></div>
-                        <div class="card"><h3>Répartition par type</h3><p>Financier: 45%, Qualité: 30%, Sécurité: 25%</p></div>
+                    <h1><i class="fas fa-chart-line"></i> Courbes et statistiques</h1>
+                    <div class="filter-bar">
+                        <div>
+                            <label><i class="fas fa-calendar-alt"></i> Période :</label>
+                            <select id="periode-type">
+                                <option value="mois">Par mois</option>
+                                <option value="semaine">Par semaine</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label><i class="fas fa-filter"></i> Filtre :</label>
+                            <select id="courbes-filtre">
+                                <option value="all">Tous</option>
+                                <option value="UAP1">UAP1</option>
+                                <option value="UAP2">UAP2</option>
+                                <option value="Magasin">Magasin</option>
+                            </select>
+                        </div>
+                        <button onclick="updateCourbesCharts()"><i class="fas fa-sync-alt"></i> Actualiser</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chart-audits" style="width:100%; max-height:300px;"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chart-questions" style="width:100%; max-height:300px;"></canvas>
                     </div>
                 </div>
 
                 <!-- Section Nouvelle audit -->
                 <div id="section-auditeurs" class="section">
-                    <h1>Nouvelle audit Gemba</h1>
+                    <h1><i class="fas fa-pen-alt"></i> Nouvelle audit Gemba</h1>
                     <div class="sub-nav">
-                        <button id="tab-ligne" class="active" onclick="switchAuditType('ligne')">Ligne</button>
-                        <button id="tab-magasin" onclick="switchAuditType('magasin')">Magasin</button>
-                        <button id="tab-mur" onclick="switchAuditType('mur')">Mur qualité</button>
+                        <button id="tab-ligne" class="active" onclick="switchAuditType('ligne')">
+                            <i class="fas fa-bolt"></i> Ligne
+                        </button>
+                        <button id="tab-magasin" onclick="switchAuditType('magasin')">
+                            <i class="fas fa-boxes"></i> Magasin
+                        </button>
+                        <button id="tab-mur" onclick="switchAuditType('mur')">
+                            <i class="fas fa-chalkboard"></i> Mur qualité
+                        </button>
                     </div>
 
                     <!-- Audit Ligne -->
                     <div id="audit-ligne" class="audit-content active-content">
                         <div class="audit-form">
-                            <h3>Audit Gemba - Ligne de production</h3>
+                            <h3><i class="fas fa-bolt"></i> Audit Gemba - Ligne de production</h3>
                             <form id="form-audit-ligne">
                                 <div class="question-group">
                                     <label>Date</label>
@@ -405,19 +607,80 @@
                                         <div><input type="radio" name="uapLigne" value="UAP2"> UAP2</div>
                                     </div>
                                 </div>
-                                <!-- Questions -->
-                                <div class="question-group"><label>Main d'œuvre : Qualification (Grille de polyvalence)</label><div class="radio-group"><div><input type="radio" name="mainLigne" value="OK" required> OK</div><div><input type="radio" name="mainLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>matière : Etat de rebut</label><div class="radio-group"><div><input type="radio" name="matiereLigne" value="OK" required> OK</div><div><input type="radio" name="matiereLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : OK démarrage</label><div class="radio-group"><div><input type="radio" name="demarrageLigne" value="OK" required> OK</div><div><input type="radio" name="demarrageLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : Dossier de Fabrication</label><div class="radio-group"><div><input type="radio" name="dossierLigne" value="OK" required> OK</div><div><input type="radio" name="dossierLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : Formulaire (Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireLigne" value="OK" required> OK</div><div><input type="radio" name="formulaireLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode : HSE</label><div class="radio-group"><div><input type="radio" name="hseLigne" value="OK" required> OK</div><div><input type="radio" name="hseLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Milieu : 5S</label><div class="radio-group"><div><input type="radio" name="cinqSLigne" value="OK" required> OK</div><div><input type="radio" name="cinqSLigne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Machine : Préventif niveau 1</label><div class="radio-group"><div><input type="radio" name="prev1Ligne" value="OK" required> OK</div><div><input type="radio" name="prev1Ligne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Préventif niveau 2</label><div class="radio-group"><div><input type="radio" name="prev2Ligne" value="OK" required> OK</div><div><input type="radio" name="prev2Ligne" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>POKA YOKE</label><div class="radio-group"><div><input type="radio" name="pokaLigne" value="OK" required> OK</div><div><input type="radio" name="pokaLigne" value="NOK"> NOK</div><div><input type="radio" name="pokaLigne" value="N/A"> N/A</div></div></div>
-
-                                <button type="button" class="btn-submit" onclick="soumettreLigne()">Soumettre l'audit</button>
+                                <div class="question-group">
+                                    <label>Main d'œuvre : Qualification (Grille de polyvalence)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="mainLigne" value="OK" required> OK</div>
+                                        <div><input type="radio" name="mainLigne" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>matière : Etat de rebut</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="matiereLigne" value="OK" required> OK</div>
+                                        <div><input type="radio" name="matiereLigne" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Méthode : OK démarrage</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="demarrageLigne" value="OK" required> OK</div>
+                                        <div><input type="radio" name="demarrageLigne" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Méthode : Dossier de Fabrication</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="dossierLigne" value="OK" required> OK</div>
+                                        <div><input type="radio" name="dossierLigne" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Méthode : Formulaire (Prod/Qualité)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="formulaireLigne" value="OK" required> OK</div>
+                                        <div><input type="radio" name="formulaireLigne" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Méthode : HSE</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="hseLigne" value="OK" required> OK</div>
+                                        <div><input type="radio" name="hseLigne" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Milieu : 5S</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="cinqSLigne" value="OK" required> OK</div>
+                                        <div><input type="radio" name="cinqSLigne" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Machine : Préventif niveau 1</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="prev1Ligne" value="OK" required> OK</div>
+                                        <div><input type="radio" name="prev1Ligne" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Préventif niveau 2</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="prev2Ligne" value="OK" required> OK</div>
+                                        <div><input type="radio" name="prev2Ligne" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>POKA YOKE</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="pokaLigne" value="OK" required> OK</div>
+                                        <div><input type="radio" name="pokaLigne" value="NOK"> NOK</div>
+                                        <div><input type="radio" name="pokaLigne" value="N/A"> N/A</div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-submit" onclick="soumettreLigne()">
+                                    <i class="fas fa-save"></i> Soumettre l'audit
+                                </button>
                             </form>
                             <div id="resultat-ligne" class="resultat" style="display: none;"></div>
                         </div>
@@ -426,7 +689,7 @@
                     <!-- Audit Magasin -->
                     <div id="audit-magasin" class="audit-content">
                         <div class="audit-form">
-                            <h3>Audit Gemba - Magasin / Stock</h3>
+                            <h3><i class="fas fa-boxes"></i> Audit Gemba - Magasin / Stock</h3>
                             <form id="form-audit-magasin">
                                 <div class="question-group">
                                     <label>Date</label>
@@ -441,16 +704,66 @@
                                         <option value="Magasin P2">Magasin P2</option>
                                     </select>
                                 </div>
-                                <div class="question-group"><label>1. Qualification (Grille de polyvalence)</label><div class="radio-group"><div><input type="radio" name="qualifMag" value="OK" required> OK</div><div><input type="radio" name="qualifMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>2. Identification (Etiquette)</label><div class="radio-group"><div><input type="radio" name="idMag" value="OK" required> OK</div><div><input type="radio" name="idMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>3. Méthode (Instruction)</label><div class="radio-group"><div><input type="radio" name="instructionMag" value="OK" required> OK</div><div><input type="radio" name="instructionMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>4. Méthode (Stockage)</label><div class="radio-group"><div><input type="radio" name="stockageMag" value="OK" required> OK</div><div><input type="radio" name="stockageMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>5. Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMag" value="OK" required> OK</div><div><input type="radio" name="formulaireMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>6. Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMag" value="OK" required> OK</div><div><input type="radio" name="hseMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>7. Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMag" value="OK" required> OK</div><div><input type="radio" name="cinqSMag" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>8. Chariot élévateur (Préventif niveau 1)</label><div class="radio-group"><div><input type="radio" name="chariotMag" value="OK" required> OK</div><div><input type="radio" name="chariotMag" value="NOK"> NOK</div><div><input type="radio" name="chariotMag" value="N/A"> N/A</div></div></div>
-
-                                <button type="button" class="btn-submit" onclick="soumettreMagasin()">Soumettre l'audit</button>
+                                <div class="question-group">
+                                    <label>1. Qualification (Grille de polyvalence)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="qualifMag" value="OK" required> OK</div>
+                                        <div><input type="radio" name="qualifMag" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>2. Identification (Etiquette)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="idMag" value="OK" required> OK</div>
+                                        <div><input type="radio" name="idMag" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>3. Méthode (Instruction)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="instructionMag" value="OK" required> OK</div>
+                                        <div><input type="radio" name="instructionMag" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>4. Méthode (Stockage)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="stockageMag" value="OK" required> OK</div>
+                                        <div><input type="radio" name="stockageMag" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>5. Méthode (Formulaire)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="formulaireMag" value="OK" required> OK</div>
+                                        <div><input type="radio" name="formulaireMag" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>6. Méthode (HSE)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="hseMag" value="OK" required> OK</div>
+                                        <div><input type="radio" name="hseMag" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>7. Milieu (5S)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="cinqSMag" value="OK" required> OK</div>
+                                        <div><input type="radio" name="cinqSMag" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>8. Chariot élévateur (Préventif niveau 1)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="chariotMag" value="OK" required> OK</div>
+                                        <div><input type="radio" name="chariotMag" value="NOK"> NOK</div>
+                                        <div><input type="radio" name="chariotMag" value="N/A"> N/A</div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-submit" onclick="soumettreMagasin()">
+                                    <i class="fas fa-save"></i> Soumettre l'audit
+                                </button>
                             </form>
                             <div id="resultat-magasin" class="resultat" style="display: none;"></div>
                         </div>
@@ -459,7 +772,7 @@
                     <!-- Audit Mur qualité -->
                     <div id="audit-mur" class="audit-content">
                         <div class="audit-form">
-                            <h3>Audit Gemba - Mur qualité</h3>
+                            <h3><i class="fas fa-chalkboard"></i> Audit Gemba - Mur qualité</h3>
                             <form id="form-audit-mur">
                                 <div class="question-group">
                                     <label>Date</label>
@@ -473,15 +786,58 @@
                                         <option value="Mur qualite uap2">Mur qualité UAP2</option>
                                     </select>
                                 </div>
-                                <div class="question-group"><label>Main d'œuvre (Qualification)</label><div class="radio-group"><div><input type="radio" name="mainMur" value="OK" required> OK</div><div><input type="radio" name="mainMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>matière (Etat de rebut)</label><div class="radio-group"><div><input type="radio" name="matiereMur" value="OK" required> OK</div><div><input type="radio" name="matiereMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (OK démarrage)</label><div class="radio-group"><div><input type="radio" name="demarrageMur" value="OK" required> OK</div><div><input type="radio" name="demarrageMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (Dossier de Fabrication)</label><div class="radio-group"><div><input type="radio" name="dossierMur" value="OK" required> OK</div><div><input type="radio" name="dossierMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (Formulaire Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireMur" value="OK" required> OK</div><div><input type="radio" name="formulaireMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMur" value="OK" required> OK</div><div><input type="radio" name="hseMur" value="NOK"> NOK</div></div></div>
-                                <div class="question-group"><label>Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMur" value="OK" required> OK</div><div><input type="radio" name="cinqSMur" value="NOK"> NOK</div></div></div>
-
-                                <button type="button" class="btn-submit" onclick="soumettreMur()">Soumettre l'audit</button>
+                                <div class="question-group">
+                                    <label>Main d'œuvre (Qualification)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="mainMur" value="OK" required> OK</div>
+                                        <div><input type="radio" name="mainMur" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>matière (Etat de rebut)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="matiereMur" value="OK" required> OK</div>
+                                        <div><input type="radio" name="matiereMur" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Méthode (OK démarrage)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="demarrageMur" value="OK" required> OK</div>
+                                        <div><input type="radio" name="demarrageMur" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Méthode (Dossier de Fabrication)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="dossierMur" value="OK" required> OK</div>
+                                        <div><input type="radio" name="dossierMur" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Méthode (Formulaire Prod/Qualité)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="formulaireMur" value="OK" required> OK</div>
+                                        <div><input type="radio" name="formulaireMur" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Méthode (HSE)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="hseMur" value="OK" required> OK</div>
+                                        <div><input type="radio" name="hseMur" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label>Milieu (5S)</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="cinqSMur" value="OK" required> OK</div>
+                                        <div><input type="radio" name="cinqSMur" value="NOK"> NOK</div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-submit" onclick="soumettreMur()">
+                                    <i class="fas fa-save"></i> Soumettre l'audit
+                                </button>
                             </form>
                             <div id="resultat-mur" class="resultat" style="display: none;"></div>
                         </div>
@@ -490,7 +846,7 @@
 
                 <!-- Section Détails d'audit -->
                 <div id="section-details" class="section">
-                    <h1>Détails des audits</h1>
+                    <h1><i class="fas fa-list-alt"></i> Détails des audits</h1>
                     <div class="filter-bar">
                         <div>
                             <label>Filtrer par type :</label>
@@ -539,7 +895,6 @@
             measurementId: "G-KCCRY45MNX"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
@@ -558,8 +913,17 @@
 
         let isLoginMode = true;
         let isForgotPasswordMode = false;
-        let chart = null;
-        let audits = []; // Données locales pour l'affichage (synchronisées avec Firebase)
+        let audits = [];
+        let chartAudits, chartQuestions;
+
+        // Éléments stats dashboard
+        const statTotalAudits = document.getElementById('stat-total-audits');
+        const statTotalOk = document.getElementById('stat-total-ok');
+        const statTotalNok = document.getElementById('stat-total-nok');
+        const statMoyenneUap1 = document.getElementById('stat-moyenne-uap1');
+        const statMoyenneUap2 = document.getElementById('stat-moyenne-uap2');
+        const statMoyenneMagasin = document.getElementById('stat-moyenne-magasin');
+        const statMoyenneUsine = document.getElementById('stat-moyenne-usine');
 
         // Surveiller l'état de connexion
         auth.onAuthStateChanged((user) => {
@@ -567,19 +931,19 @@
                 loginContainer.style.display = 'none';
                 dashboardContainer.style.display = 'flex';
                 userEmailSpan.textContent = user.email;
-                if (!chart) initChart();
                 // Écouter les audits en temps réel
                 database.ref('audits').on('value', (snapshot) => {
                     audits = [];
                     snapshot.forEach((child) => {
                         audits.push({ id: child.key, ...child.val() });
                     });
-                    filterAudits(); // Met à jour le tableau avec les filtres actuels
+                    filterAudits();
+                    updateDashboardStats();
+                    updateCourbesCharts();
                 });
             } else {
                 loginContainer.style.display = 'flex';
                 dashboardContainer.style.display = 'none';
-                // Détacher l'écoute si on veut (optionnel)
                 database.ref('audits').off();
             }
         });
@@ -589,16 +953,16 @@
             isLoginMode = !isLoginMode;
             isForgotPasswordMode = false;
             if (isLoginMode) {
-                formTitle.textContent = 'Connexion';
-                authButton.textContent = 'Se connecter';
-                toggleLink.textContent = 'Créer un compte';
+                formTitle.innerHTML = '<i class="fas fa-lock"></i> Connexion';
+                authButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Se connecter';
+                toggleLink.innerHTML = '<i class="fas fa-user-plus"></i> Créer un compte';
                 forgotPasswordLink.style.display = 'inline';
                 passwordInput.style.display = 'block';
                 document.querySelector('.forgot-password').style.display = 'block';
             } else {
-                formTitle.textContent = 'Inscription';
-                authButton.textContent = "S'inscrire";
-                toggleLink.textContent = 'Déjà un compte ? Se connecter';
+                formTitle.innerHTML = '<i class="fas fa-user-plus"></i> Inscription';
+                authButton.innerHTML = "<i class='fas fa-user-plus'></i> S'inscrire";
+                toggleLink.innerHTML = '<i class="fas fa-sign-in-alt"></i> Déjà un compte ? Se connecter';
                 forgotPasswordLink.style.display = 'none';
                 passwordInput.style.display = 'block';
                 document.querySelector('.forgot-password').style.display = 'none';
@@ -609,9 +973,9 @@
 
         function showForgotPassword() {
             isForgotPasswordMode = true;
-            formTitle.textContent = 'Réinitialisation';
-            authButton.textContent = 'Envoyer le lien';
-            toggleLink.textContent = 'Retour à la connexion';
+            formTitle.innerHTML = '<i class="fas fa-key"></i> Réinitialisation';
+            authButton.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer le lien';
+            toggleLink.innerHTML = '<i class="fas fa-sign-in-alt"></i> Retour à la connexion';
             passwordInput.style.display = 'none';
             document.querySelector('.forgot-password').style.display = 'none';
             clearForm();
@@ -704,19 +1068,21 @@
             const score = eligible>0 ? (ok/eligible)*100 : 0;
             const detail = `OK: ${ok}, NOK: ${nok}, N/A: ${na} – Score: ${score.toFixed(1)}% (${ok}/${eligible})`;
             
-            // Afficher le résultat
             document.getElementById('resultat-ligne').style.display='block';
             document.getElementById('resultat-ligne').innerHTML = detail;
             document.getElementById('resultat-ligne').className = 'resultat success';
 
-            // Sauvegarder dans Firebase
             const user = auth.currentUser;
             if (user) {
                 database.ref('audits').push({
                     date: date,
                     type: 'Ligne',
                     uap: zone + ' (' + uap + ')',
-                    score: score.toFixed(1),
+                    score: parseFloat(score.toFixed(1)),
+                    okCount: ok,
+                    nokCount: nok,
+                    naCount: na,
+                    totalQuestions: total,
                     detail: detail,
                     uid: user.uid,
                     timestamp: firebase.database.ServerValue.TIMESTAMP
@@ -754,7 +1120,11 @@
                     date: date,
                     type: 'Magasin',
                     uap: magasin,
-                    score: score.toFixed(1),
+                    score: parseFloat(score.toFixed(1)),
+                    okCount: ok,
+                    nokCount: nok,
+                    naCount: na,
+                    totalQuestions: total,
                     detail: detail,
                     uid: user.uid,
                     timestamp: firebase.database.ServerValue.TIMESTAMP
@@ -790,7 +1160,11 @@
                     date: date,
                     type: 'Mur',
                     uap: mur,
-                    score: score.toFixed(1),
+                    score: parseFloat(score.toFixed(1)),
+                    okCount: ok,
+                    nokCount: nok,
+                    naCount: 0,
+                    totalQuestions: total,
                     detail: detail,
                     uid: user.uid,
                     timestamp: firebase.database.ServerValue.TIMESTAMP
@@ -798,7 +1172,42 @@
             }
         }
 
-        // Mise à jour du tableau avec filtres
+        // Mise à jour des statistiques du dashboard
+        function updateDashboardStats() {
+            let totalAudits = audits.length;
+            let totalOk = 0, totalNok = 0;
+            let scoresUap1 = [], scoresUap2 = [], scoresMagasin = [];
+            audits.forEach(a => {
+                totalOk += a.okCount || 0;
+                totalNok += a.nokCount || 0;
+                if (a.type === 'Ligne') {
+                    if (a.uap.includes('UAP1')) scoresUap1.push(a.score);
+                    else if (a.uap.includes('UAP2')) scoresUap2.push(a.score);
+                } else if (a.type === 'Mur') {
+                    if (a.uap.includes('uap1')) scoresUap1.push(a.score);
+                    else if (a.uap.includes('uap2')) scoresUap2.push(a.score);
+                } else if (a.type === 'Magasin') {
+                    scoresMagasin.push(a.score);
+                }
+            });
+            const moyenne = (arr) => arr.length ? (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1) : 'N/A';
+            statTotalAudits.textContent = totalAudits;
+            statTotalOk.textContent = totalOk;
+            statTotalNok.textContent = totalNok;
+            statMoyenneUap1.textContent = (moyenne(scoresUap1) !== 'N/A' ? moyenne(scoresUap1) + '%' : 'N/A');
+            statMoyenneUap2.textContent = (moyenne(scoresUap2) !== 'N/A' ? moyenne(scoresUap2) + '%' : 'N/A');
+            statMoyenneMagasin.textContent = (moyenne(scoresMagasin) !== 'N/A' ? moyenne(scoresMagasin) + '%' : 'N/A');
+            
+            // Moyenne usine = moyenne des trois catégories (UAP1, UAP2, Magasin) si elles existent
+            let moyU1 = parseFloat(moyenne(scoresUap1)) || 0;
+            let moyU2 = parseFloat(moyenne(scoresUap2)) || 0;
+            let moyMag = parseFloat(moyenne(scoresMagasin)) || 0;
+            let count = [scoresUap1.length, scoresUap2.length, scoresMagasin.length].filter(l => l>0).length;
+            let moyUsine = count ? ((moyU1 + moyU2 + moyMag) / count).toFixed(1) : 'N/A';
+            statMoyenneUsine.textContent = (moyUsine !== 'N/A' ? moyUsine + '%' : 'N/A');
+        }
+
+        // Filtrage du tableau
         function filterAudits() {
             const filterType = document.getElementById('filter-type').value;
             const filterUap = document.getElementById('filter-uap').value;
@@ -817,7 +1226,7 @@
                 row.insertCell().textContent = a.type;
                 row.insertCell().textContent = a.uap;
                 row.insertCell().textContent = a.score + '%';
-                row.insertCell().innerHTML = `<button onclick="alert('${a.detail}')">Voir</button>`;
+                row.insertCell().innerHTML = `<button class="badge" onclick="alert('${a.detail}')"><i class="fas fa-eye"></i> Voir</button>`;
             });
 
             // Mettre à jour les options du filtre UAP
@@ -827,29 +1236,101 @@
             uapSelect.innerHTML = '<option value="all">Tous</option>' + allUaps.map(u => `<option value="${u}" ${u===currentUap?'selected':''}>${u}</option>`).join('');
         }
 
+        // Mise à jour des graphiques
+        function updateCourbesCharts() {
+            const periodeType = document.getElementById('periode-type').value;
+            const filtre = document.getElementById('courbes-filtre').value;
+
+            let filtered = audits;
+            if (filtre === 'UAP1') {
+                filtered = audits.filter(a => 
+                    (a.type === 'Ligne' && a.uap.includes('UAP1')) || 
+                    (a.type === 'Mur' && a.uap.includes('uap1'))
+                );
+            } else if (filtre === 'UAP2') {
+                filtered = audits.filter(a => 
+                    (a.type === 'Ligne' && a.uap.includes('UAP2')) || 
+                    (a.type === 'Mur' && a.uap.includes('uap2'))
+                );
+            } else if (filtre === 'Magasin') {
+                filtered = audits.filter(a => a.type === 'Magasin');
+            }
+
+            const grouped = {};
+            filtered.forEach(a => {
+                let period;
+                if (periodeType === 'mois') {
+                    period = a.date.substring(0, 7); // YYYY-MM
+                } else {
+                    const date = new Date(a.date + 'T00:00:00');
+                    const oneJan = new Date(date.getFullYear(), 0, 1);
+                    const week = Math.ceil((((date - oneJan) / 86400000) + oneJan.getDay() + 1) / 7);
+                    period = `${date.getFullYear()}-S${week}`;
+                }
+                if (!grouped[period]) {
+                    grouped[period] = { count:0, ok:0, nok:0, na:0 };
+                }
+                grouped[period].count += 1;
+                grouped[period].ok += a.okCount || 0;
+                grouped[period].nok += a.nokCount || 0;
+                grouped[period].na += a.naCount || 0;
+            });
+
+            const sortedPeriods = Object.keys(grouped).sort();
+            const periodLabels = sortedPeriods;
+            const auditCounts = sortedPeriods.map(p => grouped[p].count);
+            const okCounts = sortedPeriods.map(p => grouped[p].ok);
+            const nokCounts = sortedPeriods.map(p => grouped[p].nok);
+            const naCounts = sortedPeriods.map(p => grouped[p].na);
+
+            if (chartAudits) chartAudits.destroy();
+            const ctx1 = document.getElementById('chart-audits').getContext('2d');
+            chartAudits = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: periodLabels,
+                    datasets: [{
+                        label: "Nombre d'audits",
+                        data: auditCounts,
+                        backgroundColor: '#667eea',
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: 'Audits par période' }
+                    }
+                }
+            });
+
+            if (chartQuestions) chartQuestions.destroy();
+            const ctx2 = document.getElementById('chart-questions').getContext('2d');
+            chartQuestions = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: periodLabels,
+                    datasets: [
+                        { label: 'OK', data: okCounts, backgroundColor: '#2ecc71' },
+                        { label: 'NOK', data: nokCounts, backgroundColor: '#e74c3c' },
+                        { label: 'N/A', data: naCounts, backgroundColor: '#f39c12' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: 'Réponses aux questions par période' }
+                    },
+                    scales: { x: { stacked: true }, y: { stacked: true } }
+                }
+            });
+        }
+
         // Déconnexion
         function logout() {
             auth.signOut().catch(err => alert('Erreur lors de la déconnexion.'));
-        }
-
-        // Initialisation du graphique
-        function initChart() {
-            const ctx = document.getElementById('auditChart').getContext('2d');
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
-                    datasets: [{
-                        label: 'Audits réalisés',
-                        data: [12, 19, 15, 17, 24, 23],
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102,126,234,0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
         }
 
         // Entrée sur formulaire de connexion
