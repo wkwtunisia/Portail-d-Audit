@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Portail d'Audit Gemba</title>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
@@ -258,7 +256,6 @@
             overflow-x: auto;
         }
 
-        /* Sur desktop, quand la sidebar est ouverte, on décale le contenu */
         @media (min-width: 1024px) {
             .sidebar.open {
                 transform: translateX(0);
@@ -268,7 +265,6 @@
             }
         }
 
-        /* Sections */
         .section {
             display: none;
             animation: slideIn 0.3s ease;
@@ -336,7 +332,7 @@
             opacity: 0.8;
         }
 
-        /* Sous-navigation */
+        /* Sous-navigation des audits */
         .sub-nav {
             display: flex;
             gap: 12px;
@@ -380,7 +376,7 @@
             display: block;
         }
 
-        /* Formulaire */
+        /* Formulaire d'audit */
         .audit-form {
             background: white;
             padding: 30px;
@@ -465,7 +461,7 @@
             box-shadow: 0 20px 30px -5px rgba(102, 126, 234, 0.6);
         }
 
-        /* Résultat */
+        /* Résultat après soumission */
         .resultat-card {
             margin-top: 30px;
             padding: 25px;
@@ -531,7 +527,7 @@
             text-align: center;
         }
 
-        /* Tableau responsive */
+        /* Tableaux */
         .auditor-table {
             background: white;
             border-radius: 20px;
@@ -570,6 +566,8 @@
             border: none;
             cursor: pointer;
         }
+
+        /* Graphiques */
         .chart-container {
             background: white;
             border-radius: 24px;
@@ -578,6 +576,8 @@
             margin-bottom: 30px;
             overflow-x: auto;
         }
+
+        /* Barre de filtres */
         .filter-bar {
             margin-bottom: 25px;
             display: flex;
@@ -612,31 +612,18 @@
             background: #5a67d8;
         }
 
-        /* Responsive pour petits écrans */
         @media (max-width: 768px) {
-            .section h1 {
-                font-size: 24px;
-            }
-            .card-container {
-                grid-template-columns: 1fr;
-            }
-            .sub-nav button {
-                width: 100%;
-                justify-content: center;
-            }
-            .filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .resultat-stats {
-                grid-template-columns: 1fr;
-            }
+            .section h1 { font-size: 24px; }
+            .card-container { grid-template-columns: 1fr; }
+            .sub-nav button { width: 100%; justify-content: center; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+            .resultat-stats { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div id="app">
-        <!-- Connexion (inchangée) -->
+        <!-- PAGE DE CONNEXION -->
         <div id="login-container">
             <div class="login-box">
                 <h2 id="form-title"><i class="fas fa-lock"></i> Connexion</h2>
@@ -659,9 +646,9 @@
             </div>
         </div>
 
-        <!-- Dashboard avec sidebar toggle -->
+        <!-- TABLEAU DE BORD -->
         <div id="dashboard-container">
-            <!-- Bouton menu -->
+            <!-- Bouton menu hamburger -->
             <button class="menu-toggle" onclick="toggleSidebar()">
                 <i class="fas fa-bars"></i>
             </button>
@@ -669,7 +656,7 @@
             <!-- Sidebar -->
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <!-- Logo (remplacez par votre logo) -->
+                    <!-- Logo (remplacez par votre propre logo) -->
                     <img src="https://media.licdn.com/dms/image/v2/C510BAQFv4NwvhYRq8Q/company-logo_200_200/company-logo_200_200/0/1631351838133?e=2147483647&v=beta&t=pE5-TQRX2fd9oIfzQypoBLterLoj-X4wOnC3C8MMI4Q" alt="Logo Gemba Audit">
                     <h2>Gemba Audit</h2>
                     <p id="user-email">Espace auditeur</p>
@@ -710,6 +697,24 @@
                         <div class="card"><i class="fas fa-industry"></i><h3>Moyenne UAP2</h3><p class="stat-value" id="stat-moyenne-uap2">0%</p></div>
                         <div class="card"><i class="fas fa-warehouse"></i><h3>Moyenne Magasin</h3><p class="stat-value" id="stat-moyenne-magasin">0%</p></div>
                         <div class="card"><i class="fas fa-building"></i><h3>Moyenne Usine</h3><p class="stat-value" id="stat-moyenne-usine">0%</p></div>
+                        <!-- Meilleur et pire score -->
+                        <div class="card"><i class="fas fa-trophy" style="color:#f1c40f;"></i><h3>Meilleur score</h3><p class="stat-value" id="stat-best-score">-</p></div>
+                        <div class="card"><i class="fas fa-skull-crosswalk" style="color:#e74c3c;"></i><h3>Pire score</h3><p class="stat-value" id="stat-worst-score">-</p></div>
+                    </div>
+
+                    <!-- 5 pires résultats -->
+                    <div style="margin-top: 50px;">
+                        <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                            <i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> 5 pires résultats
+                        </h2>
+                        <div class="auditor-table" id="worst-results-table">
+                            <table>
+                                <thead>
+                                    <tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr>
+                                </thead>
+                                <tbody id="worst-results-body"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -717,15 +722,33 @@
                 <div id="section-courbes" class="section">
                     <h1><i class="fas fa-chart-line"></i> Courbes et statistiques</h1>
                     <div class="filter-bar">
-                        <div><label><i class="fas fa-calendar-alt"></i> Période :</label><select id="periode-type"><option value="mois">Par mois</option><option value="semaine">Par semaine</option></select></div>
-                        <div><label><i class="fas fa-filter"></i> Filtre :</label><select id="courbes-filtre"><option value="all">Tous</option><option value="UAP1">UAP1</option><option value="UAP2">UAP2</option><option value="Magasin">Magasin</option></select></div>
+                        <div>
+                            <label><i class="fas fa-calendar-alt"></i> Période :</label>
+                            <select id="periode-type">
+                                <option value="mois">Par mois</option>
+                                <option value="semaine">Par semaine</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label><i class="fas fa-filter"></i> Filtre :</label>
+                            <select id="courbes-filtre">
+                                <option value="all">Tous</option>
+                                <option value="UAP1">UAP1</option>
+                                <option value="UAP2">UAP2</option>
+                                <option value="Magasin">Magasin</option>
+                            </select>
+                        </div>
                         <button onclick="updateCourbesCharts()"><i class="fas fa-sync-alt"></i> Actualiser</button>
                     </div>
-                    <div class="chart-container"><canvas id="chart-audits" style="width:100%; max-height:300px;"></canvas></div>
-                    <div class="chart-container"><canvas id="chart-questions" style="width:100%; max-height:300px;"></canvas></div>
+                    <div class="chart-container">
+                        <canvas id="chart-audits" style="width:100%; max-height:300px;"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chart-questions" style="width:100%; max-height:300px;"></canvas>
+                    </div>
                 </div>
 
-                <!-- Section Nouvelle audit (avec sous-navigation) -->
+                <!-- Section Nouvelle audit -->
                 <div id="section-auditeurs" class="section">
                     <h1><i class="fas fa-pen-alt"></i> Nouvelle audit Gemba</h1>
                     <div class="sub-nav">
@@ -734,14 +757,26 @@
                         <button id="tab-mur" onclick="switchAuditType('mur')"><i class="fas fa-chalkboard"></i> Mur qualité</button>
                     </div>
 
-                    <!-- Audit Ligne (contenu complet, identique à la version précédente) -->
+                    <!-- Audit Ligne -->
                     <div id="audit-ligne" class="audit-content active-content">
                         <div class="audit-form">
                             <h3><i class="fas fa-bolt"></i> Audit Ligne de production</h3>
                             <form id="form-audit-ligne">
-                                <div class="question-group"><label>Date</label><input type="date" id="date-ligne" class="text-input" required></div>
-                                <div class="question-group"><label>Zone / Ligne / Poste</label><input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required></div>
-                                <div class="question-group"><label>UAP</label><div class="radio-group"><div><input type="radio" name="uapLigne" value="UAP1" required> UAP1</div><div><input type="radio" name="uapLigne" value="UAP2"> UAP2</div></div></div>
+                                <div class="question-group">
+                                    <label>Date</label>
+                                    <input type="date" id="date-ligne" class="text-input" required>
+                                </div>
+                                <div class="question-group">
+                                    <label>Zone / Ligne / Poste</label>
+                                    <input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required>
+                                </div>
+                                <div class="question-group">
+                                    <label>UAP</label>
+                                    <div class="radio-group">
+                                        <div><input type="radio" name="uapLigne" value="UAP1" required> UAP1</div>
+                                        <div><input type="radio" name="uapLigne" value="UAP2"> UAP2</div>
+                                    </div>
+                                </div>
                                 <div class="question-group"><label>Main d'œuvre : Qualification (Grille de polyvalence)</label><div class="radio-group"><div><input type="radio" name="mainLigne" value="OK" required> OK</div><div><input type="radio" name="mainLigne" value="NOK"> NOK</div></div></div>
                                 <div class="question-group"><label>matière : Etat de rebut</label><div class="radio-group"><div><input type="radio" name="matiereLigne" value="OK" required> OK</div><div><input type="radio" name="matiereLigne" value="NOK"> NOK</div></div></div>
                                 <div class="question-group"><label>Méthode : OK démarrage</label><div class="radio-group"><div><input type="radio" name="demarrageLigne" value="OK" required> OK</div><div><input type="radio" name="demarrageLigne" value="NOK"> NOK</div></div></div>
@@ -758,7 +793,7 @@
                         </div>
                     </div>
 
-                    <!-- Audit Magasin (contenu complet) -->
+                    <!-- Audit Magasin -->
                     <div id="audit-magasin" class="audit-content">
                         <div class="audit-form">
                             <h3><i class="fas fa-boxes"></i> Audit Magasin / Stock</h3>
@@ -779,7 +814,7 @@
                         </div>
                     </div>
 
-                    <!-- Audit Mur qualité (contenu complet) -->
+                    <!-- Audit Mur qualité -->
                     <div id="audit-mur" class="audit-content">
                         <div class="audit-form">
                             <h3><i class="fas fa-chalkboard"></i> Audit Mur qualité</h3>
@@ -804,8 +839,21 @@
                 <div id="section-details" class="section">
                     <h1><i class="fas fa-list-alt"></i> Détails des audits</h1>
                     <div class="filter-bar">
-                        <div><label>Filtrer par type :</label><select id="filter-type" onchange="filterAudits()"><option value="all">Tous</option><option value="Ligne">Ligne</option><option value="Magasin">Magasin</option><option value="Mur">Mur qualité</option></select></div>
-                        <div><label>Filtrer par UAP/Ligne :</label><select id="filter-uap" onchange="filterAudits()"><option value="all">Tous</option></select></div>
+                        <div>
+                            <label>Filtrer par type :</label>
+                            <select id="filter-type" onchange="filterAudits()">
+                                <option value="all">Tous</option>
+                                <option value="Ligne">Ligne</option>
+                                <option value="Magasin">Magasin</option>
+                                <option value="Mur">Mur qualité</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Filtrer par UAP/Ligne :</label>
+                            <select id="filter-uap" onchange="filterAudits()">
+                                <option value="all">Tous</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="auditor-table">
                         <table id="audit-table">
@@ -824,7 +872,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <script>
-        // Configuration Firebase (identique)
+        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBCnvkriTgPdaE37DRkRHPcULCVAYfbUHE",
             authDomain: "portail-d-audit.firebaseapp.com",
@@ -867,41 +915,10 @@
         const statMoyenneUap2 = document.getElementById('stat-moyenne-uap2');
         const statMoyenneMagasin = document.getElementById('stat-moyenne-magasin');
         const statMoyenneUsine = document.getElementById('stat-moyenne-usine');
+        const statBestScore = document.getElementById('stat-best-score');
+        const statWorstScore = document.getElementById('stat-worst-score');
 
-        // Fonction pour ouvrir/fermer la sidebar
-        function toggleSidebar() {
-            sidebar.classList.toggle('open');
-            // Sur desktop (>1024), on décale le contenu quand la sidebar est ouverte
-            if (window.innerWidth >= 1024) {
-                mainContent.classList.toggle('shifted', sidebar.classList.contains('open'));
-            }
-        }
-
-        // Fermer la sidebar si on clique en dehors (mobile)
-        document.addEventListener('click', function(event) {
-            const isClickInside = sidebar.contains(event.target) || event.target.classList.contains('menu-toggle');
-            if (!isClickInside && window.innerWidth < 1024 && sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open');
-            }
-        });
-
-        // Navigation sidebar
-        function switchSection(sectionName) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
-            document.getElementById(`section-${sectionName}`).classList.add('active-section');
-            document.querySelectorAll('.sidebar-nav li').forEach(i => i.classList.remove('active'));
-            document.getElementById(`nav-${sectionName}`).classList.add('active');
-        }
-
-        // Changer d'onglet dans Nouvelle audit
-        function switchAuditType(type) {
-            document.querySelectorAll('.audit-content').forEach(c => c.classList.remove('active-content'));
-            document.querySelectorAll('.sub-nav button').forEach(b => b.classList.remove('active'));
-            document.getElementById(`audit-${type}`).classList.add('active-content');
-            document.getElementById(`tab-${type}`).classList.add('active');
-        }
-
-        // Fonctions de connexion (inchangées)
+        // ---- Fonctions d'authentification ----
         function toggleForm() {
             isLoginMode = !isLoginMode;
             isForgotPasswordMode = false;
@@ -983,13 +1000,54 @@
             }
         }
 
-        // Surveiller l'état de connexion
+        // ---- Gestion de la sidebar ----
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            if (window.innerWidth >= 1024) {
+                mainContent.classList.toggle('shifted', sidebar.classList.contains('open'));
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            const isClickInside = sidebar.contains(event.target) || event.target.classList.contains('menu-toggle');
+            if (!isClickInside && window.innerWidth < 1024 && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024) {
+                if (sidebar.classList.contains('open')) {
+                    mainContent.classList.add('shifted');
+                } else {
+                    mainContent.classList.remove('shifted');
+                }
+            } else {
+                mainContent.classList.remove('shifted');
+            }
+        });
+
+        // ---- Navigation ----
+        function switchSection(sectionName) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+            document.getElementById(`section-${sectionName}`).classList.add('active-section');
+            document.querySelectorAll('.sidebar-nav li').forEach(i => i.classList.remove('active'));
+            document.getElementById(`nav-${sectionName}`).classList.add('active');
+        }
+
+        function switchAuditType(type) {
+            document.querySelectorAll('.audit-content').forEach(c => c.classList.remove('active-content'));
+            document.querySelectorAll('.sub-nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(`audit-${type}`).classList.add('active-content');
+            document.getElementById(`tab-${type}`).classList.add('active');
+        }
+
+        // ---- Surveillance de l'état de connexion ----
         auth.onAuthStateChanged((user) => {
             if (user) {
                 loginContainer.style.display = 'none';
                 dashboardContainer.style.display = 'block';
                 userEmailSpan.textContent = user.email;
-                // Écouter les audits en temps réel
                 database.ref('audits').on('value', (snapshot) => {
                     audits = [];
                     snapshot.forEach((child) => {
@@ -997,6 +1055,7 @@
                     });
                     filterAudits();
                     updateDashboardStats();
+                    updateWorstResults();
                     updateCourbesCharts();
                 });
             } else {
@@ -1006,7 +1065,7 @@
             }
         });
 
-        // Fonctions de soumission (identiques à la version précédente avec affichage stylisé)
+        // ---- Fonctions de soumission des audits (avec résultat stylisé) ----
         function soumettreLigne() {
             const questions = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
             let ok=0, nok=0, na=0;
@@ -1155,24 +1214,32 @@
             }
         }
 
-        // Mise à jour des stats dashboard (identique)
+        // ---- Mise à jour des statistiques du dashboard (corrigée) ----
         function updateDashboardStats() {
             let totalAudits = audits.length;
             let totalOk = 0, totalNok = 0;
             let scoresUap1 = [], scoresUap2 = [], scoresMagasin = [];
+            let allScores = [];
+
             audits.forEach(a => {
                 totalOk += a.okCount || 0;
                 totalNok += a.nokCount || 0;
-                if (a.type === 'Ligne') {
-                    if (a.uap.includes('UAP1')) scoresUap1.push(a.score);
-                    else if (a.uap.includes('UAP2')) scoresUap2.push(a.score);
-                } else if (a.type === 'Mur') {
-                    if (a.uap.includes('uap1')) scoresUap1.push(a.score);
-                    else if (a.uap.includes('uap2')) scoresUap2.push(a.score);
-                } else if (a.type === 'Magasin') {
-                    scoresMagasin.push(a.score);
+                // Convertir le score en nombre si possible
+                let score = Number(a.score);
+                if (!isNaN(score)) {
+                    allScores.push(score);
+                    if (a.type === 'Ligne') {
+                        if (a.uap.includes('UAP1')) scoresUap1.push(score);
+                        else if (a.uap.includes('UAP2')) scoresUap2.push(score);
+                    } else if (a.type === 'Mur') {
+                        if (a.uap.includes('uap1')) scoresUap1.push(score);
+                        else if (a.uap.includes('uap2')) scoresUap2.push(score);
+                    } else if (a.type === 'Magasin') {
+                        scoresMagasin.push(score);
+                    }
                 }
             });
+
             const moyenne = (arr) => arr.length ? (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1) : 'N/A';
             statTotalAudits.textContent = totalAudits;
             statTotalOk.textContent = totalOk;
@@ -1187,9 +1254,46 @@
             let count = [scoresUap1.length, scoresUap2.length, scoresMagasin.length].filter(l => l>0).length;
             let moyUsine = count ? ((moyU1 + moyU2 + moyMag) / count).toFixed(1) : 'N/A';
             statMoyenneUsine.textContent = (moyUsine !== 'N/A' ? moyUsine + '%' : 'N/A');
+
+            // Meilleur et pire score
+            if (allScores.length > 0) {
+                let best = Math.max(...allScores);
+                let worst = Math.min(...allScores);
+                statBestScore.textContent = best.toFixed(1) + '%';
+                statWorstScore.textContent = worst.toFixed(1) + '%';
+            } else {
+                statBestScore.textContent = '-';
+                statWorstScore.textContent = '-';
+            }
         }
 
-        // Filtrage du tableau
+        // ---- Affichage des 5 pires résultats (corrigé) ----
+        function updateWorstResults() {
+            const tbody = document.getElementById('worst-results-body');
+            if (!tbody) return;
+            // Filtrer les audits qui ont un score valide
+            const validAudits = audits.filter(a => a.score !== undefined && a.score !== null && !isNaN(Number(a.score)));
+            const sorted = [...validAudits].sort((a, b) => Number(a.score) - Number(b.score));
+            const worstFive = sorted.slice(0, 5);
+            tbody.innerHTML = '';
+            if (worstFive.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucun audit disponible</td></tr>';
+                return;
+            }
+            worstFive.forEach(a => {
+                const row = tbody.insertRow();
+                row.insertCell().textContent = a.date || '-';
+                row.insertCell().textContent = a.type || '-';
+                row.insertCell().textContent = a.uap || '-';
+                const scoreVal = Number(a.score);
+                row.insertCell().textContent = (!isNaN(scoreVal) ? scoreVal.toFixed(1) + '%' : '-');
+                // Échapper les apostrophes pour éviter les erreurs dans alert
+                const detailSafe = (a.detail || '').replace(/'/g, "\\'");
+                row.insertCell().innerHTML = `<button class="badge" onclick="alert('${detailSafe}')"><i class="fas fa-eye"></i> Voir</button>`;
+            });
+        }
+
+        // ---- Filtrage du tableau des audits (corrigé) ----
         function filterAudits() {
             const filterType = document.getElementById('filter-type').value;
             const filterUap = document.getElementById('filter-uap').value;
@@ -1203,8 +1307,10 @@
                 row.insertCell().textContent = a.date;
                 row.insertCell().textContent = a.type;
                 row.insertCell().textContent = a.uap;
-                row.insertCell().textContent = a.score + '%';
-                row.insertCell().innerHTML = `<button class="badge" onclick="alert('${a.detail}')"><i class="fas fa-eye"></i> Voir</button>`;
+                const scoreVal = Number(a.score);
+                row.insertCell().textContent = (!isNaN(scoreVal) ? scoreVal.toFixed(1) + '%' : '-');
+                const detailSafe = (a.detail || '').replace(/'/g, "\\'");
+                row.insertCell().innerHTML = `<button class="badge" onclick="alert('${detailSafe}')"><i class="fas fa-eye"></i> Voir</button>`;
             });
             const uapSelect = document.getElementById('filter-uap');
             const currentUap = uapSelect.value;
@@ -1212,7 +1318,7 @@
             uapSelect.innerHTML = '<option value="all">Tous</option>' + allUaps.map(u => `<option value="${u}" ${u===currentUap?'selected':''}>${u}</option>`).join('');
         }
 
-        // Mise à jour des graphiques
+        // ---- Mise à jour des graphiques (inchangée) ----
         function updateCourbesCharts() {
             const periodeType = document.getElementById('periode-type').value;
             const filtre = document.getElementById('courbes-filtre').value;
@@ -1280,27 +1386,14 @@
             });
         }
 
-        // Déconnexion
+        // ---- Déconnexion ----
         function logout() {
             auth.signOut().catch(err => alert('Erreur lors de la déconnexion.'));
         }
 
-        // Entrée sur formulaire de connexion
+        // ---- Gestion de la touche Entrée sur le formulaire de connexion ----
         document.addEventListener('keypress', (e) => {
             if (e.target.closest('#login-container') && e.key === 'Enter') handleAuth();
-        });
-
-        // Ajuster le margin-left sur redimensionnement
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 1024) {
-                if (sidebar.classList.contains('open')) {
-                    mainContent.classList.add('shifted');
-                } else {
-                    mainContent.classList.remove('shifted');
-                }
-            } else {
-                mainContent.classList.remove('shifted');
-            }
         });
     </script>
 </body>
