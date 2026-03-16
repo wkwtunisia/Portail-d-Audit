@@ -141,6 +141,11 @@
         .card .stat-value { font-size:40px; font-weight:800; color:#1a202c; line-height:1.2; }
         .card i { font-size:48px; color:#cc0000; margin-bottom:15px; opacity:0.8; }
 
+        /* Classes de couleur pour les scores */
+        .score-vert { color: #2e7d32 !important; }
+        .score-orange { color: #ed6c02 !important; }
+        .score-rouge { color: #d32f2f !important; }
+
         .sub-nav {
             display:flex; gap:12px; margin-bottom:30px; background:white; padding:15px;
             border-radius:16px; box-shadow:0 4px 6px rgba(0,0,0,0.05); flex-wrap:wrap;
@@ -384,6 +389,11 @@
                         </div>
                         <canvas id="chart-questions-per-question" style="width:100%; max-height:400px;"></canvas>
                     </div>
+                    <!-- Nouveau graphique : Tendance des scores par mois -->
+                    <div class="chart-container">
+                        <h3 style="margin-bottom:15px;">Évolution des scores moyens par mois</h3>
+                        <canvas id="chart-trend" style="width:100%; max-height:400px;"></canvas>
+                    </div>
                 </div>
 
                 <!-- Section Nouvelle audit avec score live -->
@@ -549,7 +559,7 @@
         let isLoginMode = true;
         let isForgotPasswordMode = false;
         let audits = [];
-        let chartAudits, chartQuestions, chartRepartition, chartPerQuestion;
+        let chartAudits, chartQuestions, chartRepartition, chartPerQuestion, chartTrend;
 
         // Stats dashboard
         const statTotalAudits = document.getElementById('stat-total-audits');
@@ -561,6 +571,23 @@
         const statMoyenneUsine = document.getElementById('stat-moyenne-usine');
         const statBestScore = document.getElementById('stat-best-score');
         const statWorstScore = document.getElementById('stat-worst-score');
+
+        // Fonction pour colorer un élément en fonction du score
+        function applyScoreColor(element, score) {
+            if (!element) return;
+            const val = parseFloat(score);
+            if (isNaN(val)) {
+                element.className = 'stat-value';
+                return;
+            }
+            if (val >= 85) {
+                element.className = 'stat-value score-vert';
+            } else if (val >= 80) {
+                element.className = 'stat-value score-orange';
+            } else {
+                element.className = 'stat-value score-rouge';
+            }
+        }
 
         // Fonctions d'authentification
         function toggleForm() {
@@ -703,6 +730,7 @@
                     updateCourbesCharts();
                     updateRepartitionChart();
                     updateQuestionChart();
+                    updateTrendChart(); // Nouveau graphique de tendance
                 });
             } else {
                 loginContainer.style.display = 'flex';
@@ -934,7 +962,7 @@
             }
         }
 
-        // ---- Mise à jour des statistiques du dashboard ----
+        // ---- Mise à jour des statistiques du dashboard (avec coloration) ----
         function updateDashboardStats() {
             let totalAudits = audits.length;
             let totalOk = 0, totalNok = 0;
@@ -963,29 +991,46 @@
             statTotalAudits.textContent = totalAudits;
             statTotalOk.textContent = totalOk;
             statTotalNok.textContent = totalNok;
-            statMoyenneUap1.textContent = (moyenne(scoresUap1) !== 'N/A' ? moyenne(scoresUap1) + '%' : 'N/A');
-            statMoyenneUap2.textContent = (moyenne(scoresUap2) !== 'N/A' ? moyenne(scoresUap2) + '%' : 'N/A');
-            statMoyenneMagasin.textContent = (moyenne(scoresMagasin) !== 'N/A' ? moyenne(scoresMagasin) + '%' : 'N/A');
             
-            let moyU1 = parseFloat(moyenne(scoresUap1)) || 0;
-            let moyU2 = parseFloat(moyenne(scoresUap2)) || 0;
-            let moyMag = parseFloat(moyenne(scoresMagasin)) || 0;
+            // Moyennes avec coloration
+            const moyU1 = moyenne(scoresUap1);
+            const moyU2 = moyenne(scoresUap2);
+            const moyMag = moyenne(scoresMagasin);
+            
+            statMoyenneUap1.textContent = (moyU1 !== 'N/A' ? moyU1 + '%' : 'N/A');
+            statMoyenneUap2.textContent = (moyU2 !== 'N/A' ? moyU2 + '%' : 'N/A');
+            statMoyenneMagasin.textContent = (moyMag !== 'N/A' ? moyMag + '%' : 'N/A');
+            
+            // Appliquer la couleur
+            applyScoreColor(statMoyenneUap1, moyU1);
+            applyScoreColor(statMoyenneUap2, moyU2);
+            applyScoreColor(statMoyenneMagasin, moyMag);
+            
+            let moyU1num = parseFloat(moyU1) || 0;
+            let moyU2num = parseFloat(moyU2) || 0;
+            let moyMagnet = parseFloat(moyMag) || 0;
             let count = [scoresUap1.length, scoresUap2.length, scoresMagasin.length].filter(l => l>0).length;
-            let moyUsine = count ? ((moyU1 + moyU2 + moyMag) / count).toFixed(1) : 'N/A';
+            let moyUsine = count ? ((moyU1num + moyU2num + moyMagnet) / count).toFixed(1) : 'N/A';
             statMoyenneUsine.textContent = (moyUsine !== 'N/A' ? moyUsine + '%' : 'N/A');
+            applyScoreColor(statMoyenneUsine, moyUsine);
 
+            // Meilleur et pire score
             if (allScores.length > 0) {
                 let best = Math.max(...allScores);
                 let worst = Math.min(...allScores);
                 statBestScore.textContent = best.toFixed(1) + '%';
                 statWorstScore.textContent = worst.toFixed(1) + '%';
+                applyScoreColor(statBestScore, best);
+                applyScoreColor(statWorstScore, worst);
             } else {
                 statBestScore.textContent = '-';
                 statWorstScore.textContent = '-';
+                statBestScore.className = 'stat-value';
+                statWorstScore.className = 'stat-value';
             }
         }
 
-        // ---- Affichage des 5 pires résultats ----
+        // ---- Affichage des 5 pires résultats (avec coloration des scores) ----
         function updateWorstResults() {
             const tbody = document.getElementById('worst-results-body');
             if (!tbody) return;
@@ -1003,13 +1048,20 @@
                 row.insertCell().textContent = a.type || '-';
                 row.insertCell().textContent = a.uap || '-';
                 const scoreVal = Number(a.score);
-                row.insertCell().textContent = (!isNaN(scoreVal) ? scoreVal.toFixed(1) + '%' : '-');
+                const scoreCell = row.insertCell();
+                const scoreText = (!isNaN(scoreVal) ? scoreVal.toFixed(1) + '%' : '-');
+                scoreCell.textContent = scoreText;
+                if (!isNaN(scoreVal)) {
+                    if (scoreVal >= 85) scoreCell.style.color = '#2e7d32';
+                    else if (scoreVal >= 80) scoreCell.style.color = '#ed6c02';
+                    else scoreCell.style.color = '#d32f2f';
+                }
                 const detailSafe = (a.detail || '').replace(/'/g, "\\'");
                 row.insertCell().innerHTML = `<button class="badge" onclick="alert('${detailSafe}')"><i class="fas fa-eye"></i> Voir</button>`;
             });
         }
 
-        // ---- Filtrage du tableau des audits ----
+        // ---- Filtrage du tableau des audits (avec coloration des scores) ----
         function filterAudits() {
             const filterType = document.getElementById('filter-type').value;
             const filterUap = document.getElementById('filter-uap').value;
@@ -1024,7 +1076,14 @@
                 row.insertCell().textContent = a.type;
                 row.insertCell().textContent = a.uap;
                 const scoreVal = Number(a.score);
-                row.insertCell().textContent = (!isNaN(scoreVal) ? scoreVal.toFixed(1) + '%' : '-');
+                const scoreCell = row.insertCell();
+                const scoreText = (!isNaN(scoreVal) ? scoreVal.toFixed(1) + '%' : '-');
+                scoreCell.textContent = scoreText;
+                if (!isNaN(scoreVal)) {
+                    if (scoreVal >= 85) scoreCell.style.color = '#2e7d32';
+                    else if (scoreVal >= 80) scoreCell.style.color = '#ed6c02';
+                    else scoreCell.style.color = '#d32f2f';
+                }
                 const detailSafe = (a.detail || '').replace(/'/g, "\\'");
                 row.insertCell().innerHTML = `<button class="badge" onclick="alert('${detailSafe}')"><i class="fas fa-eye"></i> Voir</button>`;
             });
@@ -1279,6 +1338,65 @@
                     scales: {
                         x: { stacked: true, beginAtZero: true, max: 100, title: { display: true, text: 'Pourcentage' } },
                         y: { stacked: true }
+                    }
+                }
+            });
+        }
+
+        // Nouveau graphique de tendance : scores moyens par mois par type
+        function updateTrendChart() {
+            const types = ['Ligne', 'Magasin', 'Mur'];
+            const months = {};
+            
+            // Parcourir tous les audits et grouper par mois et type
+            audits.forEach(a => {
+                if (!a.date || a.score === undefined || isNaN(Number(a.score))) return;
+                const month = a.date.substring(0, 7); // YYYY-MM
+                if (!months[month]) {
+                    months[month] = { Ligne: { sum: 0, count: 0 }, Magasin: { sum: 0, count: 0 }, Mur: { sum: 0, count: 0 } };
+                }
+                const type = a.type;
+                if (type === 'Ligne' || type === 'Magasin' || type === 'Mur') {
+                    months[month][type].sum += Number(a.score);
+                    months[month][type].count++;
+                }
+            });
+
+            // Trier les mois
+            const sortedMonths = Object.keys(months).sort();
+            
+            // Pour chaque type, calculer la moyenne par mois
+            const ligneData = [];
+            const magasinData = [];
+            const murData = [];
+            
+            sortedMonths.forEach(m => {
+                const mData = months[m];
+                ligneData.push(mData.Ligne.count > 0 ? (mData.Ligne.sum / mData.Ligne.count).toFixed(1) : null);
+                magasinData.push(mData.Magasin.count > 0 ? (mData.Magasin.sum / mData.Magasin.count).toFixed(1) : null);
+                murData.push(mData.Mur.count > 0 ? (mData.Mur.sum / mData.Mur.count).toFixed(1) : null);
+            });
+
+            if (chartTrend) chartTrend.destroy();
+            const ctx = document.getElementById('chart-trend').getContext('2d');
+            chartTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedMonths,
+                    datasets: [
+                        { label: 'Ligne', data: ligneData, borderColor: '#cc0000', backgroundColor: 'transparent', tension: 0.1, pointBackgroundColor: '#cc0000' },
+                        { label: 'Magasin', data: magasinData, borderColor: '#1976d2', backgroundColor: 'transparent', tension: 0.1, pointBackgroundColor: '#1976d2' },
+                        { label: 'Mur', data: murData, borderColor: '#ed6c02', backgroundColor: 'transparent', tension: 0.1, pointBackgroundColor: '#ed6c02' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: 'Évolution du score moyen par mois', font: { size: 16 } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score moyen (%)' } }
                     }
                 }
             });
