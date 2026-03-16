@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Portail d'Audit Gemba</title>
+    <title>Portail d'Audit Gemba - WKW Automotive</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
@@ -25,47 +25,57 @@
             position: relative;
         }
 
-        /* --- PAGE DE CONNEXION --- */
+        /* --- PAGE DE CONNEXION WKW AUTOMOTIVE (gris & rouge) --- */
         #login-container {
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: radial-gradient(circle at 20% 50%, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4a4a4a 0%, #2d2d2d 100%);
             padding: 20px;
             min-height: 100vh;
         }
         .login-box {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             width: 100%;
-            max-width: 400px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 420px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        .login-logo {
+            margin-bottom: 20px;
+        }
+        .login-logo img {
+            max-width: 180px;
+            height: auto;
         }
         .login-box h2 {
-            text-align: center;
-            color: #333;
+            color: #cc0000;
             margin-bottom: 30px;
-            font-size: 28px;
-            font-weight: 600;
+            font-size: 26px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .input-group {
             margin-bottom: 20px;
+            text-align: left;
         }
         .input-group label {
             display: block;
             margin-bottom: 8px;
-            color: #4a5568;
+            color: #333;
             font-weight: 600;
             font-size: 14px;
         }
         .input-group input {
             width: 100%;
             padding: 14px 16px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #d0d0d0;
             border-radius: 12px;
             font-size: 15px;
             transition: all 0.3s;
@@ -73,25 +83,28 @@
         }
         .input-group input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            border-color: #cc0000;
+            box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.1);
         }
         .login-box button {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #cc0000;
             color: white;
             border: none;
             border-radius: 12px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 15px -3px rgba(204, 0, 0, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .login-box button:hover {
+            background: #a30000;
             transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px rgba(102, 126, 234, 0.5);
+            box-shadow: 0 20px 25px -5px rgba(204, 0, 0, 0.5);
         }
         .login-box button:disabled {
             opacity: 0.6;
@@ -106,11 +119,11 @@
             font-weight: 600;
             display: none;
         }
-        .message.error { background-color: #fee; color: #c33; border: 1px solid #fcc; display: block; }
+        .message.error { background-color: #fee; color: #cc0000; border: 1px solid #fcc; display: block; }
         .message.success { background-color: #e6fffa; color: #2c7a7b; border: 1px solid #b2f5ea; display: block; }
         .message.info { background-color: #e6f3ff; color: #2c7be0; border: 1px solid #b8daff; display: block; }
         .toggle-form, .forgot-password { text-align: center; margin-top: 20px; }
-        .toggle-form a, .forgot-password a { color: #667eea; text-decoration: none; font-weight: 600; font-size: 14px; }
+        .toggle-form a, .forgot-password a { color: #cc0000; text-decoration: none; font-weight: 600; font-size: 14px; }
         .toggle-form a:hover, .forgot-password a:hover { text-decoration: underline; }
         .forgot-password { text-align: right; margin-top: 5px; }
 
@@ -139,18 +152,18 @@
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            color: #667eea;
+            color: #cc0000;
             transition: all 0.3s;
         }
         .menu-toggle:hover {
-            background: #667eea;
+            background: #cc0000;
             color: white;
         }
 
         /* Sidebar */
         .sidebar {
             width: 280px;
-            background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
+            background: linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%);
             color: white;
             display: flex;
             flex-direction: column;
@@ -173,21 +186,25 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         .sidebar-header img {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             margin-bottom: 15px;
-            border: 3px solid rgba(255,255,255,0.2);
-            object-fit: cover;
+            border: 3px solid #cc0000;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
         }
         .sidebar-header h2 {
             font-size: 22px;
             font-weight: 700;
             margin-bottom: 5px;
+            color: white;
         }
         .sidebar-header p {
             font-size: 14px;
-            opacity: 0.7;
+            opacity: 0.8;
+            color: #ccc;
         }
         .sidebar-nav {
             flex: 1;
@@ -211,14 +228,15 @@
             width: 22px;
             text-align: center;
             font-size: 18px;
+            color: #cc0000;
         }
         .sidebar-nav li:hover {
-            background: rgba(255,255,255,0.1);
-            border-left-color: #667eea;
+            background: rgba(204, 0, 0, 0.1);
+            border-left-color: #cc0000;
         }
         .sidebar-nav li.active {
-            background: rgba(102, 126, 234, 0.2);
-            border-left-color: #667eea;
+            background: rgba(204, 0, 0, 0.2);
+            border-left-color: #cc0000;
         }
         .sidebar-footer {
             padding: 20px;
@@ -227,8 +245,8 @@
         .logout-btn {
             width: 100%;
             padding: 12px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(204, 0, 0, 0.2);
+            border: 1px solid #cc0000;
             color: white;
             border-radius: 10px;
             cursor: pointer;
@@ -243,7 +261,7 @@
             margin-right: 10px;
         }
         .logout-btn:hover {
-            background: rgba(255,255,255,0.2);
+            background: #cc0000;
         }
 
         /* Contenu principal */
@@ -287,7 +305,7 @@
             flex-wrap: wrap;
         }
         .section h1 i {
-            color: #667eea;
+            color: #cc0000;
             background: white;
             padding: 12px;
             border-radius: 50%;
@@ -309,7 +327,7 @@
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 30px -5px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 20px 30px -5px rgba(204, 0, 0, 0.2);
         }
         .card h3 {
             color: #4a5568;
@@ -327,7 +345,7 @@
         }
         .card i {
             font-size: 48px;
-            color: #667eea;
+            color: #cc0000;
             margin-bottom: 15px;
             opacity: 0.8;
         }
@@ -362,9 +380,9 @@
             font-size: 16px;
         }
         .sub-nav button.active {
-            background: #667eea;
+            background: #cc0000;
             color: white;
-            box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 15px -3px rgba(204, 0, 0, 0.4);
         }
         .sub-nav button:hover:not(.active) {
             background: #f7fafc;
@@ -419,12 +437,12 @@
             transition: all 0.2s;
         }
         .radio-group div:hover {
-            border-color: #667eea;
+            border-color: #cc0000;
         }
         .radio-group input[type="radio"] {
             width: 18px;
             height: 18px;
-            accent-color: #667eea;
+            accent-color: #cc0000;
         }
         .text-input, select, textarea {
             width: 100%;
@@ -437,11 +455,11 @@
         }
         .text-input:focus, select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            border-color: #cc0000;
+            box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.1);
         }
         .btn-submit {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #cc0000;
             color: white;
             border: none;
             padding: 16px 32px;
@@ -450,7 +468,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 15px -3px rgba(204, 0, 0, 0.4);
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -458,7 +476,7 @@
         }
         .btn-submit:hover {
             transform: scale(1.05);
-            box-shadow: 0 20px 30px -5px rgba(102, 126, 234, 0.6);
+            box-shadow: 0 20px 30px -5px rgba(204, 0, 0, 0.6);
         }
 
         /* Résultat après soumission */
@@ -566,6 +584,25 @@
             border: none;
             cursor: pointer;
         }
+        .btn-excel {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            margin-left: auto;
+        }
+        .btn-excel:hover {
+            background: #219653;
+            transform: scale(1.05);
+        }
 
         /* Graphiques */
         .chart-container {
@@ -602,14 +639,14 @@
             font-weight: 500;
         }
         .filter-bar button {
-            background: #667eea;
+            background: #cc0000;
             color: white;
             border: none;
             cursor: pointer;
             transition: all 0.3s;
         }
         .filter-bar button:hover {
-            background: #5a67d8;
+            background: #a30000;
         }
 
         @media (max-width: 768px) {
@@ -623,9 +660,13 @@
 </head>
 <body>
     <div id="app">
-        <!-- PAGE DE CONNEXION -->
+        <!-- PAGE DE CONNEXION WKW AUTOMOTIVE -->
         <div id="login-container">
             <div class="login-box">
+                <div class="login-logo">
+                    <!-- Logo WKW Automotive (remplacez l'URL par votre logo) -->
+                    <img src="https://via.placeholder.com/180x80/cc0000/ffffff?text=WKW+Automotive" alt="WKW Automotive">
+                </div>
                 <h2 id="form-title"><i class="fas fa-lock"></i> Connexion</h2>
                 <div class="input-group">
                     <label><i class="fas fa-envelope"></i> Email</label>
@@ -656,9 +697,9 @@
             <!-- Sidebar -->
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <!-- Logo (remplacez par votre propre logo) -->
-                    <img src="https://media.licdn.com/dms/image/v2/C510BAQFv4NwvhYRq8Q/company-logo_200_200/company-logo_200_200/0/1631351838133?e=2147483647&v=beta&t=pE5-TQRX2fd9oIfzQypoBLterLoj-X4wOnC3C8MMI4Q" alt="Logo Gemba Audit">
-                    <h2>Gemba Audit</h2>
+                    <!-- Logo (remplacez par votre logo) -->
+                    <img src="https://media.licdn.com/dms/image/v2/C510BAQFv4NwvhYRq8Q/company-logo_200_200/company-logo_200_200/0/1631351838133?e=2147483647&v=beta&t=pE5-TQRX2fd9oIfzQypoBLterLoj-X4wOnC3C8MMI4Q">
+                    <h2>WKW Audit</h2>
                     <p id="user-email">Espace auditeur</p>
                 </div>
                 <div class="sidebar-nav">
@@ -835,7 +876,7 @@
                     </div>
                 </div>
 
-                <!-- Section Détails d'audit -->
+                <!-- Section Détails d'audit avec bouton d'export Excel -->
                 <div id="section-details" class="section">
                     <h1><i class="fas fa-list-alt"></i> Détails des audits</h1>
                     <div class="filter-bar">
@@ -854,6 +895,9 @@
                                 <option value="all">Tous</option>
                             </select>
                         </div>
+                        <button class="btn-excel" onclick="exportToExcel()">
+                            <i class="fas fa-file-excel"></i> Exporter Excel
+                        </button>
                     </div>
                     <div class="auditor-table">
                         <table id="audit-table">
@@ -1065,7 +1109,7 @@
             }
         });
 
-        // ---- Fonctions de soumission des audits (avec résultat stylisé) ----
+        // ---- Fonctions de soumission des audits (inchangées) ----
         function soumettreLigne() {
             const questions = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
             let ok=0, nok=0, na=0;
@@ -1214,7 +1258,7 @@
             }
         }
 
-        // ---- Mise à jour des statistiques du dashboard (corrigée) ----
+        // ---- Mise à jour des statistiques du dashboard ----
         function updateDashboardStats() {
             let totalAudits = audits.length;
             let totalOk = 0, totalNok = 0;
@@ -1224,7 +1268,6 @@
             audits.forEach(a => {
                 totalOk += a.okCount || 0;
                 totalNok += a.nokCount || 0;
-                // Convertir le score en nombre si possible
                 let score = Number(a.score);
                 if (!isNaN(score)) {
                     allScores.push(score);
@@ -1255,7 +1298,6 @@
             let moyUsine = count ? ((moyU1 + moyU2 + moyMag) / count).toFixed(1) : 'N/A';
             statMoyenneUsine.textContent = (moyUsine !== 'N/A' ? moyUsine + '%' : 'N/A');
 
-            // Meilleur et pire score
             if (allScores.length > 0) {
                 let best = Math.max(...allScores);
                 let worst = Math.min(...allScores);
@@ -1267,11 +1309,10 @@
             }
         }
 
-        // ---- Affichage des 5 pires résultats (corrigé) ----
+        // ---- Affichage des 5 pires résultats ----
         function updateWorstResults() {
             const tbody = document.getElementById('worst-results-body');
             if (!tbody) return;
-            // Filtrer les audits qui ont un score valide
             const validAudits = audits.filter(a => a.score !== undefined && a.score !== null && !isNaN(Number(a.score)));
             const sorted = [...validAudits].sort((a, b) => Number(a.score) - Number(b.score));
             const worstFive = sorted.slice(0, 5);
@@ -1287,13 +1328,12 @@
                 row.insertCell().textContent = a.uap || '-';
                 const scoreVal = Number(a.score);
                 row.insertCell().textContent = (!isNaN(scoreVal) ? scoreVal.toFixed(1) + '%' : '-');
-                // Échapper les apostrophes pour éviter les erreurs dans alert
                 const detailSafe = (a.detail || '').replace(/'/g, "\\'");
                 row.insertCell().innerHTML = `<button class="badge" onclick="alert('${detailSafe}')"><i class="fas fa-eye"></i> Voir</button>`;
             });
         }
 
-        // ---- Filtrage du tableau des audits (corrigé) ----
+        // ---- Filtrage du tableau des audits ----
         function filterAudits() {
             const filterType = document.getElementById('filter-type').value;
             const filterUap = document.getElementById('filter-uap').value;
@@ -1318,7 +1358,48 @@
             uapSelect.innerHTML = '<option value="all">Tous</option>' + allUaps.map(u => `<option value="${u}" ${u===currentUap?'selected':''}>${u}</option>`).join('');
         }
 
-        // ---- Mise à jour des graphiques (inchangée) ----
+        // ---- Export Excel (CSV) ----
+        function exportToExcel() {
+            const filterType = document.getElementById('filter-type').value;
+            const filterUap = document.getElementById('filter-uap').value;
+            let filtered = audits;
+            if (filterType !== 'all') filtered = filtered.filter(a => a.type === filterType);
+            if (filterUap !== 'all') filtered = filtered.filter(a => a.uap === filterUap);
+
+            if (filtered.length === 0) {
+                alert('Aucune donnée à exporter.');
+                return;
+            }
+
+            // Entêtes CSV
+            const headers = ['Date', 'Type', 'UAP/Ligne', 'Score (%)', 'Détail'];
+            const rows = filtered.map(a => [
+                a.date || '',
+                a.type || '',
+                a.uap || '',
+                (!isNaN(Number(a.score)) ? Number(a.score).toFixed(1) : ''),
+                (a.detail || '').replace(/"/g, '""') // échapper les guillemets pour CSV
+            ]);
+
+            // Création du contenu CSV
+            let csvContent = headers.join(';') + '\n';
+            rows.forEach(row => {
+                csvContent += row.map(cell => `"${cell}"`).join(';') + '\n';
+            });
+
+            // Téléchargement
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'audits_export.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ---- Mise à jour des graphiques ----
         function updateCourbesCharts() {
             const periodeType = document.getElementById('periode-type').value;
             const filtre = document.getElementById('courbes-filtre').value;
@@ -1369,7 +1450,7 @@
             const ctx1 = document.getElementById('chart-audits').getContext('2d');
             chartAudits = new Chart(ctx1, {
                 type: 'bar',
-                data: { labels: periodLabels, datasets: [{ label: "Nombre d'audits", data: auditCounts, backgroundColor: '#667eea', borderRadius: 8 }] },
+                data: { labels: periodLabels, datasets: [{ label: "Nombre d'audits", data: auditCounts, backgroundColor: '#cc0000', borderRadius: 8 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: 'Audits par période', font: { size: 16 } } } }
             });
 
