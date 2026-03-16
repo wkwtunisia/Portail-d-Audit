@@ -2,9 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Portail d'Audit Gemba</title>
-    <!-- Font Awesome pour les icônes -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -13,19 +13,18 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
         }
         body {
-            background: #f4f7fa;
+            background: #f0f5fa;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow-x: hidden;
         }
         #app {
             width: 100%;
             min-height: 100vh;
             display: flex;
+            position: relative;
         }
 
         /* --- PAGE DE CONNEXION --- */
@@ -34,43 +33,50 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: radial-gradient(circle at 20% 50%, #667eea 0%, #764ba2 100%);
             padding: 20px;
+            min-height: 100vh;
         }
         .login-box {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             width: 100%;
             max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         .login-box h2 {
             text-align: center;
             color: #333;
             margin-bottom: 30px;
             font-size: 28px;
+            font-weight: 600;
         }
         .input-group {
             margin-bottom: 20px;
         }
         .input-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: 500;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 14px;
         }
         .input-group input {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: white;
         }
         .input-group input:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
         .login-box button {
             width: 100%;
@@ -78,65 +84,112 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s;
+            box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.4);
         }
         .login-box button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 20px 25px -5px rgba(102, 126, 234, 0.5);
         }
         .login-box button:disabled {
-            opacity: 0.7;
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
         .message {
             margin-top: 20px;
             padding: 12px;
-            border-radius: 5px;
+            border-radius: 10px;
             text-align: center;
+            font-weight: 600;
             display: none;
         }
         .message.error { background-color: #fee; color: #c33; border: 1px solid #fcc; display: block; }
-        .message.success { background-color: #efe; color: #3c3; border: 1px solid #cfc; display: block; }
+        .message.success { background-color: #e6fffa; color: #2c7a7b; border: 1px solid #b2f5ea; display: block; }
         .message.info { background-color: #e6f3ff; color: #2c7be0; border: 1px solid #b8daff; display: block; }
-        .toggle-form, .forgot-password { text-align: center; margin-top: 15px; }
-        .toggle-form a, .forgot-password a { color: #667eea; text-decoration: none; font-weight: 500; cursor: pointer; }
+        .toggle-form, .forgot-password { text-align: center; margin-top: 20px; }
+        .toggle-form a, .forgot-password a { color: #667eea; text-decoration: none; font-weight: 600; font-size: 14px; }
         .toggle-form a:hover, .forgot-password a:hover { text-decoration: underline; }
         .forgot-password { text-align: right; margin-top: 5px; }
 
-        /* --- TABLEAU DE BORD --- */
+        /* --- TABLEAU DE BORD AVEC SIDEBAR TOGGLE --- */
         #dashboard-container {
             display: none;
             width: 100%;
-            background: #f4f7fa;
+            background: #f0f5fa;
+            position: relative;
         }
+
+        /* Bouton menu hamburger */
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #667eea;
+            transition: all 0.3s;
+        }
+        .menu-toggle:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Sidebar */
         .sidebar {
-            width: 260px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 280px;
+            background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
             color: white;
             display: flex;
             flex-direction: column;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
             position: fixed;
+            left: 0;
+            top: 0;
             height: 100vh;
+            z-index: 999;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
         }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
         .sidebar-header {
             padding: 30px 20px;
             text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-header img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid rgba(255,255,255,0.2);
+            object-fit: cover;
         }
         .sidebar-header h2 {
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
         .sidebar-header p {
             font-size: 14px;
-            opacity: 0.8;
-            margin-top: 5px;
+            opacity: 0.7;
         }
         .sidebar-nav {
             flex: 1;
@@ -153,30 +206,33 @@
             display: flex;
             align-items: center;
             font-size: 16px;
+            border-left: 4px solid transparent;
         }
         .sidebar-nav li i {
             margin-right: 15px;
-            width: 20px;
+            width: 22px;
             text-align: center;
+            font-size: 18px;
         }
         .sidebar-nav li:hover {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            border-left-color: #667eea;
         }
         .sidebar-nav li.active {
-            background: rgba(255,255,255,0.3);
-            border-left: 4px solid white;
+            background: rgba(102, 126, 234, 0.2);
+            border-left-color: #667eea;
         }
         .sidebar-footer {
             padding: 20px;
-            border-top: 1px solid rgba(255,255,255,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
         .logout-btn {
             width: 100%;
             padding: 12px;
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
             color: white;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 16px;
             font-weight: 600;
@@ -189,96 +245,133 @@
             margin-right: 10px;
         }
         .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.2);
         }
+
+        /* Contenu principal */
         .main-content {
             flex: 1;
-            margin-left: 260px;
-            padding: 30px;
-            overflow-y: auto;
+            margin-left: 0;
+            padding: 80px 20px 30px 20px;
+            transition: margin-left 0.3s ease;
+            width: 100%;
+            overflow-x: auto;
         }
+
+        /* Sur desktop, quand la sidebar est ouverte, on décale le contenu */
+        @media (min-width: 1024px) {
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content.shifted {
+                margin-left: 280px;
+            }
+        }
+
+        /* Sections */
         .section {
             display: none;
-            animation: fadeIn 0.3s;
+            animation: slideIn 0.3s ease;
         }
         .section.active-section {
             display: block;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .section h1 {
-            color: #333;
+            color: #1a202c;
             margin-bottom: 30px;
             font-size: 28px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-            display: inline-block;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .section h1 i {
+            color: #667eea;
+            background: white;
+            padding: 12px;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         .card-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 25px;
             margin-top: 20px;
         }
         .card {
             background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.03);
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 30px -5px rgba(102, 126, 234, 0.2);
         }
         .card h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 18px;
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .card .stat-value {
-            font-size: 36px;
-            font-weight: bold;
-            color: #333;
+            font-size: 40px;
+            font-weight: 800;
+            color: #1a202c;
+            line-height: 1.2;
         }
         .card i {
-            font-size: 40px;
+            font-size: 48px;
             color: #667eea;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            opacity: 0.8;
         }
 
         /* Sous-navigation */
         .sub-nav {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 30px;
             background: white;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
         }
         .sub-nav button {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
             background: transparent;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 600;
-            color: #666;
+            color: #4a5568;
             cursor: pointer;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1 1 auto;
         }
         .sub-nav button i {
-            margin-right: 8px;
+            font-size: 16px;
         }
         .sub-nav button.active {
             background: #667eea;
             color: white;
+            box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.4);
         }
         .sub-nav button:hover:not(.active) {
-            background: #f0f0f0;
+            background: #f7fafc;
         }
         .audit-content {
             display: none;
@@ -287,166 +380,263 @@
             display: block;
         }
 
-        /* Formulaire d'audit */
+        /* Formulaire */
         .audit-form {
             background: white;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
         }
         .audit-form h3 {
-            margin-bottom: 20px;
-            color: #333;
+            font-size: 24px;
+            color: #1a202c;
+            margin-bottom: 25px;
+            font-weight: 700;
         }
         .question-group {
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8fafd;
+            border-radius: 16px;
+            border: 1px solid #edf2f7;
         }
         .question-group label {
             display: block;
             font-weight: 600;
-            color: #444;
-            margin-bottom: 10px;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 16px;
         }
         .radio-group {
             display: flex;
             gap: 20px;
-            align-items: center;
             flex-wrap: wrap;
         }
         .radio-group div {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 30px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+        .radio-group div:hover {
+            border-color: #667eea;
         }
         .radio-group input[type="radio"] {
-            width: auto;
-            margin-right: 5px;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
         }
         .text-input, select, textarea {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 14px;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: white;
         }
         .text-input:focus, select:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
         .btn-submit {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 5px;
+            padding: 16px 32px;
+            border-radius: 40px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             margin-top: 20px;
-        }
-        .btn-submit i {
-            margin-right: 8px;
         }
         .btn-submit:hover {
-            background: #5a67d8;
-        }
-        .resultat {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            font-weight: bold;
-            text-align: center;
-            font-size: 18px;
-        }
-        .resultat.success {
-            background: #efe;
-            color: #2e7d32;
+            transform: scale(1.05);
+            box-shadow: 0 20px 30px -5px rgba(102, 126, 234, 0.6);
         }
 
-        /* Tableau des audits */
-        .auditor-table {
-            width: 100%;
+        /* Résultat */
+        .resultat-card {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+            border: 2px solid #9ae6b4;
+            box-shadow: 0 10px 20px -5px rgba(72, 187, 120, 0.3);
+            display: none;
+        }
+        .resultat-card.show {
+            display: block;
+            animation: scaleIn 0.3s;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .resultat-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .resultat-header i {
+            font-size: 32px;
+            color: #38a169;
+        }
+        .resultat-header h4 {
+            font-size: 20px;
+            color: #22543d;
+            font-weight: 700;
+        }
+        .resultat-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-badge {
             background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .stat-badge.ok { border-left: 4px solid #38a169; }
+        .stat-badge.nok { border-left: 4px solid #e53e3e; }
+        .stat-badge.na { border-left: 4px solid #d69e2e; }
+        .stat-badge span {
+            display: block;
+            font-size: 28px;
+            font-weight: 800;
+            margin: 5px 0;
+        }
+        .stat-badge small {
+            color: #718096;
+            font-size: 14px;
+        }
+        .resultat-score {
+            font-size: 36px;
+            font-weight: 800;
+            color: #22543d;
+            text-align: center;
+        }
+
+        /* Tableau responsive */
+        .auditor-table {
+            background: white;
+            border-radius: 20px;
+            overflow-x: auto;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
         }
         .auditor-table table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px;
         }
         .auditor-table th {
-            background: #667eea;
-            color: white;
-            padding: 15px;
+            background: #f7fafc;
+            color: #4a5568;
+            padding: 18px;
             text-align: left;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .auditor-table td {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        .auditor-table tr:last-child td {
-            border-bottom: none;
+            padding: 16px 18px;
+            border-bottom: 1px solid #edf2f7;
         }
         .auditor-table tr:hover td {
-            background: #f9f9f9;
+            background: #f8fafd;
         }
         .badge {
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 5px 10px;
-            border-radius: 20px;
+            background: #e6fffa;
+            color: #2c7a7b;
+            padding: 6px 12px;
+            border-radius: 30px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
         }
         .chart-container {
-            margin-top: 20px;
             background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            overflow-x: auto;
         }
         .filter-bar {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
             align-items: center;
             background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 18px 25px;
+            border-radius: 18px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.03);
         }
         .filter-bar label {
             font-weight: 600;
-            color: #555;
+            color: #4a5568;
         }
         .filter-bar select, .filter-bar button {
-            padding: 8px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
+            padding: 10px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 40px;
             background: white;
             font-size: 14px;
+            font-weight: 500;
         }
         .filter-bar button {
             background: #667eea;
             color: white;
             border: none;
             cursor: pointer;
+            transition: all 0.3s;
         }
         .filter-bar button:hover {
             background: #5a67d8;
+        }
+
+        /* Responsive pour petits écrans */
+        @media (max-width: 768px) {
+            .section h1 {
+                font-size: 24px;
+            }
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+            .sub-nav button {
+                width: 100%;
+                justify-content: center;
+            }
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .resultat-stats {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div id="app">
-        <!-- Conteneur de connexion -->
+        <!-- Connexion (inchangée) -->
         <div id="login-container">
             <div class="login-box">
                 <h2 id="form-title"><i class="fas fa-lock"></i> Connexion</h2>
@@ -469,25 +659,33 @@
             </div>
         </div>
 
-        <!-- Conteneur du tableau de bord -->
+        <!-- Dashboard avec sidebar toggle -->
         <div id="dashboard-container">
-            <div class="sidebar">
+            <!-- Bouton menu -->
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Sidebar -->
+            <div class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <h2><i class="fas fa-clipboard-check"></i> Portail Audit</h2>
-                    <p id="user-email">Espace administrateur</p>
+                    <!-- Logo (remplacez par votre logo) -->
+                    <img src="https://via.placeholder.com/70x70/667eea/ffffff?text=GA" alt="Logo Gemba Audit">
+                    <h2>Gemba Audit</h2>
+                    <p id="user-email">Espace auditeur</p>
                 </div>
                 <div class="sidebar-nav">
                     <ul>
-                        <li id="nav-dashboard" class="active" onclick="switchSection('dashboard')">
+                        <li id="nav-dashboard" class="active" onclick="switchSection('dashboard'); if(window.innerWidth<1024) toggleSidebar();">
                             <i class="fas fa-tachometer-alt"></i> Dashboard
                         </li>
-                        <li id="nav-courbes" onclick="switchSection('courbes')">
+                        <li id="nav-courbes" onclick="switchSection('courbes'); if(window.innerWidth<1024) toggleSidebar();">
                             <i class="fas fa-chart-line"></i> Courbes
                         </li>
-                        <li id="nav-auditeurs" onclick="switchSection('auditeurs')">
+                        <li id="nav-auditeurs" onclick="switchSection('auditeurs'); if(window.innerWidth<1024) toggleSidebar();">
                             <i class="fas fa-pen-alt"></i> Nouvelle audit
                         </li>
-                        <li id="nav-details" onclick="switchSection('details')">
+                        <li id="nav-details" onclick="switchSection('details'); if(window.innerWidth<1024) toggleSidebar();">
                             <i class="fas fa-list-alt"></i> Détails d'audit
                         </li>
                     </ul>
@@ -499,46 +697,19 @@
                 </div>
             </div>
 
-            <div class="main-content">
+            <!-- Contenu principal -->
+            <div class="main-content" id="mainContent">
                 <!-- Section Dashboard -->
                 <div id="section-dashboard" class="section active-section">
                     <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
                     <div class="card-container">
-                        <div class="card">
-                            <i class="fas fa-calendar-check"></i>
-                            <h3>Audits réalisés</h3>
-                            <p class="stat-value" id="stat-total-audits">0</p>
-                        </div>
-                        <div class="card">
-                            <i class="fas fa-check-circle" style="color:#2ecc71;"></i>
-                            <h3>Questions OK</h3>
-                            <p class="stat-value" id="stat-total-ok">0</p>
-                        </div>
-                        <div class="card">
-                            <i class="fas fa-times-circle" style="color:#e74c3c;"></i>
-                            <h3>Questions NOK</h3>
-                            <p class="stat-value" id="stat-total-nok">0</p>
-                        </div>
-                        <div class="card">
-                            <i class="fas fa-industry"></i>
-                            <h3>Moyenne UAP1</h3>
-                            <p class="stat-value" id="stat-moyenne-uap1">0%</p>
-                        </div>
-                        <div class="card">
-                            <i class="fas fa-industry"></i>
-                            <h3>Moyenne UAP2</h3>
-                            <p class="stat-value" id="stat-moyenne-uap2">0%</p>
-                        </div>
-                        <div class="card">
-                            <i class="fas fa-warehouse"></i>
-                            <h3>Moyenne Magasin</h3>
-                            <p class="stat-value" id="stat-moyenne-magasin">0%</p>
-                        </div>
-                        <div class="card">
-                            <i class="fas fa-building"></i>
-                            <h3>Moyenne Usine</h3>
-                            <p class="stat-value" id="stat-moyenne-usine">0%</p>
-                        </div>
+                        <div class="card"><i class="fas fa-calendar-check"></i><h3>Audits réalisés</h3><p class="stat-value" id="stat-total-audits">0</p></div>
+                        <div class="card"><i class="fas fa-check-circle" style="color:#38a169;"></i><h3>Questions OK</h3><p class="stat-value" id="stat-total-ok">0</p></div>
+                        <div class="card"><i class="fas fa-times-circle" style="color:#e53e3e;"></i><h3>Questions NOK</h3><p class="stat-value" id="stat-total-nok">0</p></div>
+                        <div class="card"><i class="fas fa-industry"></i><h3>Moyenne UAP1</h3><p class="stat-value" id="stat-moyenne-uap1">0%</p></div>
+                        <div class="card"><i class="fas fa-industry"></i><h3>Moyenne UAP2</h3><p class="stat-value" id="stat-moyenne-uap2">0%</p></div>
+                        <div class="card"><i class="fas fa-warehouse"></i><h3>Moyenne Magasin</h3><p class="stat-value" id="stat-moyenne-magasin">0%</p></div>
+                        <div class="card"><i class="fas fa-building"></i><h3>Moyenne Usine</h3><p class="stat-value" id="stat-moyenne-usine">0%</p></div>
                     </div>
                 </div>
 
@@ -546,300 +717,85 @@
                 <div id="section-courbes" class="section">
                     <h1><i class="fas fa-chart-line"></i> Courbes et statistiques</h1>
                     <div class="filter-bar">
-                        <div>
-                            <label><i class="fas fa-calendar-alt"></i> Période :</label>
-                            <select id="periode-type">
-                                <option value="mois">Par mois</option>
-                                <option value="semaine">Par semaine</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label><i class="fas fa-filter"></i> Filtre :</label>
-                            <select id="courbes-filtre">
-                                <option value="all">Tous</option>
-                                <option value="UAP1">UAP1</option>
-                                <option value="UAP2">UAP2</option>
-                                <option value="Magasin">Magasin</option>
-                            </select>
-                        </div>
+                        <div><label><i class="fas fa-calendar-alt"></i> Période :</label><select id="periode-type"><option value="mois">Par mois</option><option value="semaine">Par semaine</option></select></div>
+                        <div><label><i class="fas fa-filter"></i> Filtre :</label><select id="courbes-filtre"><option value="all">Tous</option><option value="UAP1">UAP1</option><option value="UAP2">UAP2</option><option value="Magasin">Magasin</option></select></div>
                         <button onclick="updateCourbesCharts()"><i class="fas fa-sync-alt"></i> Actualiser</button>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="chart-audits" style="width:100%; max-height:300px;"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="chart-questions" style="width:100%; max-height:300px;"></canvas>
-                    </div>
+                    <div class="chart-container"><canvas id="chart-audits" style="width:100%; max-height:300px;"></canvas></div>
+                    <div class="chart-container"><canvas id="chart-questions" style="width:100%; max-height:300px;"></canvas></div>
                 </div>
 
-                <!-- Section Nouvelle audit -->
+                <!-- Section Nouvelle audit (avec sous-navigation) -->
                 <div id="section-auditeurs" class="section">
                     <h1><i class="fas fa-pen-alt"></i> Nouvelle audit Gemba</h1>
                     <div class="sub-nav">
-                        <button id="tab-ligne" class="active" onclick="switchAuditType('ligne')">
-                            <i class="fas fa-bolt"></i> Ligne
-                        </button>
-                        <button id="tab-magasin" onclick="switchAuditType('magasin')">
-                            <i class="fas fa-boxes"></i> Magasin
-                        </button>
-                        <button id="tab-mur" onclick="switchAuditType('mur')">
-                            <i class="fas fa-chalkboard"></i> Mur qualité
-                        </button>
+                        <button id="tab-ligne" class="active" onclick="switchAuditType('ligne')"><i class="fas fa-bolt"></i> Ligne</button>
+                        <button id="tab-magasin" onclick="switchAuditType('magasin')"><i class="fas fa-boxes"></i> Magasin</button>
+                        <button id="tab-mur" onclick="switchAuditType('mur')"><i class="fas fa-chalkboard"></i> Mur qualité</button>
                     </div>
 
-                    <!-- Audit Ligne -->
+                    <!-- Audit Ligne (contenu complet, identique à la version précédente) -->
                     <div id="audit-ligne" class="audit-content active-content">
                         <div class="audit-form">
-                            <h3><i class="fas fa-bolt"></i> Audit Gemba - Ligne de production</h3>
+                            <h3><i class="fas fa-bolt"></i> Audit Ligne de production</h3>
                             <form id="form-audit-ligne">
-                                <div class="question-group">
-                                    <label>Date</label>
-                                    <input type="date" id="date-ligne" class="text-input" required>
-                                </div>
-                                <div class="question-group">
-                                    <label>Zone / Ligne / Poste</label>
-                                    <input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required>
-                                </div>
-                                <div class="question-group">
-                                    <label>UAP</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="uapLigne" value="UAP1" required> UAP1</div>
-                                        <div><input type="radio" name="uapLigne" value="UAP2"> UAP2</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Main d'œuvre : Qualification (Grille de polyvalence)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="mainLigne" value="OK" required> OK</div>
-                                        <div><input type="radio" name="mainLigne" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>matière : Etat de rebut</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="matiereLigne" value="OK" required> OK</div>
-                                        <div><input type="radio" name="matiereLigne" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Méthode : OK démarrage</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="demarrageLigne" value="OK" required> OK</div>
-                                        <div><input type="radio" name="demarrageLigne" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Méthode : Dossier de Fabrication</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="dossierLigne" value="OK" required> OK</div>
-                                        <div><input type="radio" name="dossierLigne" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Méthode : Formulaire (Prod/Qualité)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="formulaireLigne" value="OK" required> OK</div>
-                                        <div><input type="radio" name="formulaireLigne" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Méthode : HSE</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="hseLigne" value="OK" required> OK</div>
-                                        <div><input type="radio" name="hseLigne" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Milieu : 5S</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="cinqSLigne" value="OK" required> OK</div>
-                                        <div><input type="radio" name="cinqSLigne" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Machine : Préventif niveau 1</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="prev1Ligne" value="OK" required> OK</div>
-                                        <div><input type="radio" name="prev1Ligne" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Préventif niveau 2</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="prev2Ligne" value="OK" required> OK</div>
-                                        <div><input type="radio" name="prev2Ligne" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>POKA YOKE</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="pokaLigne" value="OK" required> OK</div>
-                                        <div><input type="radio" name="pokaLigne" value="NOK"> NOK</div>
-                                        <div><input type="radio" name="pokaLigne" value="N/A"> N/A</div>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn-submit" onclick="soumettreLigne()">
-                                    <i class="fas fa-save"></i> Soumettre l'audit
-                                </button>
+                                <div class="question-group"><label>Date</label><input type="date" id="date-ligne" class="text-input" required></div>
+                                <div class="question-group"><label>Zone / Ligne / Poste</label><input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required></div>
+                                <div class="question-group"><label>UAP</label><div class="radio-group"><div><input type="radio" name="uapLigne" value="UAP1" required> UAP1</div><div><input type="radio" name="uapLigne" value="UAP2"> UAP2</div></div></div>
+                                <div class="question-group"><label>Main d'œuvre : Qualification (Grille de polyvalence)</label><div class="radio-group"><div><input type="radio" name="mainLigne" value="OK" required> OK</div><div><input type="radio" name="mainLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>matière : Etat de rebut</label><div class="radio-group"><div><input type="radio" name="matiereLigne" value="OK" required> OK</div><div><input type="radio" name="matiereLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : OK démarrage</label><div class="radio-group"><div><input type="radio" name="demarrageLigne" value="OK" required> OK</div><div><input type="radio" name="demarrageLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : Dossier de Fabrication</label><div class="radio-group"><div><input type="radio" name="dossierLigne" value="OK" required> OK</div><div><input type="radio" name="dossierLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : Formulaire (Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireLigne" value="OK" required> OK</div><div><input type="radio" name="formulaireLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode : HSE</label><div class="radio-group"><div><input type="radio" name="hseLigne" value="OK" required> OK</div><div><input type="radio" name="hseLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Milieu : 5S</label><div class="radio-group"><div><input type="radio" name="cinqSLigne" value="OK" required> OK</div><div><input type="radio" name="cinqSLigne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Machine : Préventif niveau 1</label><div class="radio-group"><div><input type="radio" name="prev1Ligne" value="OK" required> OK</div><div><input type="radio" name="prev1Ligne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Préventif niveau 2</label><div class="radio-group"><div><input type="radio" name="prev2Ligne" value="OK" required> OK</div><div><input type="radio" name="prev2Ligne" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>POKA YOKE</label><div class="radio-group"><div><input type="radio" name="pokaLigne" value="OK" required> OK</div><div><input type="radio" name="pokaLigne" value="NOK"> NOK</div><div><input type="radio" name="pokaLigne" value="N/A"> N/A</div></div></div>
+                                <button type="button" class="btn-submit" onclick="soumettreLigne()"><i class="fas fa-save"></i> Soumettre l'audit</button>
                             </form>
-                            <div id="resultat-ligne" class="resultat" style="display: none;"></div>
+                            <div id="resultat-ligne" class="resultat-card"></div>
                         </div>
                     </div>
 
-                    <!-- Audit Magasin -->
+                    <!-- Audit Magasin (contenu complet) -->
                     <div id="audit-magasin" class="audit-content">
                         <div class="audit-form">
-                            <h3><i class="fas fa-boxes"></i> Audit Gemba - Magasin / Stock</h3>
+                            <h3><i class="fas fa-boxes"></i> Audit Magasin / Stock</h3>
                             <form id="form-audit-magasin">
-                                <div class="question-group">
-                                    <label>Date</label>
-                                    <input type="date" id="date-magasin" class="text-input" required>
-                                </div>
-                                <div class="question-group">
-                                    <label>Magasin</label>
-                                    <select id="magasin-select" required>
-                                        <option value="">Sélectionnez</option>
-                                        <option value="Magasin general">Magasin général</option>
-                                        <option value="Magasin P1">Magasin P1</option>
-                                        <option value="Magasin P2">Magasin P2</option>
-                                    </select>
-                                </div>
-                                <div class="question-group">
-                                    <label>1. Qualification (Grille de polyvalence)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="qualifMag" value="OK" required> OK</div>
-                                        <div><input type="radio" name="qualifMag" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>2. Identification (Etiquette)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="idMag" value="OK" required> OK</div>
-                                        <div><input type="radio" name="idMag" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>3. Méthode (Instruction)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="instructionMag" value="OK" required> OK</div>
-                                        <div><input type="radio" name="instructionMag" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>4. Méthode (Stockage)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="stockageMag" value="OK" required> OK</div>
-                                        <div><input type="radio" name="stockageMag" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>5. Méthode (Formulaire)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="formulaireMag" value="OK" required> OK</div>
-                                        <div><input type="radio" name="formulaireMag" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>6. Méthode (HSE)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="hseMag" value="OK" required> OK</div>
-                                        <div><input type="radio" name="hseMag" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>7. Milieu (5S)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="cinqSMag" value="OK" required> OK</div>
-                                        <div><input type="radio" name="cinqSMag" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>8. Chariot élévateur (Préventif niveau 1)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="chariotMag" value="OK" required> OK</div>
-                                        <div><input type="radio" name="chariotMag" value="NOK"> NOK</div>
-                                        <div><input type="radio" name="chariotMag" value="N/A"> N/A</div>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn-submit" onclick="soumettreMagasin()">
-                                    <i class="fas fa-save"></i> Soumettre l'audit
-                                </button>
+                                <div class="question-group"><label>Date</label><input type="date" id="date-magasin" class="text-input" required></div>
+                                <div class="question-group"><label>Magasin</label><select id="magasin-select" required><option value="">Sélectionnez</option><option value="Magasin general">Magasin général</option><option value="Magasin P1">Magasin P1</option><option value="Magasin P2">Magasin P2</option></select></div>
+                                <div class="question-group"><label>1. Qualification (Grille de polyvalence)</label><div class="radio-group"><div><input type="radio" name="qualifMag" value="OK" required> OK</div><div><input type="radio" name="qualifMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>2. Identification (Etiquette)</label><div class="radio-group"><div><input type="radio" name="idMag" value="OK" required> OK</div><div><input type="radio" name="idMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>3. Méthode (Instruction)</label><div class="radio-group"><div><input type="radio" name="instructionMag" value="OK" required> OK</div><div><input type="radio" name="instructionMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>4. Méthode (Stockage)</label><div class="radio-group"><div><input type="radio" name="stockageMag" value="OK" required> OK</div><div><input type="radio" name="stockageMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>5. Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMag" value="OK" required> OK</div><div><input type="radio" name="formulaireMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>6. Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMag" value="OK" required> OK</div><div><input type="radio" name="hseMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>7. Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMag" value="OK" required> OK</div><div><input type="radio" name="cinqSMag" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>8. Chariot élévateur (Préventif niveau 1)</label><div class="radio-group"><div><input type="radio" name="chariotMag" value="OK" required> OK</div><div><input type="radio" name="chariotMag" value="NOK"> NOK</div><div><input type="radio" name="chariotMag" value="N/A"> N/A</div></div></div>
+                                <button type="button" class="btn-submit" onclick="soumettreMagasin()"><i class="fas fa-save"></i> Soumettre l'audit</button>
                             </form>
-                            <div id="resultat-magasin" class="resultat" style="display: none;"></div>
+                            <div id="resultat-magasin" class="resultat-card"></div>
                         </div>
                     </div>
 
-                    <!-- Audit Mur qualité -->
+                    <!-- Audit Mur qualité (contenu complet) -->
                     <div id="audit-mur" class="audit-content">
                         <div class="audit-form">
-                            <h3><i class="fas fa-chalkboard"></i> Audit Gemba - Mur qualité</h3>
+                            <h3><i class="fas fa-chalkboard"></i> Audit Mur qualité</h3>
                             <form id="form-audit-mur">
-                                <div class="question-group">
-                                    <label>Date</label>
-                                    <input type="date" id="date-mur" class="text-input" required>
-                                </div>
-                                <div class="question-group">
-                                    <label>Mur qualité</label>
-                                    <select id="mur-select" required>
-                                        <option value="">Sélectionnez</option>
-                                        <option value="Mur qualite uap1">Mur qualité UAP1</option>
-                                        <option value="Mur qualite uap2">Mur qualité UAP2</option>
-                                    </select>
-                                </div>
-                                <div class="question-group">
-                                    <label>Main d'œuvre (Qualification)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="mainMur" value="OK" required> OK</div>
-                                        <div><input type="radio" name="mainMur" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>matière (Etat de rebut)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="matiereMur" value="OK" required> OK</div>
-                                        <div><input type="radio" name="matiereMur" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Méthode (OK démarrage)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="demarrageMur" value="OK" required> OK</div>
-                                        <div><input type="radio" name="demarrageMur" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Méthode (Dossier de Fabrication)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="dossierMur" value="OK" required> OK</div>
-                                        <div><input type="radio" name="dossierMur" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Méthode (Formulaire Prod/Qualité)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="formulaireMur" value="OK" required> OK</div>
-                                        <div><input type="radio" name="formulaireMur" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Méthode (HSE)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="hseMur" value="OK" required> OK</div>
-                                        <div><input type="radio" name="hseMur" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <div class="question-group">
-                                    <label>Milieu (5S)</label>
-                                    <div class="radio-group">
-                                        <div><input type="radio" name="cinqSMur" value="OK" required> OK</div>
-                                        <div><input type="radio" name="cinqSMur" value="NOK"> NOK</div>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn-submit" onclick="soumettreMur()">
-                                    <i class="fas fa-save"></i> Soumettre l'audit
-                                </button>
+                                <div class="question-group"><label>Date</label><input type="date" id="date-mur" class="text-input" required></div>
+                                <div class="question-group"><label>Mur qualité</label><select id="mur-select" required><option value="">Sélectionnez</option><option value="Mur qualite uap1">Mur qualité UAP1</option><option value="Mur qualite uap2">Mur qualité UAP2</option></select></div>
+                                <div class="question-group"><label>Main d'œuvre (Qualification)</label><div class="radio-group"><div><input type="radio" name="mainMur" value="OK" required> OK</div><div><input type="radio" name="mainMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>matière (Etat de rebut)</label><div class="radio-group"><div><input type="radio" name="matiereMur" value="OK" required> OK</div><div><input type="radio" name="matiereMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (OK démarrage)</label><div class="radio-group"><div><input type="radio" name="demarrageMur" value="OK" required> OK</div><div><input type="radio" name="demarrageMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (Dossier de Fabrication)</label><div class="radio-group"><div><input type="radio" name="dossierMur" value="OK" required> OK</div><div><input type="radio" name="dossierMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (Formulaire Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireMur" value="OK" required> OK</div><div><input type="radio" name="formulaireMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMur" value="OK" required> OK</div><div><input type="radio" name="hseMur" value="NOK"> NOK</div></div></div>
+                                <div class="question-group"><label>Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMur" value="OK" required> OK</div><div><input type="radio" name="cinqSMur" value="NOK"> NOK</div></div></div>
+                                <button type="button" class="btn-submit" onclick="soumettreMur()"><i class="fas fa-save"></i> Soumettre l'audit</button>
                             </form>
-                            <div id="resultat-mur" class="resultat" style="display: none;"></div>
+                            <div id="resultat-mur" class="resultat-card"></div>
                         </div>
                     </div>
                 </div>
@@ -848,27 +804,12 @@
                 <div id="section-details" class="section">
                     <h1><i class="fas fa-list-alt"></i> Détails des audits</h1>
                     <div class="filter-bar">
-                        <div>
-                            <label>Filtrer par type :</label>
-                            <select id="filter-type" onchange="filterAudits()">
-                                <option value="all">Tous</option>
-                                <option value="Ligne">Ligne</option>
-                                <option value="Magasin">Magasin</option>
-                                <option value="Mur">Mur qualité</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Filtrer par UAP/Ligne :</label>
-                            <select id="filter-uap" onchange="filterAudits()">
-                                <option value="all">Tous</option>
-                            </select>
-                        </div>
+                        <div><label>Filtrer par type :</label><select id="filter-type" onchange="filterAudits()"><option value="all">Tous</option><option value="Ligne">Ligne</option><option value="Magasin">Magasin</option><option value="Mur">Mur qualité</option></select></div>
+                        <div><label>Filtrer par UAP/Ligne :</label><select id="filter-uap" onchange="filterAudits()"><option value="all">Tous</option></select></div>
                     </div>
                     <div class="auditor-table">
                         <table id="audit-table">
-                            <thead>
-                                <tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr>
-                            </thead>
+                            <thead><tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr></thead>
                             <tbody id="audit-table-body"></tbody>
                         </table>
                     </div>
@@ -883,7 +824,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <script>
-        // Configuration Firebase
+        // Configuration Firebase (identique)
         const firebaseConfig = {
             apiKey: "AIzaSyBCnvkriTgPdaE37DRkRHPcULCVAYfbUHE",
             authDomain: "portail-d-audit.firebaseapp.com",
@@ -910,13 +851,15 @@
         const messageDiv = document.getElementById('message');
         const forgotPasswordLink = document.querySelector('.forgot-password a');
         const userEmailSpan = document.getElementById('user-email');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
 
         let isLoginMode = true;
         let isForgotPasswordMode = false;
         let audits = [];
         let chartAudits, chartQuestions;
 
-        // Éléments stats dashboard
+        // Stats dashboard
         const statTotalAudits = document.getElementById('stat-total-audits');
         const statTotalOk = document.getElementById('stat-total-ok');
         const statTotalNok = document.getElementById('stat-total-nok');
@@ -925,30 +868,40 @@
         const statMoyenneMagasin = document.getElementById('stat-moyenne-magasin');
         const statMoyenneUsine = document.getElementById('stat-moyenne-usine');
 
-        // Surveiller l'état de connexion
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                loginContainer.style.display = 'none';
-                dashboardContainer.style.display = 'flex';
-                userEmailSpan.textContent = user.email;
-                // Écouter les audits en temps réel
-                database.ref('audits').on('value', (snapshot) => {
-                    audits = [];
-                    snapshot.forEach((child) => {
-                        audits.push({ id: child.key, ...child.val() });
-                    });
-                    filterAudits();
-                    updateDashboardStats();
-                    updateCourbesCharts();
-                });
-            } else {
-                loginContainer.style.display = 'flex';
-                dashboardContainer.style.display = 'none';
-                database.ref('audits').off();
+        // Fonction pour ouvrir/fermer la sidebar
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            // Sur desktop (>1024), on décale le contenu quand la sidebar est ouverte
+            if (window.innerWidth >= 1024) {
+                mainContent.classList.toggle('shifted', sidebar.classList.contains('open'));
+            }
+        }
+
+        // Fermer la sidebar si on clique en dehors (mobile)
+        document.addEventListener('click', function(event) {
+            const isClickInside = sidebar.contains(event.target) || event.target.classList.contains('menu-toggle');
+            if (!isClickInside && window.innerWidth < 1024 && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
             }
         });
 
-        // Fonctions de connexion
+        // Navigation sidebar
+        function switchSection(sectionName) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+            document.getElementById(`section-${sectionName}`).classList.add('active-section');
+            document.querySelectorAll('.sidebar-nav li').forEach(i => i.classList.remove('active'));
+            document.getElementById(`nav-${sectionName}`).classList.add('active');
+        }
+
+        // Changer d'onglet dans Nouvelle audit
+        function switchAuditType(type) {
+            document.querySelectorAll('.audit-content').forEach(c => c.classList.remove('active-content'));
+            document.querySelectorAll('.sub-nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(`audit-${type}`).classList.add('active-content');
+            document.getElementById(`tab-${type}`).classList.add('active');
+        }
+
+        // Fonctions de connexion (inchangées)
         function toggleForm() {
             isLoginMode = !isLoginMode;
             isForgotPasswordMode = false;
@@ -1030,23 +983,30 @@
             }
         }
 
-        // Navigation sidebar
-        function switchSection(sectionName) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
-            document.getElementById(`section-${sectionName}`).classList.add('active-section');
-            document.querySelectorAll('.sidebar-nav li').forEach(i => i.classList.remove('active'));
-            document.getElementById(`nav-${sectionName}`).classList.add('active');
-        }
+        // Surveiller l'état de connexion
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loginContainer.style.display = 'none';
+                dashboardContainer.style.display = 'block';
+                userEmailSpan.textContent = user.email;
+                // Écouter les audits en temps réel
+                database.ref('audits').on('value', (snapshot) => {
+                    audits = [];
+                    snapshot.forEach((child) => {
+                        audits.push({ id: child.key, ...child.val() });
+                    });
+                    filterAudits();
+                    updateDashboardStats();
+                    updateCourbesCharts();
+                });
+            } else {
+                loginContainer.style.display = 'flex';
+                dashboardContainer.style.display = 'none';
+                database.ref('audits').off();
+            }
+        });
 
-        // Changer d'onglet dans Nouvelle audit
-        function switchAuditType(type) {
-            document.querySelectorAll('.audit-content').forEach(c => c.classList.remove('active-content'));
-            document.querySelectorAll('.sub-nav button').forEach(b => b.classList.remove('active'));
-            document.getElementById(`audit-${type}`).classList.add('active-content');
-            document.getElementById(`tab-${type}`).classList.add('active');
-        }
-
-        // Fonctions de soumission avec sauvegarde Firebase
+        // Fonctions de soumission (identiques à la version précédente avec affichage stylisé)
         function soumettreLigne() {
             const questions = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
             let ok=0, nok=0, na=0;
@@ -1068,9 +1028,17 @@
             const score = eligible>0 ? (ok/eligible)*100 : 0;
             const detail = `OK: ${ok}, NOK: ${nok}, N/A: ${na} – Score: ${score.toFixed(1)}% (${ok}/${eligible})`;
             
-            document.getElementById('resultat-ligne').style.display='block';
-            document.getElementById('resultat-ligne').innerHTML = detail;
-            document.getElementById('resultat-ligne').className = 'resultat success';
+            const resultatDiv = document.getElementById('resultat-ligne');
+            resultatDiv.innerHTML = `
+                <div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré avec succès</h4></div>
+                <div class="resultat-stats">
+                    <div class="stat-badge ok"><i class="fas fa-check"></i><span>${ok}</span><small>OK</small></div>
+                    <div class="stat-badge nok"><i class="fas fa-times"></i><span>${nok}</span><small>NOK</small></div>
+                    <div class="stat-badge na"><i class="fas fa-ban"></i><span>${na}</span><small>N/A</small></div>
+                </div>
+                <div class="resultat-score">Score : ${score.toFixed(1)}% <small>(${ok}/${eligible})</small></div>
+            `;
+            resultatDiv.classList.add('show');
 
             const user = auth.currentUser;
             if (user) {
@@ -1110,9 +1078,17 @@
             const score = eligible>0 ? (ok/eligible)*100 : 0;
             const detail = `OK: ${ok}, NOK: ${nok}, N/A: ${na} – Score: ${score.toFixed(1)}% (${ok}/${eligible})`;
             
-            document.getElementById('resultat-magasin').style.display='block';
-            document.getElementById('resultat-magasin').innerHTML = detail;
-            document.getElementById('resultat-magasin').className = 'resultat success';
+            const resultatDiv = document.getElementById('resultat-magasin');
+            resultatDiv.innerHTML = `
+                <div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré avec succès</h4></div>
+                <div class="resultat-stats">
+                    <div class="stat-badge ok"><i class="fas fa-check"></i><span>${ok}</span><small>OK</small></div>
+                    <div class="stat-badge nok"><i class="fas fa-times"></i><span>${nok}</span><small>NOK</small></div>
+                    <div class="stat-badge na"><i class="fas fa-ban"></i><span>${na}</span><small>N/A</small></div>
+                </div>
+                <div class="resultat-score">Score : ${score.toFixed(1)}% <small>(${ok}/${eligible})</small></div>
+            `;
+            resultatDiv.classList.add('show');
 
             const user = auth.currentUser;
             if (user) {
@@ -1150,9 +1126,16 @@
             const score = (ok/total)*100;
             const detail = `OK: ${ok}, NOK: ${nok} – Score: ${score.toFixed(1)}% (${ok}/${total})`;
             
-            document.getElementById('resultat-mur').style.display='block';
-            document.getElementById('resultat-mur').innerHTML = detail;
-            document.getElementById('resultat-mur').className = 'resultat success';
+            const resultatDiv = document.getElementById('resultat-mur');
+            resultatDiv.innerHTML = `
+                <div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré avec succès</h4></div>
+                <div class="resultat-stats">
+                    <div class="stat-badge ok"><i class="fas fa-check"></i><span>${ok}</span><small>OK</small></div>
+                    <div class="stat-badge nok"><i class="fas fa-times"></i><span>${nok}</span><small>NOK</small></div>
+                </div>
+                <div class="resultat-score">Score : ${score.toFixed(1)}% <small>(${ok}/${total})</small></div>
+            `;
+            resultatDiv.classList.add('show');
 
             const user = auth.currentUser;
             if (user) {
@@ -1172,7 +1155,7 @@
             }
         }
 
-        // Mise à jour des statistiques du dashboard
+        // Mise à jour des stats dashboard (identique)
         function updateDashboardStats() {
             let totalAudits = audits.length;
             let totalOk = 0, totalNok = 0;
@@ -1198,7 +1181,6 @@
             statMoyenneUap2.textContent = (moyenne(scoresUap2) !== 'N/A' ? moyenne(scoresUap2) + '%' : 'N/A');
             statMoyenneMagasin.textContent = (moyenne(scoresMagasin) !== 'N/A' ? moyenne(scoresMagasin) + '%' : 'N/A');
             
-            // Moyenne usine = moyenne des trois catégories (UAP1, UAP2, Magasin) si elles existent
             let moyU1 = parseFloat(moyenne(scoresUap1)) || 0;
             let moyU2 = parseFloat(moyenne(scoresUap2)) || 0;
             let moyMag = parseFloat(moyenne(scoresMagasin)) || 0;
@@ -1212,12 +1194,8 @@
             const filterType = document.getElementById('filter-type').value;
             const filterUap = document.getElementById('filter-uap').value;
             let filtered = audits;
-            if (filterType !== 'all') {
-                filtered = filtered.filter(a => a.type === filterType);
-            }
-            if (filterUap !== 'all') {
-                filtered = filtered.filter(a => a.uap === filterUap);
-            }
+            if (filterType !== 'all') filtered = filtered.filter(a => a.type === filterType);
+            if (filterUap !== 'all') filtered = filtered.filter(a => a.uap === filterUap);
             const tbody = document.getElementById('audit-table-body');
             tbody.innerHTML = '';
             filtered.forEach(a => {
@@ -1228,8 +1206,6 @@
                 row.insertCell().textContent = a.score + '%';
                 row.insertCell().innerHTML = `<button class="badge" onclick="alert('${a.detail}')"><i class="fas fa-eye"></i> Voir</button>`;
             });
-
-            // Mettre à jour les options du filtre UAP
             const uapSelect = document.getElementById('filter-uap');
             const currentUap = uapSelect.value;
             const allUaps = [...new Set(audits.map(a => a.uap))];
@@ -1260,7 +1236,7 @@
             filtered.forEach(a => {
                 let period;
                 if (periodeType === 'mois') {
-                    period = a.date.substring(0, 7); // YYYY-MM
+                    period = a.date.substring(0, 7);
                 } else {
                     const date = new Date(a.date + 'T00:00:00');
                     const oneJan = new Date(date.getFullYear(), 0, 1);
@@ -1287,44 +1263,20 @@
             const ctx1 = document.getElementById('chart-audits').getContext('2d');
             chartAudits = new Chart(ctx1, {
                 type: 'bar',
-                data: {
-                    labels: periodLabels,
-                    datasets: [{
-                        label: "Nombre d'audits",
-                        data: auditCounts,
-                        backgroundColor: '#667eea',
-                        borderRadius: 5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: { display: true, text: 'Audits par période' }
-                    }
-                }
+                data: { labels: periodLabels, datasets: [{ label: "Nombre d'audits", data: auditCounts, backgroundColor: '#667eea', borderRadius: 8 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: 'Audits par période', font: { size: 16 } } } }
             });
 
             if (chartQuestions) chartQuestions.destroy();
             const ctx2 = document.getElementById('chart-questions').getContext('2d');
             chartQuestions = new Chart(ctx2, {
                 type: 'bar',
-                data: {
-                    labels: periodLabels,
-                    datasets: [
-                        { label: 'OK', data: okCounts, backgroundColor: '#2ecc71' },
-                        { label: 'NOK', data: nokCounts, backgroundColor: '#e74c3c' },
-                        { label: 'N/A', data: naCounts, backgroundColor: '#f39c12' }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: { display: true, text: 'Réponses aux questions par période' }
-                    },
-                    scales: { x: { stacked: true }, y: { stacked: true } }
-                }
+                data: { labels: periodLabels, datasets: [
+                    { label: 'OK', data: okCounts, backgroundColor: '#38a169', borderRadius: 8 },
+                    { label: 'NOK', data: nokCounts, backgroundColor: '#e53e3e', borderRadius: 8 },
+                    { label: 'N/A', data: naCounts, backgroundColor: '#d69e2e', borderRadius: 8 }
+                ] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Réponses aux questions par période', font: { size: 16 } } }, scales: { x: { stacked: true }, y: { stacked: true } } }
             });
         }
 
@@ -1336,6 +1288,19 @@
         // Entrée sur formulaire de connexion
         document.addEventListener('keypress', (e) => {
             if (e.target.closest('#login-container') && e.key === 'Enter') handleAuth();
+        });
+
+        // Ajuster le margin-left sur redimensionnement
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024) {
+                if (sidebar.classList.contains('open')) {
+                    mainContent.classList.add('shifted');
+                } else {
+                    mainContent.classList.remove('shifted');
+                }
+            } else {
+                mainContent.classList.remove('shifted');
+            }
         });
     </script>
 </body>
