@@ -7,338 +7,913 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', 'Segoe UI', Roboto, sans-serif; }
-        body { background:#f0f5fa; min-height:100vh; overflow-x:hidden; }
-        #app { width:100%; min-height:100vh; display:flex; position:relative; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f0f5fa;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #app {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            position: relative;
+        }
+
         /* --- PAGE DE CONNEXION --- */
         #login-container {
-            width:100%; display:flex; justify-content:center; align-items:center;
-            background:linear-gradient(135deg, #4a4a4a 0%, #2d2d2d 100%);
-            padding:20px; min-height:100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #4a4a4a 0%, #2d2d2d 100%);
+            padding: 20px;
+            min-height: 100vh;
         }
+
         .login-box {
-            background:rgba(255,255,255,0.98); backdrop-filter:blur(10px);
-            padding:40px; border-radius:20px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);
-            width:100%; max-width:420px; border:1px solid #e0e0e0; text-align:center;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
         }
+
         .login-icon {
-            width:80px; height:80px; background:#cc0000; color:white;
-            border-radius:50%; display:flex; align-items:center; justify-content:center;
-            margin:0 auto 20px; font-size:40px; box-shadow:0 10px 15px -3px rgba(204,0,0,0.3);
+            width: 80px;
+            height: 80px;
+            background: #cc0000;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+            box-shadow: 0 10px 15px -3px rgba(204, 0, 0, 0.3);
         }
+
         .login-box h2 {
-            color:#cc0000; margin-bottom:30px; font-size:26px; font-weight:700;
-            text-transform:uppercase; letter-spacing:1px;
+            color: #cc0000;
+            margin-bottom: 30px;
+            font-size: 26px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .input-group { margin-bottom:20px; text-align:left; }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
         .input-group label {
-            display:block; margin-bottom:8px; color:#333; font-weight:600; font-size:14px;
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
         }
+
         .input-group input {
-            width:100%; padding:14px 16px; border:2px solid #d0d0d0; border-radius:12px;
-            font-size:15px; transition:all 0.3s; background:white;
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #d0d0d0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: white;
         }
+
         .input-group input:focus {
-            outline:none; border-color:#cc0000; box-shadow:0 0 0 4px rgba(204,0,0,0.1);
+            outline: none;
+            border-color: #cc0000;
+            box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.1);
         }
+
         .login-box button {
-            width:100%; padding:14px; background:#cc0000; color:white; border:none;
-            border-radius:12px; font-size:16px; font-weight:700; cursor:pointer;
-            transition:all 0.3s; box-shadow:0 10px 15px -3px rgba(204,0,0,0.4);
-            text-transform:uppercase; letter-spacing:1px;
+            width: 100%;
+            padding: 14px;
+            background: #cc0000;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 15px -3px rgba(204, 0, 0, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .login-box button:hover { background:#a30000; transform:translateY(-2px); box-shadow:0 20px 25px -5px rgba(204,0,0,0.5); }
-        .login-box button:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-        .message { margin-top:20px; padding:12px; border-radius:10px; text-align:center; font-weight:600; display:none; }
-        .message.error { background-color:#fee; color:#cc0000; border:1px solid #fcc; display:block; }
-        .message.success { background-color:#e6fffa; color:#2c7a7b; border:1px solid #b2f5ea; display:block; }
-        .message.info { background-color:#e6f3ff; color:#2c7be0; border:1px solid #b8daff; display:block; }
-        .toggle-form, .forgot-password { text-align:center; margin-top:20px; }
-        .toggle-form a, .forgot-password a { color:#cc0000; text-decoration:none; font-weight:600; font-size:14px; }
-        .toggle-form a:hover, .forgot-password a:hover { text-decoration:underline; }
-        .forgot-password { text-align:right; margin-top:5px; }
+
+        .login-box button:hover {
+            background: #a30000;
+            transform: translateY(-2px);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .message.error {
+            background-color: #fee;
+            color: #cc0000;
+            border: 1px solid #fcc;
+            display: block;
+        }
+
+        .message.success {
+            background-color: #e6fffa;
+            color: #2c7a7b;
+            border: 1px solid #b2f5ea;
+            display: block;
+        }
+
+        .toggle-form,
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .toggle-form a,
+        .forgot-password a {
+            color: #cc0000;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
 
         /* --- TABLEAU DE BORD --- */
-        #dashboard-container { display:none; width:100%; background:#f0f5fa; position:relative; }
-        .menu-toggle {
-            position:fixed; top:20px; left:20px; z-index:1000; background:white; border:none;
-            border-radius:12px; width:48px; height:48px; box-shadow:0 4px 12px rgba(0,0,0,0.1);
-            cursor:pointer; display:flex; align-items:center; justify-content:center;
-            font-size:24px; color:#cc0000; transition:all 0.3s;
+        #dashboard-container {
+            display: none;
+            width: 100%;
+            background: #f0f5fa;
+            position: relative;
         }
-        .menu-toggle:hover { background:#cc0000; color:white; }
+
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #cc0000;
+            transition: all 0.3s;
+        }
+
+        .menu-toggle:hover {
+            background: #cc0000;
+            color: white;
+        }
 
         .sidebar {
-            width:280px; background:linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%);
-            color:white; display:flex; flex-direction:column;
-            box-shadow:4px 0 20px rgba(0,0,0,0.1); position:fixed; left:0; top:0;
-            height:100vh; z-index:999; transform:translateX(-100%); transition:transform 0.3s ease;
+            width: 280px;
+            background: linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            z-index: 999;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
         }
-        .sidebar.open { transform:translateX(0); }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
 
         .sidebar-header {
-            padding:30px 20px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.1);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .sidebar-icon {
-            width:80px; height:80px; background:#cc0000; color:white;
-            border-radius:50%; display:flex; align-items:center; justify-content:center;
-            margin:0 auto 15px; font-size:40px; box-shadow:0 10px 15px -3px rgba(204,0,0,0.3);
-        }
-        .sidebar-header h2 { font-size:22px; font-weight:700; margin-bottom:5px; color:white; }
-        .sidebar-header p { font-size:14px; opacity:0.8; color:#ccc; }
 
-        .sidebar-nav { flex:1; padding:20px 0; }
-        .sidebar-nav ul { list-style:none; }
+        .sidebar-icon {
+            width: 80px;
+            height: 80px;
+            background: #cc0000;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 40px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .sidebar-header p {
+            font-size: 14px;
+            opacity: 0.8;
+            color: #ccc;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
         .sidebar-nav li {
-            padding:15px 25px; margin:5px 0; cursor:pointer; transition:all 0.3s;
-            display:flex; align-items:center; font-size:16px; border-left:4px solid transparent;
+            padding: 15px 25px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            border-left: 4px solid transparent;
         }
+
         .sidebar-nav li i {
-            margin-right:15px; width:22px; text-align:center; font-size:18px; color:#cc0000;
+            margin-right: 15px;
+            width: 22px;
+            text-align: center;
+            font-size: 18px;
+            color: #cc0000;
         }
-        .sidebar-nav li:hover { background:rgba(204,0,0,0.1); border-left-color:#cc0000; }
-        .sidebar-nav li.active { background:rgba(204,0,0,0.2); border-left-color:#cc0000; }
-        .sidebar-footer { padding:20px; border-top:1px solid rgba(255,255,255,0.1); }
+
+        .sidebar-nav li:hover {
+            background: rgba(204, 0, 0, 0.1);
+            border-left-color: #cc0000;
+        }
+
+        .sidebar-nav li.active {
+            background: rgba(204, 0, 0, 0.2);
+            border-left-color: #cc0000;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
         .logout-btn {
-            width:100%; padding:12px; background:rgba(204,0,0,0.2); border:1px solid #cc0000;
-            color:white; border-radius:10px; cursor:pointer; font-size:16px; font-weight:600;
-            transition:all 0.3s; display:flex; align-items:center; justify-content:center;
+            width: 100%;
+            padding: 12px;
+            background: rgba(204, 0, 0, 0.2);
+            border: 1px solid #cc0000;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
         }
-        .logout-btn i { margin-right:10px; }
-        .logout-btn:hover { background:#cc0000; }
+
+        .logout-btn:hover {
+            background: #cc0000;
+        }
 
         .main-content {
-            flex:1; margin-left:0; padding:80px 20px 30px 20px;
-            transition:margin-left 0.3s ease; width:100%; overflow-x:auto;
+            flex: 1;
+            margin-left: 0;
+            padding: 80px 20px 30px 20px;
+            transition: margin-left 0.3s ease;
+            width: 100%;
+            overflow-x: auto;
         }
+
         @media (min-width: 1024px) {
-            .sidebar.open { transform:translateX(0); }
-            .main-content.shifted { margin-left:280px; }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content.shifted {
+                margin-left: 280px;
+            }
         }
 
-        .section { display:none; animation:slideIn 0.3s ease; }
-        .section.active-section { display:block; }
-        @keyframes slideIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        .section {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .section.active-section {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .section h1 {
-            color:#1a202c; margin-bottom:30px; font-size:28px; font-weight:700;
-            display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+            color: #1a202c;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-        .section h1 i {
-            color:#cc0000; background:white; padding:12px; border-radius:50%;
-            box-shadow:0 4px 6px rgba(0,0,0,0.05);
-        }
-        .card-container {
-            display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:25px; margin-top:20px;
-        }
-        .card {
-            background:white; border-radius:20px; padding:25px;
-            box-shadow:0 10px 25px -5px rgba(0,0,0,0.1);
-            transition:transform 0.3s, box-shadow 0.3s; border:1px solid rgba(0,0,0,0.03);
-        }
-        .card:hover { transform:translateY(-8px); box-shadow:0 25px 30px -5px rgba(204,0,0,0.2); }
-        .card h3 { color:#4a5568; margin-bottom:15px; font-size:16px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
-        .card .stat-value { font-size:40px; font-weight:800; color:#1a202c; line-height:1.2; }
-        .card i { font-size:48px; color:#cc0000; margin-bottom:15px; opacity:0.8; }
 
-        .score-vert { color: #2e7d32 !important; }
-        .score-orange { color: #ed6c02 !important; }
-        .score-rouge { color: #d32f2f !important; }
+        .section h1 i {
+            color: #cc0000;
+            background: white;
+            padding: 12px;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 30px -5px rgba(204, 0, 0, 0.2);
+        }
+
+        .card h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .card .stat-value {
+            font-size: 40px;
+            font-weight: 800;
+            color: #1a202c;
+            line-height: 1.2;
+        }
+
+        .card i {
+            font-size: 48px;
+            color: #cc0000;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .score-vert {
+            color: #2e7d32 !important;
+        }
+
+        .score-orange {
+            color: #ed6c02 !important;
+        }
+
+        .score-rouge {
+            color: #d32f2f !important;
+        }
 
         .sub-nav {
-            display:flex; gap:12px; margin-bottom:30px; background:white; padding:15px;
-            border-radius:16px; box-shadow:0 4px 6px rgba(0,0,0,0.05); flex-wrap:wrap;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 15px;
+            border-radius: 16px;
+            flex-wrap: wrap;
         }
+
         .sub-nav button {
-            padding:12px 24px; border:none; background:transparent; border-radius:12px;
-            font-size:15px; font-weight:600; color:#4a5568; cursor:pointer;
-            transition:all 0.3s; display:flex; align-items:center; gap:8px; flex:1 1 auto;
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #4a5568;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
         }
-        .sub-nav button i { font-size:16px; }
+
         .sub-nav button.active {
-            background:#cc0000; color:white; box-shadow:0 10px 15px -3px rgba(204,0,0,0.4);
+            background: #cc0000;
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(204, 0, 0, 0.4);
         }
-        .sub-nav button:hover:not(.active) { background:#f7fafc; }
-        .audit-content { display:none; }
-        .audit-content.active-content { display:block; }
+
+        .sub-nav button:hover:not(.active) {
+            background: #f7fafc;
+        }
+
+        .audit-content {
+            display: none;
+        }
+
+        .audit-content.active-content {
+            display: block;
+        }
 
         .audit-form {
-            background:white; padding:30px; border-radius:24px;
-            box-shadow:0 20px 40px -10px rgba(0,0,0,0.15); position:relative;
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
         }
+
         .audit-form h3 {
-            font-size:24px; color:#1a202c; margin-bottom:25px; font-weight:700;
-            border-left:5px solid #cc0000; padding-left:15px;
+            font-size: 24px;
+            color: #1a202c;
+            margin-bottom: 25px;
+            font-weight: 700;
+            border-left: 5px solid #cc0000;
+            padding-left: 15px;
         }
+
         .score-live {
-            background:#f0f0f0; padding:15px 20px; border-radius:40px;
-            display:inline-flex; align-items:center; gap:15px; margin-bottom:20px; font-weight:600;
-            border:1px solid #d0d0d0;
+            background: #f0f0f0;
+            padding: 15px 20px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            flex-wrap: wrap;
         }
+
         .score-live .badge-score {
-            background:#cc0000; color:white; padding:8px 20px; border-radius:40px; font-size:20px;
+            background: #cc0000;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 20px;
         }
-        .progress { height:10px; background:#e0e0e0; border-radius:5px; margin:10px 0 20px; overflow:hidden; }
-        .progress-bar { height:100%; background:#cc0000; width:0%; transition:width 0.3s; }
-        
+
+        .progress {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 10px 0 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #cc0000;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
         .question-group {
-            margin-bottom:30px; padding:20px; background:#f8fafd; border-radius:16px;
-            border:1px solid #e0e0e0; transition:box-shadow 0.2s;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8fafd;
+            border-radius: 16px;
+            border: 1px solid #e0e0e0;
         }
-        .question-group:hover { box-shadow:0 8px 20px rgba(0,0,0,0.08); }
+
         .question-group label {
-            display:block; font-weight:700; color:#1976d2;
-            margin-bottom:15px; font-size:16px; letter-spacing:0.3px;
+            display: block;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 15px;
+            font-size: 16px;
         }
-        .radio-group { display:flex; gap:15px; flex-wrap:wrap; }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
         .radio-group div {
-            display:flex; align-items:center; gap:8px; padding:8px 18px;
-            border-radius:40px; border:2px solid #e2e8f0;
-            transition:all 0.2s; font-weight:600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 40px;
+            border: 2px solid #e2e8f0;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
         }
+
         .radio-group div:has(input[value="OK"]) {
-            background: #e8f5e9; border-color: #2e7d32;
+            background: #e8f5e9;
+            border-color: #2e7d32;
         }
-        .radio-group div:has(input[value="OK"]):hover {
-            background: #c8e6c9; border-color: #1b5e20;
-        }
+
         .radio-group div:has(input[value="NOK"]) {
-            background: #ffebee; border-color: #c62828;
+            background: #ffebee;
+            border-color: #c62828;
         }
-        .radio-group div:has(input[value="NOK"]):hover {
-            background: #ffcdd2; border-color: #b71c1c;
-        }
+
         .radio-group div:has(input[value="N/A"]) {
-            background: #fff8e1; border-color: #ff8f00;
+            background: #fff8e1;
+            border-color: #ff8f00;
         }
-        .radio-group div:has(input[value="N/A"]):hover {
-            background: #ffecb3; border-color: #ff6f00;
-        }
+
         .radio-group input[type="radio"] {
-            width:18px; height:18px; accent-color:#cc0000; margin-right:5px;
+            width: 18px;
+            height: 18px;
+            accent-color: #cc0000;
+            cursor: pointer;
         }
-        .radio-group div:has(input[value="OK"]) span { color: #2e7d32; font-weight:700; }
-        .radio-group div:has(input[value="NOK"]) span { color: #c62828; font-weight:700; }
-        .radio-group div:has(input[value="N/A"]) span { color: #ff8f00; font-weight:700; }
-        
-        .text-input, select, textarea {
-            width:100%; padding:14px 18px; border:2px solid #e2e8f0; border-radius:14px;
-            font-size:15px; transition:all 0.3s; background:white;
+
+        .text-input,
+        select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 15px;
+            background: white;
+            transition: all 0.3s;
         }
-        .text-input:focus, select:focus {
-            outline:none; border-color:#cc0000; box-shadow:0 0 0 4px rgba(204,0,0,0.1);
+
+        .text-input:focus,
+        select:focus {
+            outline: none;
+            border-color: #cc0000;
+            box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.1);
         }
+
         .btn-submit {
-            background:#cc0000; color:white; border:none; padding:16px 32px; border-radius:40px;
-            font-size:16px; font-weight:700; cursor:pointer; transition:all 0.3s;
-            box-shadow:0 10px 15px -3px rgba(204,0,0,0.4);
-            display:inline-flex; align-items:center; gap:10px; margin-top:20px;
+            background: #cc0000;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            transition: all 0.3s;
         }
-        .btn-submit:hover { transform:scale(1.05); box-shadow:0 20px 30px -5px rgba(204,0,0,0.6); }
+
+        .btn-submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(204, 0, 0, 0.3);
+        }
 
         .resultat-card {
-            margin-top:30px; padding:25px; border-radius:20px;
-            background:linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
-            border:2px solid #9ae6b4; box-shadow:0 10px 20px -5px rgba(72,187,120,0.3);
-            display:none;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+            border: 2px solid #9ae6b4;
+            display: none;
         }
-        .resultat-card.show { display:block; animation:scaleIn 0.3s; }
-        @keyframes scaleIn { from { transform:scale(0.9); opacity:0; } to { transform:scale(1); opacity:1; } }
-        .resultat-header { display:flex; align-items:center; gap:15px; margin-bottom:15px; }
-        .resultat-header i { font-size:32px; color:#38a169; }
-        .resultat-header h4 { font-size:20px; color:#22543d; font-weight:700; }
-        .resultat-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin:20px 0; }
-        .stat-badge { background:white; padding:15px; border-radius:16px; text-align:center; box-shadow:0 4px 6px rgba(0,0,0,0.05); }
-        .stat-badge.ok { border-left:4px solid #38a169; }
-        .stat-badge.nok { border-left:4px solid #e53e3e; }
-        .stat-badge.na { border-left:4px solid #d69e2e; }
-        .stat-badge span { display:block; font-size:28px; font-weight:800; margin:5px 0; }
-        .stat-badge small { color:#718096; font-size:14px; }
-        .resultat-score { font-size:36px; font-weight:800; color:#22543d; text-align:center; }
+
+        .resultat-card.show {
+            display: block;
+            animation: scaleIn 0.3s;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .resultat-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-badge {
+            background: white;
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-badge.ok {
+            border-left: 4px solid #38a169;
+        }
+
+        .stat-badge.nok {
+            border-left: 4px solid #e53e3e;
+        }
+
+        .stat-badge.na {
+            border-left: 4px solid #d69e2e;
+        }
+
+        .stat-badge span {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .resultat-score {
+            font-size: 36px;
+            font-weight: 800;
+            color: #22543d;
+            text-align: center;
+        }
 
         .auditor-table {
-            background:white; border-radius:20px; overflow-x:auto;
-            box-shadow:0 10px 25px -5px rgba(0,0,0,0.1);
+            background: white;
+            border-radius: 20px;
+            overflow-x: auto;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
-        .auditor-table table { width:100%; border-collapse:collapse; min-width:600px; }
+
+        .auditor-table table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
+        }
+
         .auditor-table th {
-            background:#f7fafc; color:#4a5568; padding:18px; text-align:left;
-            font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:0.5px;
+            background: #f7fafc;
+            color: #4a5568;
+            padding: 18px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
         }
-        .auditor-table td { padding:16px 18px; border-bottom:1px solid #edf2f7; }
-        .auditor-table tr:hover td { background:#f8fafd; }
+
+        .auditor-table td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
         .badge {
-            background:#e6fffa; color:#2c7a7b; padding:6px 12px; border-radius:30px;
-            font-size:12px; font-weight:700; border:none; cursor:pointer;
+            background: #e6fffa;
+            color: #2c7a7b;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
         }
+
+        .badge:hover {
+            background: #c6f6e5;
+        }
+
         .btn-excel {
-            background:#27ae60; color:white; border:none; padding:10px 20px; border-radius:40px;
-            font-size:14px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center;
-            gap:8px; transition:all 0.3s; margin-left:auto;
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
         }
-        .btn-excel:hover { background:#219653; transform:scale(1.05); }
+
+        .btn-excel:hover {
+            background: #219653;
+            transform: scale(1.02);
+        }
 
         .chart-container {
-            background:white; border-radius:24px; padding:25px;
-            box-shadow:0 15px 30px -10px rgba(0,0,0,0.1); margin-bottom:30px; overflow-x:auto;
-            transition:box-shadow 0.3s;
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow-x: auto;
         }
-        .chart-container:hover { box-shadow:0 20px 40px -10px rgba(204,0,0,0.2); }
+
+        .chart-container canvas {
+            max-height: 450px;
+            width: 100%;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .chart-title i {
+            color: #cc0000;
+        }
 
         .filter-bar {
-            margin-bottom:25px; display:flex; gap:15px; flex-wrap:wrap; align-items:center;
-            background:white; padding:18px 25px; border-radius:18px;
-            box-shadow:0 5px 10px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.03);
         }
-        .filter-group {
-            display:flex; flex-direction:column; gap:5px;
-        }
-        .filter-group label {
-            font-weight:600; color:#4a5568; font-size:12px;
-        }
-        .filter-bar select, .filter-bar button {
-            padding:8px 16px; border:2px solid #e2e8f0; border-radius:40px;
-            background:white; font-size:14px; font-weight:500; transition:all 0.2s;
-        }
-        .filter-bar select:focus { border-color:#cc0000; outline:none; }
-        .filter-bar button { background:#cc0000; color:white; border:none; cursor:pointer; transition:all 0.3s; }
-        .filter-bar button:hover { background:#a30000; transform:scale(1.02); }
 
-        .line-performance-card {
-            background:white; border-radius:20px; padding:20px;
-            margin-bottom:20px; border-left:4px solid #cc0000;
-            box-shadow:0 4px 12px rgba(0,0,0,0.05);
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 140px;
         }
-        .line-name { font-size:18px; font-weight:700; color:#1a202c; margin-bottom:10px; }
-        .line-score { font-size:32px; font-weight:800; }
-        .line-date { color:#718096; font-size:12px; margin-top:5px; }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group select,
+        .filter-group button {
+            padding: 10px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 40px;
+            background: white;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-group select:focus {
+            border-color: #cc0000;
+            outline: none;
+        }
+
+        .filter-group button {
+            background: #cc0000;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .filter-group button:hover {
+            background: #a30000;
+        }
+
+        .stats-mini-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-mini {
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-mini .value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1a202c;
+        }
+
+        .stat-mini .label {
+            font-size: 12px;
+            color: #718096;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .audit-count-badge {
+            background: #cc0000;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .question-selector {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .question-selector label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .question-selector select {
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 2px solid #e2e8f0;
+            background: white;
+        }
 
         @media (max-width: 768px) {
-            .section h1 { font-size:24px; }
-            .card-container { grid-template-columns:1fr; }
-            .sub-nav button { width:100%; justify-content:center; }
-            .filter-bar { flex-direction:column; align-items:stretch; }
-            .filter-group { width:100%; }
-            .resultat-stats { grid-template-columns:1fr; }
+            .section h1 {
+                font-size: 22px;
+            }
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                width: 100%;
+            }
+            .chart-container canvas {
+                max-height: 350px;
+            }
+            .stat-mini .value {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
 <body>
     <div id="app">
-        <!-- PAGE DE CONNEXION -->
+        <!-- Login Container -->
         <div id="login-container">
             <div class="login-box">
-                <div class="login-icon">
-                    <i class="fas fa-industry"></i>
-                </div>
+                <div class="login-icon"><i class="fas fa-industry"></i></div>
                 <h2 id="form-title"><i class="fas fa-lock"></i> Connexion</h2>
                 <div class="input-group">
                     <label><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="email" placeholder="votre@email.com" required>
+                    <input type="email" id="email" placeholder="votre@email.com">
                 </div>
                 <div class="input-group">
                     <label><i class="fas fa-key"></i> Mot de passe</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
+                    <input type="password" id="password" placeholder="••••••••">
                 </div>
                 <div class="forgot-password">
                     <a onclick="showForgotPassword()"><i class="fas fa-question-circle"></i> Mot de passe oublié ?</a>
@@ -351,23 +926,22 @@
             </div>
         </div>
 
-        <!-- TABLEAU DE BORD -->
+        <!-- Dashboard Container -->
         <div id="dashboard-container">
             <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <div class="sidebar-icon">
-                        <i class="fas fa-clipboard-check"></i>
-                    </div>
+                    <div class="sidebar-icon"><i class="fas fa-clipboard-check"></i></div>
                     <h2>WKW Audit</h2>
                     <p id="user-email">Espace auditeur</p>
                 </div>
                 <div class="sidebar-nav">
                     <ul>
-                        <li id="nav-dashboard" class="active" onclick="switchSection('dashboard'); if(window.innerWidth<1024) toggleSidebar();"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
-                        <li id="nav-courbes" onclick="switchSection('courbes'); if(window.innerWidth<1024) toggleSidebar();"><i class="fas fa-chart-line"></i> Courbes</li>
-                        <li id="nav-auditeurs" onclick="switchSection('auditeurs'); if(window.innerWidth<1024) toggleSidebar();"><i class="fas fa-pen-alt"></i> Nouvelle audit</li>
-                        <li id="nav-details" onclick="switchSection('details'); if(window.innerWidth<1024) toggleSidebar();"><i class="fas fa-list-alt"></i> Détails d'audit</li>
+                        <li id="nav-dashboard" class="active" onclick="switchSection('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+                        <li id="nav-courbes" onclick="switchSection('courbes')"><i class="fas fa-chart-line"></i> Courbes & Stats</li>
+                        <li id="nav-auditeurs" onclick="switchSection('auditeurs')"><i class="fas fa-pen-alt"></i> Nouvelle audit</li>
+                        <li id="nav-details" onclick="switchSection('details')"><i class="fas fa-list-alt"></i> Détails d'audit</li>
                     </ul>
                 </div>
                 <div class="sidebar-footer">
@@ -376,93 +950,99 @@
             </div>
 
             <div class="main-content" id="mainContent">
-                <!-- Section Dashboard -->
+                <!-- Dashboard Section -->
                 <div id="section-dashboard" class="section active-section">
-                    <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
-                    <div class="card-container">
-                        <div class="card"><i class="fas fa-calendar-check"></i><h3>Audits réalisés</h3><p class="stat-value" id="stat-total-audits">0</p></div>
-                        <div class="card"><i class="fas fa-check-circle" style="color:#38a169;"></i><h3>Questions OK</h3><p class="stat-value" id="stat-total-ok">0</p></div>
-                        <div class="card"><i class="fas fa-times-circle" style="color:#e53e3e;"></i><h3>Questions NOK</h3><p class="stat-value" id="stat-total-nok">0</p></div>
-                        <div class="card"><i class="fas fa-industry"></i><h3>Moyenne UAP1</h3><p class="stat-value" id="stat-moyenne-uap1">0%</p></div>
-                        <div class="card"><i class="fas fa-industry"></i><h3>Moyenne UAP2</h3><p class="stat-value" id="stat-moyenne-uap2">0%</p></div>
-                        <div class="card"><i class="fas fa-warehouse"></i><h3>Moyenne Magasin</h3><p class="stat-value" id="stat-moyenne-magasin">0%</p></div>
-                        <div class="card"><i class="fas fa-building"></i><h3>Moyenne Usine</h3><p class="stat-value" id="stat-moyenne-usine">0%</p></div>
-                        <div class="card"><i class="fas fa-trophy" style="color:#f1c40f;"></i><h3>Meilleur score</h3><p class="stat-value" id="stat-best-score">-</p></div>
-                        <div class="card"><i class="fas fa-skull-crosswalk" style="color:#e74c3c;"></i><h3>Pire score</h3><p class="stat-value" id="stat-worst-score">-</p></div>
-                    </div>
-                    <div style="margin-top: 50px;">
-                        <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-                            <i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> 5 pires résultats
-                        </h2>
-                        <div class="auditor-table" id="worst-results-table">
-                            <table>
-                                <thead><tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr></thead>
+                    <h1><i class="fas fa-tachometer-alt"></i> Dashboard <span id="total-audits-badge" class="audit-count-badge"></span></h1>
+                    <div class="card-container" id="dashboard-cards"></div>
+                    <div style="margin-top: 40px;">
+                        <h2 style="margin-bottom: 20px;"><i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> 5 pires résultats</h2>
+                        <div class="auditor-table">
+                             <table>
+                                <thead>
+                                    <tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr>
+                                </thead>
                                 <tbody id="worst-results-body"></tbody>
-                            </table>
+                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- Section Courbes avec filtres avancés -->
+                <!-- Courbes Section avec graphiques par question -->
                 <div id="section-courbes" class="section">
-                    <h1><i class="fas fa-chart-line"></i> Courbes et statistiques</h1>
+                    <h1><i class="fas fa-chart-line"></i> Courbes & Statistiques avancées <span id="courbes-audit-count" class="audit-count-badge"></span></h1>
                     
-                    <!-- Barre de filtres -->
                     <div class="filter-bar">
                         <div class="filter-group">
                             <label><i class="fas fa-calendar-alt"></i> Période</label>
-                            <select id="period-filter" onchange="updateCourbesCharts()">
+                            <select id="period-filter" onchange="updateAllCharts()">
                                 <option value="jour">Par jour</option>
                                 <option value="semaine">Par semaine</option>
                                 <option value="mois" selected>Par mois</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label><i class="fas fa-filter"></i> Type d'audit</label>
-                            <select id="type-filter" onchange="updateCourbesCharts()">
+                            <label><i class="fas fa-filter"></i> Type audit</label>
+                            <select id="type-filter" onchange="updateAllCharts()">
                                 <option value="all">Tous</option>
                                 <option value="Ligne">Ligne</option>
                                 <option value="Magasin">Magasin</option>
-                                <option value="Mur">Mur qualité</option>
+                                <option value="Mur">Mur</option>
                             </select>
                         </div>
                         <div class="filter-group">
                             <label><i class="fas fa-industry"></i> UAP</label>
-                            <select id="uap-filter" onchange="updateCourbesCharts()">
+                            <select id="uap-filter" onchange="updateAllCharts()">
                                 <option value="all">Toutes</option>
                                 <option value="UAP1">UAP1</option>
                                 <option value="UAP2">UAP2</option>
                             </select>
                         </div>
-                        <button onclick="updateCourbesCharts()"><i class="fas fa-sync-alt"></i> Actualiser</button>
+                        <div class="filter-group">
+                            <button onclick="updateAllCharts()"><i class="fas fa-sync-alt"></i> Actualiser</button>
+                        </div>
                     </div>
 
-                    <!-- Graphique Évolution UAP1 vs UAP2 -->
+                    <div class="stats-mini-cards" id="mini-stats"></div>
+
+                    <!-- Graphiques d'évolution -->
                     <div class="chart-container">
-                        <h3 style="margin-bottom:15px;">Évolution UAP1 vs UAP2</h3>
-                        <canvas id="chart-uap-comparison" style="width:100%; max-height:400px;"></canvas>
+                        <div class="chart-title"><i class="fas fa-chart-line"></i> Évolution UAP1 vs UAP2</div>
+                        <canvas id="chart-uap-comparison"></canvas>
                     </div>
 
-                    <!-- Graphique Tendance générale & prévision -->
                     <div class="chart-container">
-                        <h3 style="margin-bottom:15px;">Tendance générale & prévision (moyenne par période)</h3>
-                        <canvas id="chart-trend-forecast" style="width:100%; max-height:400px;"></canvas>
+                        <div class="chart-title"><i class="fas fa-chart-line"></i> Tendance générale & prévision</div>
+                        <canvas id="chart-trend-forecast"></canvas>
                     </div>
 
-                    <!-- Graphique Performance par ligne - Histogramme -->
                     <div class="chart-container">
-                        <h3 style="margin-bottom:15px;">Performance par ligne - Dernier audit (histogramme)</h3>
-                        <canvas id="chart-lines-histogram" style="width:100%; max-height:400px;"></canvas>
+                        <div class="chart-title"><i class="fas fa-chart-bar"></i> Performance par ligne - Dernier audit</div>
+                        <canvas id="chart-lines-histogram"></canvas>
                     </div>
 
-                    <!-- Graphique Distribution des scores (Lignes) -->
                     <div class="chart-container">
-                        <h3 style="margin-bottom:15px;">Distribution des scores - Audits Ligne</h3>
-                        <canvas id="chart-score-distribution" style="width:100%; max-height:300px;"></canvas>
+                        <div class="chart-title"><i class="fas fa-chart-pie"></i> Distribution des scores - Audits Ligne</div>
+                        <canvas id="chart-score-distribution"></canvas>
+                    </div>
+
+                    <!-- Nouveaux graphiques: Pourcentage de réponses par question pour chaque type d'audit -->
+                    <div class="chart-container">
+                        <div class="chart-title"><i class="fas fa-chart-bar"></i> Pourcentage de réponses par question - Audit Ligne</div>
+                        <canvas id="chart-ligne-questions"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-title"><i class="fas fa-chart-bar"></i> Pourcentage de réponses par question - Audit Magasin</div>
+                        <canvas id="chart-magasin-questions"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-title"><i class="fas fa-chart-bar"></i> Pourcentage de réponses par question - Audit Mur qualité</div>
+                        <canvas id="chart-mur-questions"></canvas>
                     </div>
                 </div>
 
-                <!-- Section Nouvelle audit -->
+                <!-- Nouvelle Audit Section -->
                 <div id="section-auditeurs" class="section">
                     <h1><i class="fas fa-pen-alt"></i> Nouvelle audit Gemba</h1>
                     <div class="sub-nav">
@@ -470,114 +1050,35 @@
                         <button id="tab-magasin" onclick="switchAuditType('magasin')"><i class="fas fa-boxes"></i> Magasin</button>
                         <button id="tab-mur" onclick="switchAuditType('mur')"><i class="fas fa-chalkboard"></i> Mur qualité</button>
                     </div>
-
-                    <!-- Audit Ligne -->
-                    <div id="audit-ligne" class="audit-content active-content">
-                        <div class="audit-form">
-                            <h3><i class="fas fa-bolt"></i> Audit Ligne de production</h3>
-                            <div class="score-live">
-                                <span>Score actuel :</span>
-                                <span class="badge-score" id="ligne-score">-</span>
-                                <span id="ligne-answered">0/10</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar" id="ligne-progress" style="width:0%"></div>
-                            </div>
-                            <form id="form-audit-ligne">
-                                <div class="question-group"><label><i class="fas fa-calendar-alt"></i>Date</label><input type="date" id="date-ligne" class="text-input" required></div>
-                                <div class="question-group"><label><i class="fas fa-map-marker-alt"></i>Zone / Ligne / Poste</label><input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required></div>
-                                <div class="question-group"><label><i class="fas fa-tag"></i>UAP</label>
-                                    <select id="uap-ligne" class="text-input" required>
-                                        <option value="">Sélectionnez</option>
-                                        <option value="UAP1">UAP1</option>
-                                        <option value="UAP2">UAP2</option>
-                                    </select>
-                                </div>
-                                <div class="question-group"><label>Main d'œuvre : Qualification</label><div class="radio-group"><div><input type="radio" name="mainLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="mainLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>matière : Etat de rebut</label><div class="radio-group"><div><input type="radio" name="matiereLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="matiereLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Méthode : OK démarrage</label><div class="radio-group"><div><input type="radio" name="demarrageLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="demarrageLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Méthode : Dossier de Fabrication</label><div class="radio-group"><div><input type="radio" name="dossierLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="dossierLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Méthode : Formulaire (Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="formulaireLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Méthode : HSE</label><div class="radio-group"><div><input type="radio" name="hseLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="hseLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Milieu : 5S</label><div class="radio-group"><div><input type="radio" name="cinqSLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="cinqSLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Machine : Préventif niveau 1</label><div class="radio-group"><div><input type="radio" name="prev1Ligne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="prev1Ligne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Préventif niveau 2</label><div class="radio-group"><div><input type="radio" name="prev2Ligne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="prev2Ligne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>POKA YOKE</label><div class="radio-group"><div><input type="radio" name="pokaLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="pokaLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div><div><input type="radio" name="pokaLigne" value="N/A" onchange="updateLigneScore()"><span>N/A</span></div></div></div>
-                                <button type="button" class="btn-submit" onclick="soumettreLigne()"><i class="fas fa-save"></i> Soumettre l'audit</button>
-                            </form>
-                            <div id="resultat-ligne" class="resultat-card"></div>
-                        </div>
-                    </div>
-
-                    <!-- Audit Magasin -->
-                    <div id="audit-magasin" class="audit-content">
-                        <div class="audit-form">
-                            <h3><i class="fas fa-boxes"></i> Audit Magasin / Stock</h3>
-                            <div class="score-live">
-                                <span>Score actuel :</span>
-                                <span class="badge-score" id="magasin-score">-</span>
-                                <span id="magasin-answered">0/8</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar" id="magasin-progress" style="width:0%"></div>
-                            </div>
-                            <form id="form-audit-magasin">
-                                <div class="question-group"><label><i class="fas fa-calendar-alt"></i>Date</label><input type="date" id="date-magasin" class="text-input" required></div>
-                                <div class="question-group"><label><i class="fas fa-warehouse"></i>Magasin</label><select id="magasin-select" required onchange="updateMagasinScore()"><option value="">Sélectionnez</option><option value="Magasin general">Magasin général</option><option value="Magasin P1">Magasin P1</option><option value="Magasin P2">Magasin P2</option></select></div>
-                                <div class="question-group"><label>1. Qualification</label><div class="radio-group"><div><input type="radio" name="qualifMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="qualifMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>2. Identification</label><div class="radio-group"><div><input type="radio" name="idMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="idMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>3. Méthode (Instruction)</label><div class="radio-group"><div><input type="radio" name="instructionMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="instructionMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>4. Méthode (Stockage)</label><div class="radio-group"><div><input type="radio" name="stockageMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="stockageMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>5. Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="formulaireMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>6. Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="hseMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>7. Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="cinqSMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>8. Chariot élévateur</label><div class="radio-group"><div><input type="radio" name="chariotMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="chariotMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div><div><input type="radio" name="chariotMag" value="N/A" onchange="updateMagasinScore()"><span>N/A</span></div></div></div>
-                                <button type="button" class="btn-submit" onclick="soumettreMagasin()"><i class="fas fa-save"></i> Soumettre l'audit</button>
-                            </form>
-                            <div id="resultat-magasin" class="resultat-card"></div>
-                        </div>
-                    </div>
-
-                    <!-- Audit Mur qualité -->
-                    <div id="audit-mur" class="audit-content">
-                        <div class="audit-form">
-                            <h3><i class="fas fa-chalkboard"></i> Audit Mur qualité</h3>
-                            <div class="score-live">
-                                <span>Score actuel :</span>
-                                <span class="badge-score" id="mur-score">-</span>
-                                <span id="mur-answered">0/7</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar" id="mur-progress" style="width:0%"></div>
-                            </div>
-                            <form id="form-audit-mur">
-                                <div class="question-group"><label><i class="fas fa-calendar-alt"></i>Date</label><input type="date" id="date-mur" class="text-input" required></div>
-                                <div class="question-group"><label><i class="fas fa-chalkboard"></i>Mur qualité</label><select id="mur-select" required onchange="updateMurScore()"><option value="">Sélectionnez</option><option value="Mur qualite uap1">Mur qualité UAP1</option><option value="Mur qualite uap2">Mur qualité UAP2</option></select></div>
-                                <div class="question-group"><label>Main d'œuvre</label><div class="radio-group"><div><input type="radio" name="mainMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="mainMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>matière (Etat rebut)</label><div class="radio-group"><div><input type="radio" name="matiereMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="matiereMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Méthode (OK démarrage)</label><div class="radio-group"><div><input type="radio" name="demarrageMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="demarrageMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Méthode (Dossier)</label><div class="radio-group"><div><input type="radio" name="dossierMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="dossierMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="formulaireMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="hseMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label>Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="cinqSMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <button type="button" class="btn-submit" onclick="soumettreMur()"><i class="fas fa-save"></i> Soumettre l'audit</button>
-                            </form>
-                            <div id="resultat-mur" class="resultat-card"></div>
-                        </div>
-                    </div>
+                    <div id="audit-ligne" class="audit-content active-content"></div>
+                    <div id="audit-magasin" class="audit-content"></div>
+                    <div id="audit-mur" class="audit-content"></div>
                 </div>
 
-                <!-- Section Détails d'audit -->
+                <!-- Détails Section -->
                 <div id="section-details" class="section">
-                    <h1><i class="fas fa-list-alt"></i> Détails des audits</h1>
+                    <h1><i class="fas fa-list-alt"></i> Détails des audits <span id="details-audit-count" class="audit-count-badge"></span></h1>
                     <div class="filter-bar">
-                        <div><label>Filtrer par type :</label><select id="filter-type" onchange="filterAudits()"><option value="all">Tous</option><option value="Ligne">Ligne</option><option value="Magasin">Magasin</option><option value="Mur">Mur qualité</option></select></div>
-                        <div><label>Filtrer par UAP/Ligne :</label><select id="filter-uap" onchange="filterAudits()"><option value="all">Tous</option></select></div>
-                        <button class="btn-excel" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Exporter Excel</button>
+                        <div class="filter-group">
+                            <label>Type</label>
+                            <select id="filter-type" onchange="filterAudits()">
+                                <option value="all">Tous</option>
+                                <option value="Ligne">Ligne</option>
+                                <option value="Magasin">Magasin</option>
+                                <option value="Mur">Mur</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>UAP/Ligne</label>
+                            <select id="filter-uap" onchange="filterAudits()"><option value="all">Tous</option></select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn-excel" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Exporter Excel</button>
+                        </div>
                     </div>
                     <div class="auditor-table">
                         <table id="audit-table">
-                            <thead> <tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr> </thead>
+                            <thead><tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr></thead>
                             <tbody id="audit-table-body"></tbody>
                         </table>
                     </div>
@@ -586,13 +1087,12 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <script>
-        // Configuration Firebase
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBCnvkriTgPdaE37DRkRHPcULCVAYfbUHE",
             authDomain: "portail-d-audit.firebaseapp.com",
@@ -600,143 +1100,158 @@
             projectId: "portail-d-audit",
             storageBucket: "portail-d-audit.firebasestorage.app",
             messagingSenderId: "581725098490",
-            appId: "1:581725098490:web:70cd5d573787eb7530d443",
-            measurementId: "G-KCCRY45MNX"
+            appId: "1:581725098490:web:70cd5d573787eb7530d443"
         };
-
+        
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
 
-        // Éléments DOM
-        const loginContainer = document.getElementById('login-container');
-        const dashboardContainer = document.getElementById('dashboard-container');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const authButton = document.getElementById('auth-button');
-        const formTitle = document.getElementById('form-title');
-        const toggleLink = document.getElementById('toggle-link');
-        const messageDiv = document.getElementById('message');
-        const userEmailSpan = document.getElementById('user-email');
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-
-        let isLoginMode = true;
-        let isForgotPasswordMode = false;
         let audits = [];
-        let chartUapComparison, chartTrendForecast, chartLinesHistogram, chartScoreDistribution;
+        let charts = {};
 
-        // Stats dashboard elements
-        const statTotalAudits = document.getElementById('stat-total-audits');
-        const statTotalOk = document.getElementById('stat-total-ok');
-        const statTotalNok = document.getElementById('stat-total-nok');
-        const statMoyenneUap1 = document.getElementById('stat-moyenne-uap1');
-        const statMoyenneUap2 = document.getElementById('stat-moyenne-uap2');
-        const statMoyenneMagasin = document.getElementById('stat-moyenne-magasin');
-        const statMoyenneUsine = document.getElementById('stat-moyenne-usine');
-        const statBestScore = document.getElementById('stat-best-score');
-        const statWorstScore = document.getElementById('stat-worst-score');
+        // Définition des questions pour chaque type d'audit
+        const ligneQuestions = [
+            { key: 'mainLigne', label: 'Main d\'œuvre (Qualification)' },
+            { key: 'matiereLigne', label: 'Matière (Etat rebut)' },
+            { key: 'demarrageLigne', label: 'Méthode (OK démarrage)' },
+            { key: 'dossierLigne', label: 'Méthode (Dossier)' },
+            { key: 'formulaireLigne', label: 'Méthode (Formulaire)' },
+            { key: 'hseLigne', label: 'Méthode (HSE)' },
+            { key: 'cinqSLigne', label: 'Milieu (5S)' },
+            { key: 'prev1Ligne', label: 'Machine (Préventif N1)' },
+            { key: 'prev2Ligne', label: 'Préventif N2' },
+            { key: 'pokaLigne', label: 'POKA YOKE' }
+        ];
 
-        function applyScoreColor(element, score) {
-            if (!element) return;
-            const val = parseFloat(score);
-            if (isNaN(val)) { element.className = 'stat-value'; return; }
-            if (val >= 85) element.className = 'stat-value score-vert';
-            else if (val >= 80) element.className = 'stat-value score-orange';
-            else element.className = 'stat-value score-rouge';
+        const magasinQuestions = [
+            { key: 'qualifMag', label: 'Qualification' },
+            { key: 'idMag', label: 'Identification' },
+            { key: 'instructionMag', label: 'Méthode (Instruction)' },
+            { key: 'stockageMag', label: 'Méthode (Stockage)' },
+            { key: 'formulaireMag', label: 'Méthode (Formulaire)' },
+            { key: 'hseMag', label: 'Méthode (HSE)' },
+            { key: 'cinqSMag', label: 'Milieu (5S)' },
+            { key: 'chariotMag', label: 'Chariot élévateur' }
+        ];
+
+        const murQuestions = [
+            { key: 'mainMur', label: 'Main d\'œuvre' },
+            { key: 'matiereMur', label: 'Matière (Etat rebut)' },
+            { key: 'demarrageMur', label: 'Méthode (OK démarrage)' },
+            { key: 'dossierMur', label: 'Méthode (Dossier)' },
+            { key: 'formulaireMur', label: 'Méthode (Formulaire)' },
+            { key: 'hseMur', label: 'Méthode (HSE)' },
+            { key: 'cinqSMur', label: 'Milieu (5S)' }
+        ];
+
+        // Load Audit Forms
+        function loadAuditForms() {
+            // Formulaire Ligne
+            document.getElementById('audit-ligne').innerHTML = `
+                <div class="audit-form">
+                    <h3><i class="fas fa-bolt"></i> Audit Ligne de production</h3>
+                    <div class="score-live"><span>Score:</span><span class="badge-score" id="ligne-score">-</span><span id="ligne-answered">0/10</span></div>
+                    <div class="progress"><div class="progress-bar" id="ligne-progress"></div></div>
+                    <div class="question-group"><label>Date</label><input type="date" id="date-ligne" class="text-input" required></div>
+                    <div class="question-group"><label>Zone/Ligne</label><input type="text" id="zone-ligne" placeholder="Ex: Ligne A" class="text-input" required></div>
+                    <div class="question-group"><label>UAP</label><select id="uap-ligne" class="text-input"><option value="UAP1">UAP1</option><option value="UAP2">UAP2</option></select></div>
+                    ${ligneQuestions.map(q => `<div class="question-group"><label>${q.label}</label><div class="radio-group"><div><input type="radio" name="${q.key}" value="OK"><span>OK</span></div><div><input type="radio" name="${q.key}" value="NOK"><span>NOK</span></div>${q.key=='pokaLigne'?'<div><input type="radio" name="pokaLigne" value="N/A"><span>N/A</span></div>':''}</div></div>`).join('')}
+                    <button type="button" class="btn-submit" onclick="submitAudit('ligne')"><i class="fas fa-save"></i> Soumettre l'audit</button>
+                    <div id="resultat-ligne" class="resultat-card"></div>
+                </div>`;
+            
+            // Formulaire Magasin
+            document.getElementById('audit-magasin').innerHTML = `
+                <div class="audit-form">
+                    <h3><i class="fas fa-boxes"></i> Audit Magasin / Stock</h3>
+                    <div class="score-live"><span>Score:</span><span class="badge-score" id="magasin-score">-</span><span id="magasin-answered">0/8</span></div>
+                    <div class="progress"><div class="progress-bar" id="magasin-progress"></div></div>
+                    <div class="question-group"><label>Date</label><input type="date" id="date-magasin" class="text-input" required></div>
+                    <div class="question-group"><label>Magasin</label><select id="magasin-select" class="text-input"><option value="Magasin général">Magasin général</option><option value="Magasin P1">Magasin P1</option><option value="Magasin P2">Magasin P2</option></select></div>
+                    ${magasinQuestions.map(q => `<div class="question-group"><label>${q.label}</label><div class="radio-group"><div><input type="radio" name="${q.key}" value="OK"><span>OK</span></div><div><input type="radio" name="${q.key}" value="NOK"><span>NOK</span></div>${q.key=='chariotMag'?'<div><input type="radio" name="chariotMag" value="N/A"><span>N/A</span></div>':''}</div></div>`).join('')}
+                    <button type="button" class="btn-submit" onclick="submitAudit('magasin')"><i class="fas fa-save"></i> Soumettre l'audit</button>
+                    <div id="resultat-magasin" class="resultat-card"></div>
+                </div>`;
+            
+            // Formulaire Mur qualité
+            document.getElementById('audit-mur').innerHTML = `
+                <div class="audit-form">
+                    <h3><i class="fas fa-chalkboard"></i> Audit Mur qualité</h3>
+                    <div class="score-live"><span>Score:</span><span class="badge-score" id="mur-score">-</span><span id="mur-answered">0/7</span></div>
+                    <div class="progress"><div class="progress-bar" id="mur-progress"></div></div>
+                    <div class="question-group"><label>Date</label><input type="date" id="date-mur" class="text-input" required></div>
+                    <div class="question-group"><label>Mur qualité</label><select id="mur-select" class="text-input"><option value="Mur qualité UAP1">Mur qualité UAP1</option><option value="Mur qualité UAP2">Mur qualité UAP2</option></select></div>
+                    ${murQuestions.map(q => `<div class="question-group"><label>${q.label}</label><div class="radio-group"><div><input type="radio" name="${q.key}" value="OK"><span>OK</span></div><div><input type="radio" name="${q.key}" value="NOK"><span>NOK</span></div></div></div>`).join('')}
+                    <button type="button" class="btn-submit" onclick="submitAudit('mur')"><i class="fas fa-save"></i> Soumettre l'audit</button>
+                    <div id="resultat-mur" class="resultat-card"></div>
+                </div>`;
         }
 
-        // Fonctions d'authentification
+        // Auth Functions
+        let isLoginMode = true;
+        let isForgotPasswordMode = false;
+
         function toggleForm() {
             isLoginMode = !isLoginMode;
             isForgotPasswordMode = false;
-            if (isLoginMode) {
-                formTitle.innerHTML = '<i class="fas fa-lock"></i> Connexion';
-                authButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Se connecter';
-                toggleLink.innerHTML = '<i class="fas fa-user-plus"></i> Créer un compte';
-                forgotPasswordLink.style.display = 'inline';
-                passwordInput.style.display = 'block';
-                document.querySelector('.forgot-password').style.display = 'block';
-            } else {
-                formTitle.innerHTML = '<i class="fas fa-user-plus"></i> Inscription';
-                authButton.innerHTML = "<i class='fas fa-user-plus'></i> S'inscrire";
-                toggleLink.innerHTML = '<i class="fas fa-sign-in-alt"></i> Déjà un compte ? Se connecter';
-                forgotPasswordLink.style.display = 'none';
-                passwordInput.style.display = 'block';
-                document.querySelector('.forgot-password').style.display = 'none';
-            }
-            clearForm();
-            hideMessage();
+            document.getElementById('form-title').innerHTML = isLoginMode ? '<i class="fas fa-lock"></i> Connexion' : '<i class="fas fa-user-plus"></i> Inscription';
+            document.getElementById('auth-button').innerHTML = isLoginMode ? '<i class="fas fa-sign-in-alt"></i> Se connecter' : "<i class='fas fa-user-plus'></i> S'inscrire";
+            document.getElementById('toggle-link').innerHTML = isLoginMode ? '<i class="fas fa-user-plus"></i> Créer un compte' : '<i class="fas fa-sign-in-alt"></i> Déjà un compte ?';
+            document.querySelector('.forgot-password').style.display = isLoginMode ? 'block' : 'none';
+            document.getElementById('password').style.display = 'block';
         }
 
         function showForgotPassword() {
             isForgotPasswordMode = true;
-            formTitle.innerHTML = '<i class="fas fa-key"></i> Réinitialisation';
-            authButton.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer le lien';
-            toggleLink.innerHTML = '<i class="fas fa-sign-in-alt"></i> Retour à la connexion';
-            passwordInput.style.display = 'none';
+            document.getElementById('form-title').innerHTML = '<i class="fas fa-key"></i> Réinitialisation';
+            document.getElementById('auth-button').innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer';
+            document.getElementById('toggle-link').innerHTML = '<i class="fas fa-sign-in-alt"></i> Retour';
             document.querySelector('.forgot-password').style.display = 'none';
-            clearForm();
-            hideMessage();
+            document.getElementById('password').style.display = 'none';
         }
 
-        function clearForm() { emailInput.value = ''; passwordInput.value = ''; }
-        function hideMessage() { messageDiv.className = 'message'; messageDiv.textContent = ''; }
-        function showMessage(text, type) { messageDiv.className = `message ${type}`; messageDiv.textContent = text; }
-
         async function handleAuth() {
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            if (!email) { showMessage("Veuillez entrer votre email", "error"); return; }
-            if (!isForgotPasswordMode && !password) { showMessage("Veuillez entrer votre mot de passe", "error"); return; }
-            authButton.disabled = true;
+            const email = document.getElementById('email').value.trim();
+            const pwd = document.getElementById('password').value;
+            if (!email) return showMessage("Email requis", "error");
+            if (!isForgotPasswordMode && !pwd) return showMessage("Mot de passe requis", "error");
             try {
                 if (isForgotPasswordMode) {
                     await auth.sendPasswordResetEmail(email);
-                    showMessage("Email de réinitialisation envoyé ! Vérifiez votre boîte mail.", "success");
-                    setTimeout(() => toggleForm(), 3000);
+                    showMessage("Email envoyé! Vérifiez votre boîte mail.", "success");
                 } else if (isLoginMode) {
-                    await auth.signInWithEmailAndPassword(email, password);
+                    await auth.signInWithEmailAndPassword(email, pwd);
                 } else {
-                    await auth.createUserWithEmailAndPassword(email, password);
+                    await auth.createUserWithEmailAndPassword(email, pwd);
+                    showMessage("Compte créé avec succès!", "success");
                 }
-            } catch (error) {
-                let errorMessage = "Une erreur est survenue.";
-                switch (error.code) {
-                    case 'auth/user-not-found': errorMessage = "Aucun compte trouvé avec cet email."; break;
-                    case 'auth/wrong-password': errorMessage = "Mot de passe incorrect."; break;
-                    case 'auth/email-already-in-use': errorMessage = "Cet email est déjà utilisé."; break;
-                    case 'auth/invalid-email': errorMessage = "Format d'email invalide."; break;
-                    case 'auth/weak-password': errorMessage = "Le mot de passe doit contenir au moins 6 caractères."; break;
-                    case 'auth/too-many-requests': errorMessage = "Trop de tentatives. Réessayez plus tard."; break;
-                    case 'auth/network-request-failed': errorMessage = "Erreur réseau. Vérifiez votre connexion."; break;
-                }
-                showMessage(errorMessage, "error");
-            } finally { authButton.disabled = false; }
+            } catch (e) {
+                showMessage(e.message, "error");
+            }
         }
 
-        // Gestion sidebar
+        function showMessage(text, type) {
+            let m = document.getElementById('message');
+            m.className = `message ${type}`;
+            m.textContent = text;
+            setTimeout(() => m.className = 'message', 3000);
+        }
+
+        // Sidebar Functions
         function toggleSidebar() {
-            sidebar.classList.toggle('open');
-            if (window.innerWidth >= 1024) mainContent.classList.toggle('shifted', sidebar.classList.contains('open'));
-        }
-        document.addEventListener('click', function(event) {
-            const isClickInside = sidebar.contains(event.target) || event.target.classList.contains('menu-toggle');
-            if (!isClickInside && window.innerWidth < 1024 && sidebar.classList.contains('open')) sidebar.classList.remove('open');
-        });
-        window.addEventListener('resize', function() {
+            document.getElementById('sidebar').classList.toggle('open');
             if (window.innerWidth >= 1024) {
-                if (sidebar.classList.contains('open')) mainContent.classList.add('shifted');
-                else mainContent.classList.remove('shifted');
-            } else mainContent.classList.remove('shifted');
-        });
+                document.getElementById('mainContent').classList.toggle('shifted');
+            }
+        }
 
-        function switchSection(sectionName) {
+        function switchSection(section) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
-            document.getElementById(`section-${sectionName}`).classList.add('active-section');
-            document.querySelectorAll('.sidebar-nav li').forEach(i => i.classList.remove('active'));
-            document.getElementById(`nav-${sectionName}`).classList.add('active');
-            if (sectionName === 'courbes') updateCourbesCharts();
+            document.getElementById(`section-${section}`).classList.add('active-section');
+            document.querySelectorAll('.sidebar-nav li').forEach(l => l.classList.remove('active'));
+            document.getElementById(`nav-${section}`).classList.add('active');
+            if (section === 'courbes') updateAllCharts();
         }
 
         function switchAuditType(type) {
@@ -746,389 +1261,495 @@
             document.getElementById(`tab-${type}`).classList.add('active');
         }
 
-        // Fonctions de mise à jour live du score
-        function updateLigneScore() {
-            const questions = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
-            let ok=0, nok=0, na=0, answered=0;
-            for(let q of questions) {
+        // Submit Audit Function
+        window.submitAudit = function(type) {
+            let questions, date, zone, uap, ok = 0, nok = 0, na = 0, reponses = {};
+            
+            if (type === 'ligne') {
+                questions = ligneQuestions.map(q => q.key);
+                date = document.getElementById('date-ligne').value;
+                zone = document.getElementById('zone-ligne').value;
+                uap = document.getElementById('uap-ligne').value;
+                if (!date || !zone || !uap) return alert('Veuillez remplir tous les champs');
+            }
+            if (type === 'magasin') {
+                questions = magasinQuestions.map(q => q.key);
+                date = document.getElementById('date-magasin').value;
+                zone = document.getElementById('magasin-select').value;
+                uap = zone;
+                if (!date || !zone) return alert('Veuillez remplir tous les champs');
+            }
+            if (type === 'mur') {
+                questions = murQuestions.map(q => q.key);
+                date = document.getElementById('date-mur').value;
+                zone = document.getElementById('mur-select').value;
+                uap = zone;
+                if (!date || !zone) return alert('Veuillez remplir tous les champs');
+            }
+            
+            for (let q of questions) {
                 let radios = document.getElementsByName(q);
                 let val = null;
-                for(let r of radios) if(r.checked) { val = r.value; break; }
-                if(val) { answered++; if(val==='OK') ok++; else if(val==='NOK') nok++; else if(val==='N/A') na++; }
+                for (let r of radios) if (r.checked) val = r.value;
+                if (!val) return alert('Veuillez répondre à toutes les questions');
+                reponses[q] = val;
+                if (val === 'OK') ok++;
+                else if (val === 'NOK') nok++;
+                else if (val === 'N/A') na++;
             }
-            const eligible = answered - na;
-            const score = eligible > 0 ? (ok / eligible) * 100 : 0;
-            document.getElementById('ligne-answered').textContent = `${answered}/${questions.length}`;
-            document.getElementById('ligne-score').textContent = answered === questions.length ? score.toFixed(1)+'%' : 'En attente';
-            document.getElementById('ligne-progress').style.width = (answered / questions.length * 100)+'%';
-        }
-
-        function updateMagasinScore() {
-            const questions = ['qualifMag','idMag','instructionMag','stockageMag','formulaireMag','hseMag','cinqSMag','chariotMag'];
-            let ok=0, nok=0, na=0, answered=0;
-            for(let q of questions) {
-                let radios = document.getElementsByName(q);
-                let val = null;
-                for(let r of radios) if(r.checked) { val = r.value; break; }
-                if(val) { answered++; if(val==='OK') ok++; else if(val==='NOK') nok++; else if(val==='N/A') na++; }
+            
+            let total = questions.length;
+            let eligible = total - na;
+            let score = eligible > 0 ? (ok / eligible) * 100 : 0;
+            let typeName = type === 'ligne' ? 'Ligne' : type === 'magasin' ? 'Magasin' : 'Mur';
+            let resultDiv = document.getElementById(`resultat-${type}`);
+            
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <div class="resultat-stats">
+                        <div class="stat-badge ok"><span>${ok}</span><small>OK</small></div>
+                        <div class="stat-badge nok"><span>${nok}</span><small>NOK</small></div>
+                        ${type !== 'mur' ? `<div class="stat-badge na"><span>${na}</span><small>N/A</small></div>` : ''}
+                    </div>
+                    <div class="resultat-score">Score: ${score.toFixed(1)}%</div>
+                `;
+                resultDiv.classList.add('show');
             }
-            const eligible = answered - na;
-            const score = eligible > 0 ? (ok / eligible) * 100 : 0;
-            document.getElementById('magasin-answered').textContent = `${answered}/${questions.length}`;
-            document.getElementById('magasin-score').textContent = answered === questions.length ? score.toFixed(1)+'%' : 'En attente';
-            document.getElementById('magasin-progress').style.width = (answered / questions.length * 100)+'%';
-        }
-
-        function updateMurScore() {
-            const questions = ['mainMur','matiereMur','demarrageMur','dossierMur','formulaireMur','hseMur','cinqSMur'];
-            let ok=0, nok=0, answered=0;
-            for(let q of questions) {
-                let radios = document.getElementsByName(q);
-                let val = null;
-                for(let r of radios) if(r.checked) { val = r.value; break; }
-                if(val) { answered++; if(val==='OK') ok++; else if(val==='NOK') nok++; }
-            }
-            const score = answered > 0 ? (ok / answered) * 100 : 0;
-            document.getElementById('mur-answered').textContent = `${answered}/${questions.length}`;
-            document.getElementById('mur-score').textContent = answered === questions.length ? score.toFixed(1)+'%' : 'En attente';
-            document.getElementById('mur-progress').style.width = (answered / questions.length * 100)+'%';
-        }
-
-        // Fonctions de soumission (simplifiées)
-        function soumettreLigne() {
-            const questions = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
-            let ok=0, nok=0, na=0, reponses={};
-            for(let q of questions) {
-                let radios = document.getElementsByName(q);
-                let val = null;
-                for(let r of radios) if(r.checked) { val = r.value; break; }
-                if(!val) { alert('Répondez à toutes les questions'); return; }
-                reponses[q]=val;
-                if(val==='OK') ok++; else if(val==='NOK') nok++; else if(val==='N/A') na++;
-            }
-            const date = document.getElementById('date-ligne').value;
-            const zone = document.getElementById('zone-ligne').value;
-            const uap = document.getElementById('uap-ligne').value;
-            if(!date || !zone || !uap) { alert('Remplissez date, zone et UAP'); return; }
-            const total = questions.length;
-            const eligible = total - na;
-            const score = eligible>0 ? (ok/eligible)*100 : 0;
-            const detail = `OK: ${ok}, NOK: ${nok}, N/A: ${na} – Score: ${score.toFixed(1)}%`;
-            const resultatDiv = document.getElementById('resultat-ligne');
-            resultatDiv.innerHTML = `<div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré</h4></div><div class="resultat-stats"><div class="stat-badge ok"><span>${ok}</span><small>OK</small></div><div class="stat-badge nok"><span>${nok}</span><small>NOK</small></div><div class="stat-badge na"><span>${na}</span><small>N/A</small></div></div><div class="resultat-score">Score: ${score.toFixed(1)}%</div>`;
-            resultatDiv.classList.add('show');
-            if(auth.currentUser) database.ref('audits').push({date, type:'Ligne', uap: zone+' ('+uap+')', score: parseFloat(score.toFixed(1)), okCount:ok, nokCount:nok, naCount:na, totalQuestions:total, reponses, detail, uid:auth.currentUser.uid, timestamp:firebase.database.ServerValue.TIMESTAMP});
-        }
-
-        function soumettreMagasin() {
-            const questions = ['qualifMag','idMag','instructionMag','stockageMag','formulaireMag','hseMag','cinqSMag','chariotMag'];
-            let ok=0, nok=0, na=0, reponses={};
-            for(let q of questions) {
-                let radios = document.getElementsByName(q);
-                let val = null;
-                for(let r of radios) if(r.checked) { val = r.value; break; }
-                if(!val) { alert('Répondez à toutes les questions'); return; }
-                reponses[q]=val;
-                if(val==='OK') ok++; else if(val==='NOK') nok++; else if(val==='N/A') na++;
-            }
-            const date = document.getElementById('date-magasin').value;
-            const magasin = document.getElementById('magasin-select').value;
-            if(!date || !magasin) { alert('Remplissez date et magasin'); return; }
-            const total = questions.length;
-            const eligible = total - na;
-            const score = eligible>0 ? (ok/eligible)*100 : 0;
-            const detail = `OK: ${ok}, NOK: ${nok}, N/A: ${na} – Score: ${score.toFixed(1)}%`;
-            const resultatDiv = document.getElementById('resultat-magasin');
-            resultatDiv.innerHTML = `<div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré</h4></div><div class="resultat-stats"><div class="stat-badge ok"><span>${ok}</span><small>OK</small></div><div class="stat-badge nok"><span>${nok}</span><small>NOK</small></div><div class="stat-badge na"><span>${na}</span><small>N/A</small></div></div><div class="resultat-score">Score: ${score.toFixed(1)}%</div>`;
-            resultatDiv.classList.add('show');
-            if(auth.currentUser) database.ref('audits').push({date, type:'Magasin', uap: magasin, score: parseFloat(score.toFixed(1)), okCount:ok, nokCount:nok, naCount:na, totalQuestions:total, reponses, detail, uid:auth.currentUser.uid, timestamp:firebase.database.ServerValue.TIMESTAMP});
-        }
-
-        function soumettreMur() {
-            const questions = ['mainMur','matiereMur','demarrageMur','dossierMur','formulaireMur','hseMur','cinqSMur'];
-            let ok=0, nok=0, reponses={};
-            for(let q of questions) {
-                let radios = document.getElementsByName(q);
-                let val = null;
-                for(let r of radios) if(r.checked) { val = r.value; break; }
-                if(!val) { alert('Répondez à toutes les questions'); return; }
-                reponses[q]=val;
-                if(val==='OK') ok++; else if(val==='NOK') nok++;
-            }
-            const date = document.getElementById('date-mur').value;
-            const mur = document.getElementById('mur-select').value;
-            if(!date || !mur) { alert('Remplissez date et mur qualité'); return; }
-            const total = questions.length;
-            const score = (ok/total)*100;
-            const detail = `OK: ${ok}, NOK: ${nok} – Score: ${score.toFixed(1)}%`;
-            const resultatDiv = document.getElementById('resultat-mur');
-            resultatDiv.innerHTML = `<div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré</h4></div><div class="resultat-stats"><div class="stat-badge ok"><span>${ok}</span><small>OK</small></div><div class="stat-badge nok"><span>${nok}</span><small>NOK</small></div></div><div class="resultat-score">Score: ${score.toFixed(1)}%</div>`;
-            resultatDiv.classList.add('show');
-            if(auth.currentUser) database.ref('audits').push({date, type:'Mur', uap: mur, score: parseFloat(score.toFixed(1)), okCount:ok, nokCount:nok, naCount:0, totalQuestions:total, reponses, detail, uid:auth.currentUser.uid, timestamp:firebase.database.ServerValue.TIMESTAMP});
-        }
-
-        // Dashboard stats
-        function updateDashboardStats() {
-            let totalAudits = audits.length, totalOk=0, totalNok=0, scoresUap1=[], scoresUap2=[], scoresMagasin=[], allScores=[];
-            audits.forEach(a => {
-                totalOk += a.okCount||0; totalNok += a.nokCount||0;
-                let score = Number(a.score);
-                if(!isNaN(score)){
-                    allScores.push(score);
-                    if(a.type==='Ligne'){
-                        if(a.uap.includes('UAP1')) scoresUap1.push(score);
-                        else if(a.uap.includes('UAP2')) scoresUap2.push(score);
-                    } else if(a.type==='Mur'){
-                        if(a.uap.includes('uap1')) scoresUap1.push(score);
-                        else if(a.uap.includes('uap2')) scoresUap2.push(score);
-                    } else if(a.type==='Magasin') scoresMagasin.push(score);
-                }
-            });
-            const moyenne = (arr) => arr.length ? (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1) : 'N/A';
-            statTotalAudits.textContent = totalAudits;
-            statTotalOk.textContent = totalOk;
-            statTotalNok.textContent = totalNok;
-            const moyU1=moyenne(scoresUap1), moyU2=moyenne(scoresUap2), moyMag=moyenne(scoresMagasin);
-            statMoyenneUap1.textContent = moyU1!=='N/A'?moyU1+'%':'N/A';
-            statMoyenneUap2.textContent = moyU2!=='N/A'?moyU2+'%':'N/A';
-            statMoyenneMagasin.textContent = moyMag!=='N/A'?moyMag+'%':'N/A';
-            applyScoreColor(statMoyenneUap1, moyU1); applyScoreColor(statMoyenneUap2, moyU2); applyScoreColor(statMoyenneMagasin, moyMag);
-            let moyU1num=parseFloat(moyU1)||0, moyU2num=parseFloat(moyU2)||0, moyMagnet=parseFloat(moyMag)||0;
-            let count=[scoresUap1.length,scoresUap2.length,scoresMagasin.length].filter(l=>l>0).length;
-            let moyUsine=count?((moyU1num+moyU2num+moyMagnet)/count).toFixed(1):'N/A';
-            statMoyenneUsine.textContent = moyUsine!=='N/A'?moyUsine+'%':'N/A';
-            applyScoreColor(statMoyenneUsine, moyUsine);
-            if(allScores.length){ let best=Math.max(...allScores), worst=Math.min(...allScores);
-                statBestScore.textContent=best.toFixed(1)+'%'; statWorstScore.textContent=worst.toFixed(1)+'%';
-                applyScoreColor(statBestScore,best); applyScoreColor(statWorstScore,worst);
-            } else { statBestScore.textContent='-'; statWorstScore.textContent='-'; statBestScore.className='stat-value'; statWorstScore.className='stat-value'; }
-        }
-
-        function updateWorstResults() {
-            const tbody = document.getElementById('worst-results-body');
-            if(!tbody) return;
-            const validAudits = audits.filter(a => a.score!==undefined && !isNaN(Number(a.score)));
-            const sorted = [...validAudits].sort((a,b)=>Number(a.score)-Number(b.score));
-            const worstFive = sorted.slice(0,5);
-            tbody.innerHTML='';
-            if(worstFive.length===0){ tbody.innerHTML='<tr><td colspan="5" style="text-align:center;">Aucun audit disponible</td></tr>'; return; }
-            worstFive.forEach(a=>{ const row=tbody.insertRow();
-                row.insertCell().textContent=a.date||'-'; row.insertCell().textContent=a.type||'-'; row.insertCell().textContent=a.uap||'-';
-                const scoreVal=Number(a.score); const scoreCell=row.insertCell(); scoreCell.textContent=(!isNaN(scoreVal)?scoreVal.toFixed(1)+'%':'-');
-                if(!isNaN(scoreVal)){ if(scoreVal>=85) scoreCell.style.color='#2e7d32'; else if(scoreVal>=80) scoreCell.style.color='#ed6c02'; else scoreCell.style.color='#d32f2f'; }
-                const detailSafe=(a.detail||'').replace(/'/g,"\\'"); row.insertCell().innerHTML=`<button class="badge" onclick="alert('${detailSafe}')"><i class="fas fa-eye"></i> Voir</button>`;
-            });
-        }
-
-        function filterAudits() {
-            const filterType = document.getElementById('filter-type').value;
-            const filterUap = document.getElementById('filter-uap').value;
-            let filtered = audits;
-            if(filterType!=='all') filtered = filtered.filter(a=>a.type===filterType);
-            if(filterUap!=='all') filtered = filtered.filter(a=>a.uap===filterUap);
-            const tbody = document.getElementById('audit-table-body');
-            tbody.innerHTML='';
-            filtered.forEach(a=>{ const row=tbody.insertRow();
-                row.insertCell().textContent=a.date; row.insertCell().textContent=a.type; row.insertCell().textContent=a.uap;
-                const scoreVal=Number(a.score); const scoreCell=row.insertCell(); scoreCell.textContent=(!isNaN(scoreVal)?scoreVal.toFixed(1)+'%':'-');
-                if(!isNaN(scoreVal)){ if(scoreVal>=85) scoreCell.style.color='#2e7d32'; else if(scoreVal>=80) scoreCell.style.color='#ed6c02'; else scoreCell.style.color='#d32f2f'; }
-                const detailSafe=(a.detail||'').replace(/'/g,"\\'"); row.insertCell().innerHTML=`<button class="badge" onclick="alert('${detailSafe}')"><i class="fas fa-eye"></i> Voir</button>`;
-            });
-            const uapSelect = document.getElementById('filter-uap');
-            const currentUap = uapSelect.value;
-            const allUaps = [...new Set(audits.map(a=>a.uap))];
-            uapSelect.innerHTML = '<option value="all">Tous</option>'+allUaps.map(u=>`<option value="${u}" ${u===currentUap?'selected':''}>${u}</option>`).join('');
-        }
-
-        function exportToExcel() {
-            const filterType = document.getElementById('filter-type').value;
-            const filterUap = document.getElementById('filter-uap').value;
-            let filtered = audits;
-            if(filterType!=='all') filtered = filtered.filter(a=>a.type===filterType);
-            if(filterUap!=='all') filtered = filtered.filter(a=>a.uap===filterUap);
-            if(filtered.length===0){ alert('Aucune donnée à exporter.'); return; }
-            const headers = ['Date','Type','UAP/Ligne','Score (%)','Détail'];
-            const rows = filtered.map(a=>[a.date||'',a.type||'',a.uap||'',(!isNaN(Number(a.score))?Number(a.score).toFixed(1):''),(a.detail||'').replace(/"/g,'""')]);
-            let csvContent = headers.join(';')+'\n';
-            rows.forEach(row=>{ csvContent += row.map(cell=>`"${cell}"`).join(';')+'\n'; });
-            const blob = new Blob([csvContent],{type:'text/csv;charset=utf-8;'});
-            const link = document.createElement('a'); const url = URL.createObjectURL(blob);
-            link.setAttribute('href',url); link.setAttribute('download','audits_export.csv'); link.style.visibility='hidden';
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        }
-
-        // Nouveaux graphiques avec filtres
-        function getFilteredAudits() {
-            const period = document.getElementById('period-filter').value;
-            const typeFilter = document.getElementById('type-filter').value;
-            const uapFilter = document.getElementById('uap-filter').value;
-            let filtered = audits;
-            if(typeFilter !== 'all') filtered = filtered.filter(a => a.type === typeFilter);
-            if(uapFilter !== 'all') {
-                filtered = filtered.filter(a => {
-                    if(a.type === 'Ligne') return a.uap.includes(uapFilter);
-                    if(a.type === 'Mur') return a.uap.includes(uapFilter.toLowerCase());
-                    return true;
+            
+            if (auth.currentUser) {
+                database.ref('audits').push({
+                    date, type: typeName, uap: type === 'ligne' ? `${zone} (${uap})` : zone,
+                    score: parseFloat(score.toFixed(1)), okCount: ok, nokCount: nok, naCount: na,
+                    totalQuestions: total, reponses, detail: `OK:${ok} NOK:${nok} NA:${na} Score:${score.toFixed(1)}%`,
+                    uid: auth.currentUser.uid, timestamp: firebase.database.ServerValue.TIMESTAMP
                 });
             }
-            return { filtered, period };
+        };
+
+        // Fonction pour calculer les pourcentages de réponses par question
+        function calculateQuestionPercentages(auditType, questionsList) {
+            const auditsOfType = audits.filter(a => a.type === auditType && a.reponses);
+            const results = {};
+            
+            questionsList.forEach(q => {
+                let okCount = 0, nokCount = 0, naCount = 0;
+                auditsOfType.forEach(a => {
+                    const reponse = a.reponses[q.key];
+                    if (reponse === 'OK') okCount++;
+                    else if (reponse === 'NOK') nokCount++;
+                    else if (reponse === 'N/A') naCount++;
+                });
+                const total = okCount + nokCount + naCount;
+                results[q.key] = {
+                    label: q.label,
+                    ok: total > 0 ? (okCount / total) * 100 : 0,
+                    nok: total > 0 ? (nokCount / total) * 100 : 0,
+                    na: total > 0 ? (naCount / total) * 100 : 0
+                };
+            });
+            return results;
+        }
+
+        // Création des graphiques pour les questions
+        function updateQuestionCharts() {
+            // Graphique Ligne
+            const ligneResults = calculateQuestionPercentages('Ligne', ligneQuestions);
+            const ligneLabels = ligneQuestions.map(q => q.label);
+            const ligneOkData = ligneQuestions.map(q => ligneResults[q.key]?.ok || 0);
+            const ligneNokData = ligneQuestions.map(q => ligneResults[q.key]?.nok || 0);
+            const ligneNaData = ligneQuestions.map(q => ligneResults[q.key]?.na || 0);
+            
+            if (charts.ligneQuestions) charts.ligneQuestions.destroy();
+            charts.ligneQuestions = new Chart(document.getElementById('chart-ligne-questions'), {
+                type: 'bar',
+                data: {
+                    labels: ligneLabels,
+                    datasets: [
+                        { label: 'OK (%)', data: ligneOkData, backgroundColor: '#2e7d32', borderRadius: 8 },
+                        { label: 'NOK (%)', data: ligneNokData, backgroundColor: '#d32f2f', borderRadius: 8 },
+                        { label: 'N/A (%)', data: ligneNaData, backgroundColor: '#ff8f00', borderRadius: 8 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    indexAxis: 'y',
+                    plugins: { legend: { position: 'top' }, title: { display: false } },
+                    scales: { x: { stacked: true, max: 100, title: { display: true, text: 'Pourcentage (%)' } }, y: { stacked: true } }
+                }
+            });
+
+            // Graphique Magasin
+            const magasinResults = calculateQuestionPercentages('Magasin', magasinQuestions);
+            const magasinLabels = magasinQuestions.map(q => q.label);
+            const magasinOkData = magasinQuestions.map(q => magasinResults[q.key]?.ok || 0);
+            const magasinNokData = magasinQuestions.map(q => magasinResults[q.key]?.nok || 0);
+            const magasinNaData = magasinQuestions.map(q => magasinResults[q.key]?.na || 0);
+            
+            if (charts.magasinQuestions) charts.magasinQuestions.destroy();
+            charts.magasinQuestions = new Chart(document.getElementById('chart-magasin-questions'), {
+                type: 'bar',
+                data: {
+                    labels: magasinLabels,
+                    datasets: [
+                        { label: 'OK (%)', data: magasinOkData, backgroundColor: '#2e7d32', borderRadius: 8 },
+                        { label: 'NOK (%)', data: magasinNokData, backgroundColor: '#d32f2f', borderRadius: 8 },
+                        { label: 'N/A (%)', data: magasinNaData, backgroundColor: '#ff8f00', borderRadius: 8 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    indexAxis: 'y',
+                    plugins: { legend: { position: 'top' }, title: { display: false } },
+                    scales: { x: { stacked: true, max: 100, title: { display: true, text: 'Pourcentage (%)' } }, y: { stacked: true } }
+                }
+            });
+
+            // Graphique Mur qualité
+            const murResults = calculateQuestionPercentages('Mur', murQuestions);
+            const murLabels = murQuestions.map(q => q.label);
+            const murOkData = murQuestions.map(q => murResults[q.key]?.ok || 0);
+            const murNokData = murQuestions.map(q => murResults[q.key]?.nok || 0);
+            
+            if (charts.murQuestions) charts.murQuestions.destroy();
+            charts.murQuestions = new Chart(document.getElementById('chart-mur-questions'), {
+                type: 'bar',
+                data: {
+                    labels: murLabels,
+                    datasets: [
+                        { label: 'OK (%)', data: murOkData, backgroundColor: '#2e7d32', borderRadius: 8 },
+                        { label: 'NOK (%)', data: murNokData, backgroundColor: '#d32f2f', borderRadius: 8 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    indexAxis: 'y',
+                    plugins: { legend: { position: 'top' }, title: { display: false } },
+                    scales: { x: { stacked: true, max: 100, title: { display: true, text: 'Pourcentage (%)' } }, y: { stacked: true } }
+                }
+            });
+        }
+
+        // Chart Functions
+        function getFilteredAudits() {
+            let filtered = audits;
+            let t = document.getElementById('type-filter').value;
+            if (t !== 'all') filtered = filtered.filter(a => a.type === t);
+            let u = document.getElementById('uap-filter').value;
+            if (u !== 'all') filtered = filtered.filter(a => a.uap && a.uap.includes(u));
+            return filtered;
         }
 
         function getPeriodKey(date, period) {
-            if(period === 'jour') return date;
-            if(period === 'semaine') {
-                const d = new Date(date+'T00:00:00');
-                const oneJan = new Date(d.getFullYear(),0,1);
-                const week = Math.ceil((((d - oneJan)/86400000) + oneJan.getDay() + 1)/7);
+            if (period === 'jour') return date;
+            if (period === 'semaine') {
+                let d = new Date(date + 'T00:00:00');
+                let week = Math.ceil((((d - new Date(d.getFullYear(), 0, 1)) / 86400000) + new Date(d.getFullYear(), 0, 1).getDay() + 1) / 7);
                 return `${d.getFullYear()}-S${week}`;
             }
-            return date.substring(0,7);
+            return date.substring(0, 7);
         }
 
-        function updateCourbesCharts() {
-            updateUapComparisonChart();
-            updateTrendForecastChart();
-            updateLinesHistogramChart();
-            updateScoreDistributionChart();
+        function updateAllCharts() {
+            let period = document.getElementById('period-filter').value;
+            let data = getFilteredAudits();
+            updateMiniStats(data);
+            updateUapChart(data, period);
+            updateTrendChart(data, period);
+            updateLinesHistogram(data);
+            updateScoreDist(data);
+            updateQuestionCharts();
         }
 
-        function updateUapComparisonChart() {
-            const { filtered, period } = getFilteredAudits();
-            const uap1Data = {}, uap2Data = {};
-            filtered.forEach(a => {
-                if(a.type !== 'Ligne' && a.type !== 'Mur') return;
-                let uap = null;
-                if(a.uap.includes('UAP1') || a.uap.includes('uap1')) uap = 'UAP1';
-                else if(a.uap.includes('UAP2') || a.uap.includes('uap2')) uap = 'UAP2';
-                if(!uap || a.score === undefined) return;
-                const key = getPeriodKey(a.date, period);
-                if(uap === 'UAP1') {
-                    if(!uap1Data[key]) uap1Data[key] = { sum:0, count:0 };
-                    uap1Data[key].sum += Number(a.score);
-                    uap1Data[key].count++;
+        function updateMiniStats(data) {
+            let total = data.length;
+            let avgScore = 0;
+            let totalOk = 0;
+            let totalNok = 0;
+            data.forEach(a => {
+                if (a.score) avgScore += Number(a.score);
+                totalOk += a.okCount || 0;
+                totalNok += a.nokCount || 0;
+            });
+            avgScore = total ? avgScore / total : 0;
+            document.getElementById('mini-stats').innerHTML = `
+                <div class="stat-mini"><div class="value">${total}</div><div class="label">Audits filtrés</div></div>
+                <div class="stat-mini"><div class="value">${avgScore.toFixed(1)}%</div><div class="label">Score moyen</div></div>
+                <div class="stat-mini"><div class="value">${totalOk}</div><div class="label">OK totaux</div></div>
+                <div class="stat-mini"><div class="value">${totalNok}</div><div class="label">NOK totaux</div></div>`;
+        }
+
+        function updateUapChart(data, period) {
+            let u1 = {}, u2 = {};
+            data.forEach(a => {
+                if (!a.uap || (!a.uap.includes('UAP1') && !a.uap.includes('UAP2') && !a.uap.includes('uap1') && !a.uap.includes('uap2'))) return;
+                let uap = (a.uap.includes('UAP1') || a.uap.includes('uap1')) ? 'UAP1' : 'UAP2';
+                let key = getPeriodKey(a.date, period);
+                if (uap === 'UAP1') {
+                    if (!u1[key]) u1[key] = { s: 0, c: 0 };
+                    u1[key].s += Number(a.score || 0);
+                    u1[key].c++;
                 } else {
-                    if(!uap2Data[key]) uap2Data[key] = { sum:0, count:0 };
-                    uap2Data[key].sum += Number(a.score);
-                    uap2Data[key].count++;
+                    if (!u2[key]) u2[key] = { s: 0, c: 0 };
+                    u2[key].s += Number(a.score || 0);
+                    u2[key].c++;
                 }
             });
-            const allKeys = [...new Set([...Object.keys(uap1Data),...Object.keys(uap2Data)])].sort();
-            const uap1Avg = allKeys.map(k => uap1Data[k] ? uap1Data[k].sum/uap1Data[k].count : null);
-            const uap2Avg = allKeys.map(k => uap2Data[k] ? uap2Data[k].sum/uap2Data[k].count : null);
-            if(chartUapComparison) chartUapComparison.destroy();
-            const ctx = document.getElementById('chart-uap-comparison').getContext('2d');
-            chartUapComparison = new Chart(ctx, {
+            let keys = [...new Set([...Object.keys(u1), ...Object.keys(u2)])].sort();
+            if (charts.uap) charts.uap.destroy();
+            charts.uap = new Chart(document.getElementById('chart-uap-comparison'), {
                 type: 'line',
-                data: { labels: allKeys, datasets: [
-                    { label: 'UAP1', data: uap1Avg, borderColor: '#cc0000', backgroundColor: 'transparent', tension: 0.3, fill: false },
-                    { label: 'UAP2', data: uap2Avg, borderColor: '#1976d2', backgroundColor: 'transparent', tension: 0.3, fill: false }
-                ] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score (%)' } } } }
+                data: {
+                    labels: keys,
+                    datasets: [
+                        { label: 'UAP1', data: keys.map(k => u1[k] ? u1[k].s / u1[k].c : null), borderColor: '#cc0000', tension: 0.3 },
+                        { label: 'UAP2', data: keys.map(k => u2[k] ? u2[k].s / u2[k].c : null), borderColor: '#1976d2', tension: 0.3 }
+                    ]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
             });
         }
 
-        function updateTrendForecastChart() {
-            const { filtered, period } = getFilteredAudits();
-            const periodData = {};
+        function updateTrendChart(data, period) {
+            let periodData = {};
+            data.forEach(a => {
+                if (!a.score) return;
+                let key = getPeriodKey(a.date, period);
+                if (!periodData[key]) periodData[key] = { s: 0, c: 0 };
+                periodData[key].s += Number(a.score);
+                periodData[key].c++;
+            });
+            let keys = Object.keys(periodData).sort();
+            let avgs = keys.map(k => periodData[k].s / periodData[k].c);
+            let forecast = [...avgs];
+            if (avgs.length >= 3) forecast.push(avgs.slice(-3).reduce((a, b) => a + b, 0) / 3);
+            let fLabels = [...keys];
+            if (forecast.length > avgs.length) fLabels.push('Prévision');
+            if (charts.trend) charts.trend.destroy();
+            charts.trend = new Chart(document.getElementById('chart-trend-forecast'), {
+                type: 'line',
+                data: {
+                    labels: fLabels,
+                    datasets: [
+                        { label: 'Score moyen', data: avgs, borderColor: '#cc0000', tension: 0.3 },
+                        { label: 'Prévision', data: forecast, borderColor: '#ff9800', borderDash: [5, 5], tension: 0.3 }
+                    ]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
+        }
+
+        function updateLinesHistogram(data) {
+            let lines = {};
+            data.filter(a => a.type === 'Ligne').forEach(a => {
+                let name = a.uap ? a.uap.split(' (')[0] : a.uap;
+                if (name && (!lines[name] || new Date(a.date) > new Date(lines[name].date))) {
+                    lines[name] = { score: Number(a.score), date: a.date };
+                }
+            });
+            let names = Object.keys(lines).sort();
+            let scores = names.map(n => lines[n].score);
+            let colors = scores.map(s => s >= 85 ? '#2e7d32' : s >= 80 ? '#ed6c02' : '#d32f2f');
+            if (charts.histogram) charts.histogram.destroy();
+            charts.histogram = new Chart(document.getElementById('chart-lines-histogram'), {
+                type: 'bar',
+                data: { labels: names, datasets: [{ label: 'Score (%)', data: scores, backgroundColor: colors, borderRadius: 8 }] },
+                options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
+        }
+
+        function updateScoreDist(data) {
+            let scores = data.filter(a => a.type === 'Ligne' && a.score).map(a => Number(a.score));
+            let labels = ['<50%', '50-60%', '60-70%', '70-80%', '80-85%', '85-90%', '90-95%', '95-100%'];
+            let counts = new Array(8).fill(0);
+            scores.forEach(s => {
+                if (s < 50) counts[0]++;
+                else if (s < 60) counts[1]++;
+                else if (s < 70) counts[2]++;
+                else if (s < 80) counts[3]++;
+                else if (s < 85) counts[4]++;
+                else if (s < 90) counts[5]++;
+                else if (s < 95) counts[6]++;
+                else if (s <= 100) counts[7]++;
+            });
+            if (charts.dist) charts.dist.destroy();
+            charts.dist = new Chart(document.getElementById('chart-score-distribution'), {
+                type: 'bar',
+                data: { labels, datasets: [{ label: "Nombre d'audits", data: counts, backgroundColor: '#cc0000', borderRadius: 8 }] },
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        // Filter and Export Functions
+        function filterAudits() {
+            let t = document.getElementById('filter-type').value;
+            let u = document.getElementById('filter-uap').value;
+            let filtered = audits;
+            if (t !== 'all') filtered = filtered.filter(a => a.type === t);
+            if (u !== 'all') filtered = filtered.filter(a => a.uap === u);
+            let tbody = document.getElementById('audit-table-body');
+            tbody.innerHTML = '';
             filtered.forEach(a => {
-                if(a.score === undefined || isNaN(Number(a.score))) return;
-                const key = getPeriodKey(a.date, period);
-                if(!periodData[key]) periodData[key] = { sum:0, count:0 };
-                periodData[key].sum += Number(a.score);
-                periodData[key].count++;
-            });
-            const sortedKeys = Object.keys(periodData).sort();
-            const avgScores = sortedKeys.map(k => periodData[k].sum / periodData[k].count);
-            let forecast = [...avgScores];
-            if(avgScores.length >= 3) {
-                const last3Avg = avgScores.slice(-3).reduce((a,b)=>a+b,0)/3;
-                forecast.push(last3Avg);
-            }
-            const forecastLabels = [...sortedKeys];
-            if(forecast.length > avgScores.length) forecastLabels.push('Prévision');
-            if(chartTrendForecast) chartTrendForecast.destroy();
-            const ctx = document.getElementById('chart-trend-forecast').getContext('2d');
-            chartTrendForecast = new Chart(ctx, {
-                type: 'line',
-                data: { labels: forecastLabels, datasets: [
-                    { label: 'Score moyen', data: avgScores, borderColor: '#cc0000', backgroundColor: 'transparent', tension: 0.3 },
-                    { label: 'Prévision', data: forecast, borderColor: '#ff9800', backgroundColor: 'transparent', borderDash: [5,5], tension: 0.3 }
-                ] },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
-            });
-        }
-
-        function updateLinesHistogramChart() {
-            const ligneAudits = audits.filter(a => a.type === 'Ligne' && a.score !== undefined && !isNaN(Number(a.score)));
-            const lastAuditByLine = {};
-            ligneAudits.forEach(a => {
-                const lineName = a.uap.split(' (')[0];
-                if(!lastAuditByLine[lineName] || new Date(a.date) > new Date(lastAuditByLine[lineName].date)) {
-                    lastAuditByLine[lineName] = { date: a.date, score: Number(a.score) };
+                let row = tbody.insertRow();
+                row.insertCell().textContent = a.date;
+                row.insertCell().textContent = a.type;
+                row.insertCell().textContent = a.uap;
+                let sc = row.insertCell();
+                sc.textContent = a.score ? Number(a.score).toFixed(1) + '%' : '-';
+                if (a.score) {
+                    if (a.score >= 85) sc.style.color = '#2e7d32';
+                    else if (a.score >= 80) sc.style.color = '#ed6c02';
+                    else sc.style.color = '#d32f2f';
                 }
+                row.insertCell().innerHTML = `<button class="badge" onclick="alert('${(a.detail || '').replace(/'/g, "\\'")}')"><i class="fas fa-eye"></i> Voir</button>`;
             });
-            const lines = Object.keys(lastAuditByLine).sort();
-            const scores = lines.map(l => lastAuditByLine[l].score);
-            const colors = scores.map(s => s >= 85 ? '#2e7d32' : (s >= 80 ? '#ed6c02' : '#d32f2f'));
-            if(chartLinesHistogram) chartLinesHistogram.destroy();
-            const ctx = document.getElementById('chart-lines-histogram').getContext('2d');
-            chartLinesHistogram = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: lines, datasets: [{ label: 'Score (%)', data: scores, backgroundColor: colors, borderRadius: 8 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score (%)' } } } }
+            
+            document.getElementById('details-audit-count').textContent = `${filtered.length} audits`;
+            
+            let uapSelect = document.getElementById('filter-uap');
+            let current = uapSelect.value;
+            let allUaps = [...new Set(audits.map(a => a.uap))];
+            uapSelect.innerHTML = '<option value="all">Tous</option>' + allUaps.map(u => `<option value="${u}" ${u === current ? 'selected' : ''}>${u}</option>`).join('');
+        }
+
+        function exportToExcel() {
+            let t = document.getElementById('filter-type').value;
+            let u = document.getElementById('filter-uap').value;
+            let filtered = audits;
+            if (t !== 'all') filtered = filtered.filter(a => a.type === t);
+            if (u !== 'all') filtered = filtered.filter(a => a.uap === u);
+            if (!filtered.length) return alert('Aucune donnée à exporter');
+            let csv = [['Date', 'Type', 'UAP/Ligne', 'Score (%)', 'Détail']];
+            filtered.forEach(a => csv.push([a.date || '', a.type || '', a.uap || '', a.score ? Number(a.score).toFixed(1) : '', (a.detail || '').replace(/"/g, '""')]));
+            let blob = new Blob([csv.map(r => r.map(c => `"${c}"`).join(';')).join('\n')], { type: 'text/csv' });
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'audits_export.csv';
+            link.click();
+        }
+
+        // Dashboard Functions
+        function updateDashboardCards() {
+            let total = audits.length;
+            let totalOk = audits.reduce((s, a) => s + (a.okCount || 0), 0);
+            let totalNok = audits.reduce((s, a) => s + (a.nokCount || 0), 0);
+            let u1Audits = audits.filter(a => (a.uap && (a.uap.includes('UAP1') || a.uap.includes('uap1'))) && a.score);
+            let u1 = u1Audits.length ? u1Audits.reduce((s, a) => s + Number(a.score), 0) / u1Audits.length : 0;
+            let u2Audits = audits.filter(a => (a.uap && (a.uap.includes('UAP2') || a.uap.includes('uap2'))) && a.score);
+            let u2 = u2Audits.length ? u2Audits.reduce((s, a) => s + Number(a.score), 0) / u2Audits.length : 0;
+            let magAudits = audits.filter(a => a.type === 'Magasin' && a.score);
+            let mag = magAudits.length ? magAudits.reduce((s, a) => s + Number(a.score), 0) / magAudits.length : 0;
+            let scores = audits.filter(a => a.score).map(a => Number(a.score));
+            let best = scores.length ? Math.max(...scores) : 0;
+            let worst = scores.length ? Math.min(...scores) : 0;
+            
+            document.getElementById('total-audits-badge').textContent = `${total} audits`;
+            document.getElementById('courbes-audit-count').textContent = `${total} audits`;
+            
+            document.getElementById('dashboard-cards').innerHTML = `
+                <div class="card"><i class="fas fa-calendar-check"></i><h3>Audits réalisés</h3><p class="stat-value">${total}</p></div>
+                <div class="card"><i class="fas fa-check-circle" style="color:#38a169;"></i><h3>Questions OK</h3><p class="stat-value">${totalOk}</p></div>
+                <div class="card"><i class="fas fa-times-circle" style="color:#e53e3e;"></i><h3>Questions NOK</h3><p class="stat-value">${totalNok}</p></div>
+                <div class="card"><i class="fas fa-industry"></i><h3>Moyenne UAP1</h3><p class="stat-value ${u1 >= 85 ? 'score-vert' : u1 >= 80 ? 'score-orange' : 'score-rouge'}">${u1.toFixed(1)}%</p></div>
+                <div class="card"><i class="fas fa-industry"></i><h3>Moyenne UAP2</h3><p class="stat-value ${u2 >= 85 ? 'score-vert' : u2 >= 80 ? 'score-orange' : 'score-rouge'}">${u2.toFixed(1)}%</p></div>
+                <div class="card"><i class="fas fa-warehouse"></i><h3>Moyenne Magasin</h3><p class="stat-value ${mag >= 85 ? 'score-vert' : mag >= 80 ? 'score-orange' : 'score-rouge'}">${mag.toFixed(1)}%</p></div>
+                <div class="card"><i class="fas fa-trophy" style="color:#f1c40f;"></i><h3>Meilleur score</h3><p class="stat-value">${best.toFixed(1)}%</p></div>
+                <div class="card"><i class="fas fa-skull-crosswalk" style="color:#e74c3c;"></i><h3>Pire score</h3><p class="stat-value">${worst.toFixed(1)}%</p></div>`;
+        }
+
+        function updateWorstResults() {
+            let valid = audits.filter(a => a.score).sort((a, b) => Number(a.score) - Number(b.score)).slice(0, 5);
+            let tbody = document.getElementById('worst-results-body');
+            tbody.innerHTML = '';
+            if (valid.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucun audit disponible</td></tr>';
+                return;
+            }
+            valid.forEach(a => {
+                let row = tbody.insertRow();
+                row.insertCell().textContent = a.date;
+                row.insertCell().textContent = a.type;
+                row.insertCell().textContent = a.uap;
+                let sc = row.insertCell();
+                sc.textContent = Number(a.score).toFixed(1) + '%';
+                if (a.score >= 85) sc.style.color = '#2e7d32';
+                else if (a.score >= 80) sc.style.color = '#ed6c02';
+                else sc.style.color = '#d32f2f';
+                row.insertCell().innerHTML = `<button class="badge" onclick="alert('${(a.detail || '').replace(/'/g, "\\'")}')"><i class="fas fa-eye"></i> Voir</button>`;
             });
         }
 
-        function updateScoreDistributionChart() {
-            const ligneAudits = audits.filter(a => a.type === 'Ligne' && a.score !== undefined && !isNaN(Number(a.score)));
-            const scores = ligneAudits.map(a => Number(a.score));
-            const bins = [0,50,60,70,80,85,90,95,100];
-            const labels = ['<50%','50-60%','60-70%','70-80%','80-85%','85-90%','90-95%','95-100%'];
-            const counts = new Array(8).fill(0);
-            scores.forEach(score => {
-                if(score < 50) counts[0]++;
-                else if(score < 60) counts[1]++;
-                else if(score < 70) counts[2]++;
-                else if(score < 80) counts[3]++;
-                else if(score < 85) counts[4]++;
-                else if(score < 90) counts[5]++;
-                else if(score < 95) counts[6]++;
-                else if(score <= 100) counts[7]++;
-            });
-            if(chartScoreDistribution) chartScoreDistribution.destroy();
-            const ctx = document.getElementById('chart-score-distribution').getContext('2d');
-            chartScoreDistribution = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: labels, datasets: [{ label: "Nombre d'audits", data: counts, backgroundColor: '#cc0000', borderRadius: 8 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: "Nombre d'audits" } } } }
-            });
-        }
-
-        // Auth state
-        auth.onAuthStateChanged((user) => {
-            if(user) {
-                loginContainer.style.display = 'none';
-                dashboardContainer.style.display = 'block';
-                userEmailSpan.textContent = user.email;
-                database.ref('audits').on('value', (snapshot) => {
-                    audits = [];
-                    snapshot.forEach((child) => { audits.push({ id: child.key, ...child.val() }); });
-                    filterAudits();
-                    updateDashboardStats();
-                    updateWorstResults();
-                    updateCourbesCharts();
+        // Live Score Update
+        function updateScoreLive() {
+            setInterval(() => {
+                let q = ligneQuestions.map(q => q.key);
+                let a = 0, ok = 0, na = 0;
+                q.forEach(n => {
+                    let radios = document.getElementsByName(n);
+                    let v = null;
+                    for (let r of radios) if (r.checked) v = r.value;
+                    if (v) {
+                        a++;
+                        if (v === 'OK') ok++;
+                        else if (v === 'N/A') na++;
+                    }
                 });
+                let e = a - na;
+                let s = e ? ok / e * 100 : 0;
+                let el = document.getElementById('ligne-score');
+                if (el) el.textContent = a === q.length ? s.toFixed(1) + '%' : 'En attente';
+                let p = document.getElementById('ligne-progress');
+                if (p) p.style.width = (a / q.length * 100) + '%';
+                let ans = document.getElementById('ligne-answered');
+                if (ans) ans.textContent = `${a}/${q.length}`;
+            }, 500);
+        }
+
+        // Auth State Listener
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                console.log("Utilisateur connecté:", user.email);
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('dashboard-container').style.display = 'block';
+                document.getElementById('user-email').textContent = user.email;
+                loadAuditForms();
+                
+                const auditsRef = database.ref('audits');
+                auditsRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        audits = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                        console.log(`✅ ${audits.length} audits chargés depuis Firebase`);
+                    } else {
+                        audits = [];
+                        console.log("Aucun audit trouvé dans Firebase");
+                    }
+                    updateDashboardCards();
+                    updateWorstResults();
+                    filterAudits();
+                    updateAllCharts();
+                });
+                
+                updateScoreLive();
             } else {
-                loginContainer.style.display = 'flex';
-                dashboardContainer.style.display = 'none';
-                database.ref('audits').off();
+                document.getElementById('login-container').style.display = 'flex';
+                document.getElementById('dashboard-container').style.display = 'none';
             }
         });
 
-        function logout() { auth.signOut().catch(err => alert('Erreur lors de la déconnexion.')); }
-        window.addEventListener('load', function() { updateLigneScore(); updateMagasinScore(); updateMurScore(); });
-        document.addEventListener('keypress', (e) => { if(e.target.closest('#login-container') && e.key === 'Enter') handleAuth(); });
-        const forgotPasswordLink = document.querySelector('.forgot-password a');
+        function logout() {
+            auth.signOut();
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024 && document.getElementById('sidebar').classList.contains('open')) {
+                document.getElementById('mainContent').classList.add('shifted');
+            } else {
+                document.getElementById('mainContent').classList.remove('shifted');
+            }
+        });
     </script>
 </body>
 </html>
