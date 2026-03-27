@@ -141,7 +141,6 @@
         .card .stat-value { font-size:40px; font-weight:800; color:#1a202c; line-height:1.2; }
         .card i { font-size:48px; color:#cc0000; margin-bottom:15px; opacity:0.8; }
 
-        /* Classes de couleur pour les scores */
         .score-vert { color: #2e7d32 !important; }
         .score-orange { color: #ed6c02 !important; }
         .score-rouge { color: #d32f2f !important; }
@@ -163,7 +162,6 @@
         .audit-content { display:none; }
         .audit-content.active-content { display:block; }
 
-        /* --- Amélioration du design des formulaires d'audit --- */
         .audit-form {
             background:white; padding:30px; border-radius:24px;
             box-shadow:0 20px 40px -10px rgba(0,0,0,0.15); position:relative;
@@ -183,14 +181,13 @@
         .progress { height:10px; background:#e0e0e0; border-radius:5px; margin:10px 0 20px; overflow:hidden; }
         .progress-bar { height:100%; background:#cc0000; width:0%; transition:width 0.3s; }
         
-        /* Style des questions */
         .question-group {
             margin-bottom:30px; padding:20px; background:#f8fafd; border-radius:16px;
             border:1px solid #e0e0e0; transition:box-shadow 0.2s;
         }
         .question-group:hover { box-shadow:0 8px 20px rgba(0,0,0,0.08); }
         .question-group label {
-            display:block; font-weight:700; color:#1976d2; /* Bleu pour les questions */
+            display:block; font-weight:700; color:#1976d2;
             margin-bottom:15px; font-size:16px; letter-spacing:0.3px;
         }
         .radio-group { display:flex; gap:15px; flex-wrap:wrap; }
@@ -199,7 +196,6 @@
             border-radius:40px; border:2px solid #e2e8f0;
             transition:all 0.2s; font-weight:600;
         }
-        /* Couleurs des options */
         .radio-group div:has(input[value="OK"]) {
             background: #e8f5e9; border-color: #2e7d32;
         }
@@ -221,7 +217,6 @@
         .radio-group input[type="radio"] {
             width:18px; height:18px; accent-color:#cc0000; margin-right:5px;
         }
-        /* Texte des options coloré */
         .radio-group div:has(input[value="OK"]) span { color: #2e7d32; font-weight:700; }
         .radio-group div:has(input[value="NOK"]) span { color: #c62828; font-weight:700; }
         .radio-group div:has(input[value="N/A"]) span { color: #ff8f00; font-weight:700; }
@@ -291,24 +286,39 @@
         .chart-container:hover { box-shadow:0 20px 40px -10px rgba(204,0,0,0.2); }
 
         .filter-bar {
-            margin-bottom:25px; display:flex; gap:20px; flex-wrap:wrap; align-items:center;
+            margin-bottom:25px; display:flex; gap:15px; flex-wrap:wrap; align-items:center;
             background:white; padding:18px 25px; border-radius:18px;
             box-shadow:0 5px 10px rgba(0,0,0,0.03);
         }
-        .filter-bar label { font-weight:600; color:#4a5568; }
+        .filter-group {
+            display:flex; flex-direction:column; gap:5px;
+        }
+        .filter-group label {
+            font-weight:600; color:#4a5568; font-size:12px;
+        }
         .filter-bar select, .filter-bar button {
-            padding:10px 18px; border:2px solid #e2e8f0; border-radius:40px;
+            padding:8px 16px; border:2px solid #e2e8f0; border-radius:40px;
             background:white; font-size:14px; font-weight:500; transition:all 0.2s;
         }
         .filter-bar select:focus { border-color:#cc0000; outline:none; }
         .filter-bar button { background:#cc0000; color:white; border:none; cursor:pointer; transition:all 0.3s; }
         .filter-bar button:hover { background:#a30000; transform:scale(1.02); }
 
+        .line-performance-card {
+            background:white; border-radius:20px; padding:20px;
+            margin-bottom:20px; border-left:4px solid #cc0000;
+            box-shadow:0 4px 12px rgba(0,0,0,0.05);
+        }
+        .line-name { font-size:18px; font-weight:700; color:#1a202c; margin-bottom:10px; }
+        .line-score { font-size:32px; font-weight:800; }
+        .line-date { color:#718096; font-size:12px; margin-top:5px; }
+
         @media (max-width: 768px) {
             .section h1 { font-size:24px; }
             .card-container { grid-template-columns:1fr; }
             .sub-nav button { width:100%; justify-content:center; }
             .filter-bar { flex-direction:column; align-items:stretch; }
+            .filter-group { width:100%; }
             .resultat-stats { grid-template-columns:1fr; }
         }
     </style>
@@ -386,53 +396,73 @@
                         </h2>
                         <div class="auditor-table" id="worst-results-table">
                             <table>
-                                <thead>
-                                    <tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr>
-                                </thead>
+                                <thead><tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr></thead>
                                 <tbody id="worst-results-body"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- Section Courbes -->
+                <!-- Section Courbes avec filtres avancés -->
                 <div id="section-courbes" class="section">
                     <h1><i class="fas fa-chart-line"></i> Courbes et statistiques</h1>
+                    
+                    <!-- Barre de filtres -->
                     <div class="filter-bar">
-                        <div><label><i class="fas fa-calendar-alt"></i> Période :</label><select id="periode-type"><option value="mois">Par mois</option><option value="semaine">Par semaine</option></select></div>
-                        <div><label><i class="fas fa-filter"></i> Filtre :</label><select id="courbes-filtre"><option value="all">Tous</option><option value="UAP1">UAP1</option><option value="UAP2">UAP2</option><option value="Magasin">Magasin</option></select></div>
-                        <button onclick="updateCourbesCharts()"><i class="fas fa-sync-alt"></i> Actualiser</button>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="chart-audits" style="width:100%; max-height:300px;"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="chart-questions" style="width:100%; max-height:300px;"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="chart-repartition-type" style="width:100%; max-height:300px;"></canvas>
-                    </div>
-                    <!-- Graphique Pourcentage par question -->
-                    <div class="chart-container">
-                        <h3 style="margin-bottom:15px;">Pourcentage de réponses par question</h3>
-                        <div style="display:flex; gap:10px; margin-bottom:15px;">
-                            <label>Type d'audit :</label>
-                            <select id="question-type-select" onchange="updateQuestionChart()">
+                        <div class="filter-group">
+                            <label><i class="fas fa-calendar-alt"></i> Période</label>
+                            <select id="period-filter" onchange="updateCourbesCharts()">
+                                <option value="jour">Par jour</option>
+                                <option value="semaine">Par semaine</option>
+                                <option value="mois" selected>Par mois</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label><i class="fas fa-filter"></i> Type d'audit</label>
+                            <select id="type-filter" onchange="updateCourbesCharts()">
+                                <option value="all">Tous</option>
                                 <option value="Ligne">Ligne</option>
                                 <option value="Magasin">Magasin</option>
                                 <option value="Mur">Mur qualité</option>
                             </select>
                         </div>
-                        <canvas id="chart-questions-per-question" style="width:100%; max-height:400px;"></canvas>
+                        <div class="filter-group">
+                            <label><i class="fas fa-industry"></i> UAP</label>
+                            <select id="uap-filter" onchange="updateCourbesCharts()">
+                                <option value="all">Toutes</option>
+                                <option value="UAP1">UAP1</option>
+                                <option value="UAP2">UAP2</option>
+                            </select>
+                        </div>
+                        <button onclick="updateCourbesCharts()"><i class="fas fa-sync-alt"></i> Actualiser</button>
                     </div>
-                    <!-- Graphique de tendance -->
+
+                    <!-- Graphique Évolution UAP1 vs UAP2 -->
                     <div class="chart-container">
-                        <h3 style="margin-bottom:15px;">Évolution des scores moyens par mois</h3>
-                        <canvas id="chart-trend" style="width:100%; max-height:400px;"></canvas>
+                        <h3 style="margin-bottom:15px;">Évolution UAP1 vs UAP2</h3>
+                        <canvas id="chart-uap-comparison" style="width:100%; max-height:400px;"></canvas>
+                    </div>
+
+                    <!-- Graphique Tendance générale & prévision -->
+                    <div class="chart-container">
+                        <h3 style="margin-bottom:15px;">Tendance générale & prévision (moyenne par période)</h3>
+                        <canvas id="chart-trend-forecast" style="width:100%; max-height:400px;"></canvas>
+                    </div>
+
+                    <!-- Graphique Performance par ligne - Histogramme -->
+                    <div class="chart-container">
+                        <h3 style="margin-bottom:15px;">Performance par ligne - Dernier audit (histogramme)</h3>
+                        <canvas id="chart-lines-histogram" style="width:100%; max-height:400px;"></canvas>
+                    </div>
+
+                    <!-- Graphique Distribution des scores (Lignes) -->
+                    <div class="chart-container">
+                        <h3 style="margin-bottom:15px;">Distribution des scores - Audits Ligne</h3>
+                        <canvas id="chart-score-distribution" style="width:100%; max-height:300px;"></canvas>
                     </div>
                 </div>
 
-                <!-- Section Nouvelle audit avec design amélioré -->
+                <!-- Section Nouvelle audit -->
                 <div id="section-auditeurs" class="section">
                     <h1><i class="fas fa-pen-alt"></i> Nouvelle audit Gemba</h1>
                     <div class="sub-nav">
@@ -454,25 +484,25 @@
                                 <div class="progress-bar" id="ligne-progress" style="width:0%"></div>
                             </div>
                             <form id="form-audit-ligne">
-                                <div class="question-group"><label><i class="fas fa-calendar-alt" style="margin-right:8px;"></i>Date</label><input type="date" id="date-ligne" class="text-input" required></div>
-                                <div class="question-group"><label><i class="fas fa-map-marker-alt" style="margin-right:8px;"></i>Zone / Ligne / Poste</label><input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required></div>
-                                <div class="question-group"><label><i class="fas fa-tag" style="margin-right:8px;"></i>UAP</label>
+                                <div class="question-group"><label><i class="fas fa-calendar-alt"></i>Date</label><input type="date" id="date-ligne" class="text-input" required></div>
+                                <div class="question-group"><label><i class="fas fa-map-marker-alt"></i>Zone / Ligne / Poste</label><input type="text" id="zone-ligne" class="text-input" placeholder="Ex: Ligne A" required></div>
+                                <div class="question-group"><label><i class="fas fa-tag"></i>UAP</label>
                                     <select id="uap-ligne" class="text-input" required>
                                         <option value="">Sélectionnez</option>
                                         <option value="UAP1">UAP1</option>
                                         <option value="UAP2">UAP2</option>
                                     </select>
                                 </div>
-                                <div class="question-group"><label><i class="fas fa-user" style="margin-right:8px;"></i>Main d'œuvre : Qualification</label><div class="radio-group"><div><input type="radio" name="mainLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="mainLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-box" style="margin-right:8px;"></i>matière : Etat de rebut</label><div class="radio-group"><div><input type="radio" name="matiereLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="matiereLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-play" style="margin-right:8px;"></i>Méthode : OK démarrage</label><div class="radio-group"><div><input type="radio" name="demarrageLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="demarrageLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-folder" style="margin-right:8px;"></i>Méthode : Dossier de Fabrication</label><div class="radio-group"><div><input type="radio" name="dossierLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="dossierLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-file-alt" style="margin-right:8px;"></i>Méthode : Formulaire (Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="formulaireLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-shield-alt" style="margin-right:8px;"></i>Méthode : HSE</label><div class="radio-group"><div><input type="radio" name="hseLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="hseLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-tshirt" style="margin-right:8px;"></i>Milieu : 5S</label><div class="radio-group"><div><input type="radio" name="cinqSLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="cinqSLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-cogs" style="margin-right:8px;"></i>Machine : Préventif niveau 1</label><div class="radio-group"><div><input type="radio" name="prev1Ligne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="prev1Ligne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-cog" style="margin-right:8px;"></i>Préventif niveau 2</label><div class="radio-group"><div><input type="radio" name="prev2Ligne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="prev2Ligne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i>POKA YOKE</label><div class="radio-group"><div><input type="radio" name="pokaLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="pokaLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div><div><input type="radio" name="pokaLigne" value="N/A" onchange="updateLigneScore()"><span>N/A</span></div></div></div>
+                                <div class="question-group"><label>Main d'œuvre : Qualification</label><div class="radio-group"><div><input type="radio" name="mainLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="mainLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>matière : Etat de rebut</label><div class="radio-group"><div><input type="radio" name="matiereLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="matiereLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Méthode : OK démarrage</label><div class="radio-group"><div><input type="radio" name="demarrageLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="demarrageLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Méthode : Dossier de Fabrication</label><div class="radio-group"><div><input type="radio" name="dossierLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="dossierLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Méthode : Formulaire (Prod/Qualité)</label><div class="radio-group"><div><input type="radio" name="formulaireLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="formulaireLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Méthode : HSE</label><div class="radio-group"><div><input type="radio" name="hseLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="hseLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Milieu : 5S</label><div class="radio-group"><div><input type="radio" name="cinqSLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="cinqSLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Machine : Préventif niveau 1</label><div class="radio-group"><div><input type="radio" name="prev1Ligne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="prev1Ligne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Préventif niveau 2</label><div class="radio-group"><div><input type="radio" name="prev2Ligne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="prev2Ligne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>POKA YOKE</label><div class="radio-group"><div><input type="radio" name="pokaLigne" value="OK" required onchange="updateLigneScore()"><span>OK</span></div><div><input type="radio" name="pokaLigne" value="NOK" onchange="updateLigneScore()"><span>NOK</span></div><div><input type="radio" name="pokaLigne" value="N/A" onchange="updateLigneScore()"><span>N/A</span></div></div></div>
                                 <button type="button" class="btn-submit" onclick="soumettreLigne()"><i class="fas fa-save"></i> Soumettre l'audit</button>
                             </form>
                             <div id="resultat-ligne" class="resultat-card"></div>
@@ -492,8 +522,8 @@
                                 <div class="progress-bar" id="magasin-progress" style="width:0%"></div>
                             </div>
                             <form id="form-audit-magasin">
-                                <div class="question-group"><label><i class="fas fa-calendar-alt" style="margin-right:8px;"></i>Date</label><input type="date" id="date-magasin" class="text-input" required></div>
-                                <div class="question-group"><label><i class="fas fa-warehouse" style="margin-right:8px;"></i>Magasin</label><select id="magasin-select" required onchange="updateMagasinScore()"><option value="">Sélectionnez</option><option value="Magasin general">Magasin général</option><option value="Magasin P1">Magasin P1</option><option value="Magasin P2">Magasin P2</option></select></div>
+                                <div class="question-group"><label><i class="fas fa-calendar-alt"></i>Date</label><input type="date" id="date-magasin" class="text-input" required></div>
+                                <div class="question-group"><label><i class="fas fa-warehouse"></i>Magasin</label><select id="magasin-select" required onchange="updateMagasinScore()"><option value="">Sélectionnez</option><option value="Magasin general">Magasin général</option><option value="Magasin P1">Magasin P1</option><option value="Magasin P2">Magasin P2</option></select></div>
                                 <div class="question-group"><label>1. Qualification</label><div class="radio-group"><div><input type="radio" name="qualifMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="qualifMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
                                 <div class="question-group"><label>2. Identification</label><div class="radio-group"><div><input type="radio" name="idMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="idMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
                                 <div class="question-group"><label>3. Méthode (Instruction)</label><div class="radio-group"><div><input type="radio" name="instructionMag" value="OK" required onchange="updateMagasinScore()"><span>OK</span></div><div><input type="radio" name="instructionMag" value="NOK" onchange="updateMagasinScore()"><span>NOK</span></div></div></div>
@@ -521,15 +551,15 @@
                                 <div class="progress-bar" id="mur-progress" style="width:0%"></div>
                             </div>
                             <form id="form-audit-mur">
-                                <div class="question-group"><label><i class="fas fa-calendar-alt" style="margin-right:8px;"></i>Date</label><input type="date" id="date-mur" class="text-input" required></div>
-                                <div class="question-group"><label><i class="fas fa-chalkboard" style="margin-right:8px;"></i>Mur qualité</label><select id="mur-select" required onchange="updateMurScore()"><option value="">Sélectionnez</option><option value="Mur qualite uap1">Mur qualité UAP1</option><option value="Mur qualite uap2">Mur qualité UAP2</option></select></div>
-                                <div class="question-group"><label><i class="fas fa-user" style="margin-right:8px;"></i>Main d'œuvre</label><div class="radio-group"><div><input type="radio" name="mainMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="mainMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-box" style="margin-right:8px;"></i>matière (Etat rebut)</label><div class="radio-group"><div><input type="radio" name="matiereMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="matiereMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-play" style="margin-right:8px;"></i>Méthode (OK démarrage)</label><div class="radio-group"><div><input type="radio" name="demarrageMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="demarrageMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-folder" style="margin-right:8px;"></i>Méthode (Dossier)</label><div class="radio-group"><div><input type="radio" name="dossierMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="dossierMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-file-alt" style="margin-right:8px;"></i>Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="formulaireMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-shield-alt" style="margin-right:8px;"></i>Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="hseMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
-                                <div class="question-group"><label><i class="fas fa-tshirt" style="margin-right:8px;"></i>Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="cinqSMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label><i class="fas fa-calendar-alt"></i>Date</label><input type="date" id="date-mur" class="text-input" required></div>
+                                <div class="question-group"><label><i class="fas fa-chalkboard"></i>Mur qualité</label><select id="mur-select" required onchange="updateMurScore()"><option value="">Sélectionnez</option><option value="Mur qualite uap1">Mur qualité UAP1</option><option value="Mur qualite uap2">Mur qualité UAP2</option></select></div>
+                                <div class="question-group"><label>Main d'œuvre</label><div class="radio-group"><div><input type="radio" name="mainMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="mainMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>matière (Etat rebut)</label><div class="radio-group"><div><input type="radio" name="matiereMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="matiereMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Méthode (OK démarrage)</label><div class="radio-group"><div><input type="radio" name="demarrageMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="demarrageMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Méthode (Dossier)</label><div class="radio-group"><div><input type="radio" name="dossierMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="dossierMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Méthode (Formulaire)</label><div class="radio-group"><div><input type="radio" name="formulaireMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="formulaireMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Méthode (HSE)</label><div class="radio-group"><div><input type="radio" name="hseMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="hseMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
+                                <div class="question-group"><label>Milieu (5S)</label><div class="radio-group"><div><input type="radio" name="cinqSMur" value="OK" required onchange="updateMurScore()"><span>OK</span></div><div><input type="radio" name="cinqSMur" value="NOK" onchange="updateMurScore()"><span>NOK</span></div></div></div>
                                 <button type="button" class="btn-submit" onclick="soumettreMur()"><i class="fas fa-save"></i> Soumettre l'audit</button>
                             </form>
                             <div id="resultat-mur" class="resultat-card"></div>
@@ -547,7 +577,7 @@
                     </div>
                     <div class="auditor-table">
                         <table id="audit-table">
-                            <thead><tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr></thead>
+                            <thead> <tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr> </thead>
                             <tbody id="audit-table-body"></tbody>
                         </table>
                     </div>
@@ -587,7 +617,6 @@
         const formTitle = document.getElementById('form-title');
         const toggleLink = document.getElementById('toggle-link');
         const messageDiv = document.getElementById('message');
-        const forgotPasswordLink = document.querySelector('.forgot-password a');
         const userEmailSpan = document.getElementById('user-email');
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
@@ -595,9 +624,9 @@
         let isLoginMode = true;
         let isForgotPasswordMode = false;
         let audits = [];
-        let chartAudits, chartQuestions, chartRepartition, chartPerQuestion, chartTrend;
+        let chartUapComparison, chartTrendForecast, chartLinesHistogram, chartScoreDistribution;
 
-        // Stats dashboard
+        // Stats dashboard elements
         const statTotalAudits = document.getElementById('stat-total-audits');
         const statTotalOk = document.getElementById('stat-total-ok');
         const statTotalNok = document.getElementById('stat-total-nok');
@@ -608,21 +637,13 @@
         const statBestScore = document.getElementById('stat-best-score');
         const statWorstScore = document.getElementById('stat-worst-score');
 
-        // Fonction pour colorer un élément en fonction du score
         function applyScoreColor(element, score) {
             if (!element) return;
             const val = parseFloat(score);
-            if (isNaN(val)) {
-                element.className = 'stat-value';
-                return;
-            }
-            if (val >= 85) {
-                element.className = 'stat-value score-vert';
-            } else if (val >= 80) {
-                element.className = 'stat-value score-orange';
-            } else {
-                element.className = 'stat-value score-rouge';
-            }
+            if (isNaN(val)) { element.className = 'stat-value'; return; }
+            if (val >= 85) element.className = 'stat-value score-vert';
+            else if (val >= 80) element.className = 'stat-value score-orange';
+            else element.className = 'stat-value score-rouge';
         }
 
         // Fonctions d'authentification
@@ -659,20 +680,9 @@
             hideMessage();
         }
 
-        function clearForm() {
-            emailInput.value = '';
-            passwordInput.value = '';
-        }
-
-        function hideMessage() {
-            messageDiv.className = 'message';
-            messageDiv.textContent = '';
-        }
-
-        function showMessage(text, type) {
-            messageDiv.className = `message ${type}`;
-            messageDiv.textContent = text;
-        }
+        function clearForm() { emailInput.value = ''; passwordInput.value = ''; }
+        function hideMessage() { messageDiv.className = 'message'; messageDiv.textContent = ''; }
+        function showMessage(text, type) { messageDiv.className = `message ${type}`; messageDiv.textContent = text; }
 
         async function handleAuth() {
             const email = emailInput.value.trim();
@@ -702,44 +712,31 @@
                     case 'auth/network-request-failed': errorMessage = "Erreur réseau. Vérifiez votre connexion."; break;
                 }
                 showMessage(errorMessage, "error");
-            } finally {
-                authButton.disabled = false;
-            }
+            } finally { authButton.disabled = false; }
         }
 
-        // Gestion de la sidebar
+        // Gestion sidebar
         function toggleSidebar() {
             sidebar.classList.toggle('open');
-            if (window.innerWidth >= 1024) {
-                mainContent.classList.toggle('shifted', sidebar.classList.contains('open'));
-            }
+            if (window.innerWidth >= 1024) mainContent.classList.toggle('shifted', sidebar.classList.contains('open'));
         }
-
         document.addEventListener('click', function(event) {
             const isClickInside = sidebar.contains(event.target) || event.target.classList.contains('menu-toggle');
-            if (!isClickInside && window.innerWidth < 1024 && sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open');
-            }
+            if (!isClickInside && window.innerWidth < 1024 && sidebar.classList.contains('open')) sidebar.classList.remove('open');
         });
-
         window.addEventListener('resize', function() {
             if (window.innerWidth >= 1024) {
-                if (sidebar.classList.contains('open')) {
-                    mainContent.classList.add('shifted');
-                } else {
-                    mainContent.classList.remove('shifted');
-                }
-            } else {
-                mainContent.classList.remove('shifted');
-            }
+                if (sidebar.classList.contains('open')) mainContent.classList.add('shifted');
+                else mainContent.classList.remove('shifted');
+            } else mainContent.classList.remove('shifted');
         });
 
-        // Navigation
         function switchSection(sectionName) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
             document.getElementById(`section-${sectionName}`).classList.add('active-section');
             document.querySelectorAll('.sidebar-nav li').forEach(i => i.classList.remove('active'));
             document.getElementById(`nav-${sectionName}`).classList.add('active');
+            if (sectionName === 'courbes') updateCourbesCharts();
         }
 
         function switchAuditType(type) {
@@ -749,111 +746,65 @@
             document.getElementById(`tab-${type}`).classList.add('active');
         }
 
-        // Surveillance de l'état de connexion
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                loginContainer.style.display = 'none';
-                dashboardContainer.style.display = 'block';
-                userEmailSpan.textContent = user.email;
-                database.ref('audits').on('value', (snapshot) => {
-                    audits = [];
-                    snapshot.forEach((child) => {
-                        audits.push({ id: child.key, ...child.val() });
-                    });
-                    filterAudits();
-                    updateDashboardStats();
-                    updateWorstResults();
-                    updateCourbesCharts();
-                    updateRepartitionChart();
-                    updateQuestionChart();
-                    updateTrendChart();
-                });
-            } else {
-                loginContainer.style.display = 'flex';
-                dashboardContainer.style.display = 'none';
-                database.ref('audits').off();
-            }
-        });
-
-        // ---- Fonctions de mise à jour live du score ----
+        // Fonctions de mise à jour live du score
         function updateLigneScore() {
             const questions = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
-            let ok = 0, nok = 0, na = 0, answered = 0;
+            let ok=0, nok=0, na=0, answered=0;
             for(let q of questions) {
                 let radios = document.getElementsByName(q);
                 let val = null;
                 for(let r of radios) if(r.checked) { val = r.value; break; }
-                if(val) {
-                    answered++;
-                    if(val === 'OK') ok++;
-                    else if(val === 'NOK') nok++;
-                    else if(val === 'N/A') na++;
-                }
+                if(val) { answered++; if(val==='OK') ok++; else if(val==='NOK') nok++; else if(val==='N/A') na++; }
             }
-            const totalAnswered = answered;
-            const eligible = totalAnswered - na;
+            const eligible = answered - na;
             const score = eligible > 0 ? (ok / eligible) * 100 : 0;
-            document.getElementById('ligne-answered').textContent = `${totalAnswered}/${questions.length}`;
-            document.getElementById('ligne-score').textContent = totalAnswered === questions.length ? score.toFixed(1) + '%' : 'En attente';
-            document.getElementById('ligne-progress').style.width = (totalAnswered / questions.length * 100) + '%';
+            document.getElementById('ligne-answered').textContent = `${answered}/${questions.length}`;
+            document.getElementById('ligne-score').textContent = answered === questions.length ? score.toFixed(1)+'%' : 'En attente';
+            document.getElementById('ligne-progress').style.width = (answered / questions.length * 100)+'%';
         }
 
         function updateMagasinScore() {
             const questions = ['qualifMag','idMag','instructionMag','stockageMag','formulaireMag','hseMag','cinqSMag','chariotMag'];
-            let ok = 0, nok = 0, na = 0, answered = 0;
+            let ok=0, nok=0, na=0, answered=0;
             for(let q of questions) {
                 let radios = document.getElementsByName(q);
                 let val = null;
                 for(let r of radios) if(r.checked) { val = r.value; break; }
-                if(val) {
-                    answered++;
-                    if(val === 'OK') ok++;
-                    else if(val === 'NOK') nok++;
-                    else if(val === 'N/A') na++;
-                }
+                if(val) { answered++; if(val==='OK') ok++; else if(val==='NOK') nok++; else if(val==='N/A') na++; }
             }
-            const totalAnswered = answered;
-            const eligible = totalAnswered - na;
+            const eligible = answered - na;
             const score = eligible > 0 ? (ok / eligible) * 100 : 0;
-            document.getElementById('magasin-answered').textContent = `${totalAnswered}/${questions.length}`;
-            document.getElementById('magasin-score').textContent = totalAnswered === questions.length ? score.toFixed(1) + '%' : 'En attente';
-            document.getElementById('magasin-progress').style.width = (totalAnswered / questions.length * 100) + '%';
+            document.getElementById('magasin-answered').textContent = `${answered}/${questions.length}`;
+            document.getElementById('magasin-score').textContent = answered === questions.length ? score.toFixed(1)+'%' : 'En attente';
+            document.getElementById('magasin-progress').style.width = (answered / questions.length * 100)+'%';
         }
 
         function updateMurScore() {
             const questions = ['mainMur','matiereMur','demarrageMur','dossierMur','formulaireMur','hseMur','cinqSMur'];
-            let ok = 0, nok = 0, answered = 0;
+            let ok=0, nok=0, answered=0;
             for(let q of questions) {
                 let radios = document.getElementsByName(q);
                 let val = null;
                 for(let r of radios) if(r.checked) { val = r.value; break; }
-                if(val) {
-                    answered++;
-                    if(val === 'OK') ok++;
-                    else if(val === 'NOK') nok++;
-                }
+                if(val) { answered++; if(val==='OK') ok++; else if(val==='NOK') nok++; }
             }
-            const totalAnswered = answered;
-            const score = totalAnswered > 0 ? (ok / totalAnswered) * 100 : 0;
-            document.getElementById('mur-answered').textContent = `${totalAnswered}/${questions.length}`;
-            document.getElementById('mur-score').textContent = totalAnswered === questions.length ? score.toFixed(1) + '%' : 'En attente';
-            document.getElementById('mur-progress').style.width = (totalAnswered / questions.length * 100) + '%';
+            const score = answered > 0 ? (ok / answered) * 100 : 0;
+            document.getElementById('mur-answered').textContent = `${answered}/${questions.length}`;
+            document.getElementById('mur-score').textContent = answered === questions.length ? score.toFixed(1)+'%' : 'En attente';
+            document.getElementById('mur-progress').style.width = (answered / questions.length * 100)+'%';
         }
 
-        // ---- Fonctions de soumission des audits (avec enregistrement des réponses individuelles) ----
+        // Fonctions de soumission (simplifiées)
         function soumettreLigne() {
             const questions = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
-            let ok=0, nok=0, na=0;
-            let reponses = {};
+            let ok=0, nok=0, na=0, reponses={};
             for(let q of questions) {
                 let radios = document.getElementsByName(q);
                 let val = null;
                 for(let r of radios) if(r.checked) { val = r.value; break; }
                 if(!val) { alert('Répondez à toutes les questions'); return; }
-                reponses[q] = val;
-                if(val==='OK') ok++;
-                else if(val==='NOK') nok++;
-                else if(val==='N/A') na++;
+                reponses[q]=val;
+                if(val==='OK') ok++; else if(val==='NOK') nok++; else if(val==='N/A') na++;
             }
             const date = document.getElementById('date-ligne').value;
             const zone = document.getElementById('zone-ligne').value;
@@ -862,52 +813,23 @@
             const total = questions.length;
             const eligible = total - na;
             const score = eligible>0 ? (ok/eligible)*100 : 0;
-            const detail = `OK: ${ok}, NOK: ${nok}, N/A: ${na} – Score: ${score.toFixed(1)}% (${ok}/${eligible})`;
-            
+            const detail = `OK: ${ok}, NOK: ${nok}, N/A: ${na} – Score: ${score.toFixed(1)}%`;
             const resultatDiv = document.getElementById('resultat-ligne');
-            resultatDiv.innerHTML = `
-                <div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré avec succès</h4></div>
-                <div class="resultat-stats">
-                    <div class="stat-badge ok"><i class="fas fa-check"></i><span>${ok}</span><small>OK</small></div>
-                    <div class="stat-badge nok"><i class="fas fa-times"></i><span>${nok}</span><small>NOK</small></div>
-                    <div class="stat-badge na"><i class="fas fa-ban"></i><span>${na}</span><small>N/A</small></div>
-                </div>
-                <div class="resultat-score">Score : ${score.toFixed(1)}% <small>(${ok}/${eligible})</small></div>
-            `;
+            resultatDiv.innerHTML = `<div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré</h4></div><div class="resultat-stats"><div class="stat-badge ok"><span>${ok}</span><small>OK</small></div><div class="stat-badge nok"><span>${nok}</span><small>NOK</small></div><div class="stat-badge na"><span>${na}</span><small>N/A</small></div></div><div class="resultat-score">Score: ${score.toFixed(1)}%</div>`;
             resultatDiv.classList.add('show');
-
-            const user = auth.currentUser;
-            if (user) {
-                database.ref('audits').push({
-                    date: date,
-                    type: 'Ligne',
-                    uap: zone + ' (' + uap + ')',
-                    score: parseFloat(score.toFixed(1)),
-                    okCount: ok,
-                    nokCount: nok,
-                    naCount: na,
-                    totalQuestions: total,
-                    reponses: reponses,
-                    detail: detail,
-                    uid: user.uid,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                });
-            }
+            if(auth.currentUser) database.ref('audits').push({date, type:'Ligne', uap: zone+' ('+uap+')', score: parseFloat(score.toFixed(1)), okCount:ok, nokCount:nok, naCount:na, totalQuestions:total, reponses, detail, uid:auth.currentUser.uid, timestamp:firebase.database.ServerValue.TIMESTAMP});
         }
 
         function soumettreMagasin() {
             const questions = ['qualifMag','idMag','instructionMag','stockageMag','formulaireMag','hseMag','cinqSMag','chariotMag'];
-            let ok=0, nok=0, na=0;
-            let reponses = {};
+            let ok=0, nok=0, na=0, reponses={};
             for(let q of questions) {
                 let radios = document.getElementsByName(q);
                 let val = null;
                 for(let r of radios) if(r.checked) { val = r.value; break; }
                 if(!val) { alert('Répondez à toutes les questions'); return; }
-                reponses[q] = val;
-                if(val==='OK') ok++;
-                else if(val==='NOK') nok++;
-                else if(val==='N/A') na++;
+                reponses[q]=val;
+                if(val==='OK') ok++; else if(val==='NOK') nok++; else if(val==='N/A') na++;
             }
             const date = document.getElementById('date-magasin').value;
             const magasin = document.getElementById('magasin-select').value;
@@ -915,539 +837,298 @@
             const total = questions.length;
             const eligible = total - na;
             const score = eligible>0 ? (ok/eligible)*100 : 0;
-            const detail = `OK: ${ok}, NOK: ${nok}, N/A: ${na} – Score: ${score.toFixed(1)}% (${ok}/${eligible})`;
-            
+            const detail = `OK: ${ok}, NOK: ${nok}, N/A: ${na} – Score: ${score.toFixed(1)}%`;
             const resultatDiv = document.getElementById('resultat-magasin');
-            resultatDiv.innerHTML = `
-                <div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré avec succès</h4></div>
-                <div class="resultat-stats">
-                    <div class="stat-badge ok"><i class="fas fa-check"></i><span>${ok}</span><small>OK</small></div>
-                    <div class="stat-badge nok"><i class="fas fa-times"></i><span>${nok}</span><small>NOK</small></div>
-                    <div class="stat-badge na"><i class="fas fa-ban"></i><span>${na}</span><small>N/A</small></div>
-                </div>
-                <div class="resultat-score">Score : ${score.toFixed(1)}% <small>(${ok}/${eligible})</small></div>
-            `;
+            resultatDiv.innerHTML = `<div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré</h4></div><div class="resultat-stats"><div class="stat-badge ok"><span>${ok}</span><small>OK</small></div><div class="stat-badge nok"><span>${nok}</span><small>NOK</small></div><div class="stat-badge na"><span>${na}</span><small>N/A</small></div></div><div class="resultat-score">Score: ${score.toFixed(1)}%</div>`;
             resultatDiv.classList.add('show');
-
-            const user = auth.currentUser;
-            if (user) {
-                database.ref('audits').push({
-                    date: date,
-                    type: 'Magasin',
-                    uap: magasin,
-                    score: parseFloat(score.toFixed(1)),
-                    okCount: ok,
-                    nokCount: nok,
-                    naCount: na,
-                    totalQuestions: total,
-                    reponses: reponses,
-                    detail: detail,
-                    uid: user.uid,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                });
-            }
+            if(auth.currentUser) database.ref('audits').push({date, type:'Magasin', uap: magasin, score: parseFloat(score.toFixed(1)), okCount:ok, nokCount:nok, naCount:na, totalQuestions:total, reponses, detail, uid:auth.currentUser.uid, timestamp:firebase.database.ServerValue.TIMESTAMP});
         }
 
         function soumettreMur() {
             const questions = ['mainMur','matiereMur','demarrageMur','dossierMur','formulaireMur','hseMur','cinqSMur'];
-            let ok=0, nok=0;
-            let reponses = {};
+            let ok=0, nok=0, reponses={};
             for(let q of questions) {
                 let radios = document.getElementsByName(q);
                 let val = null;
                 for(let r of radios) if(r.checked) { val = r.value; break; }
                 if(!val) { alert('Répondez à toutes les questions'); return; }
-                reponses[q] = val;
-                if(val==='OK') ok++;
-                else if(val==='NOK') nok++;
+                reponses[q]=val;
+                if(val==='OK') ok++; else if(val==='NOK') nok++;
             }
             const date = document.getElementById('date-mur').value;
             const mur = document.getElementById('mur-select').value;
             if(!date || !mur) { alert('Remplissez date et mur qualité'); return; }
             const total = questions.length;
             const score = (ok/total)*100;
-            const detail = `OK: ${ok}, NOK: ${nok} – Score: ${score.toFixed(1)}% (${ok}/${total})`;
-            
+            const detail = `OK: ${ok}, NOK: ${nok} – Score: ${score.toFixed(1)}%`;
             const resultatDiv = document.getElementById('resultat-mur');
-            resultatDiv.innerHTML = `
-                <div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré avec succès</h4></div>
-                <div class="resultat-stats">
-                    <div class="stat-badge ok"><i class="fas fa-check"></i><span>${ok}</span><small>OK</small></div>
-                    <div class="stat-badge nok"><i class="fas fa-times"></i><span>${nok}</span><small>NOK</small></div>
-                </div>
-                <div class="resultat-score">Score : ${score.toFixed(1)}% <small>(${ok}/${total})</small></div>
-            `;
+            resultatDiv.innerHTML = `<div class="resultat-header"><i class="fas fa-check-circle"></i><h4>Audit enregistré</h4></div><div class="resultat-stats"><div class="stat-badge ok"><span>${ok}</span><small>OK</small></div><div class="stat-badge nok"><span>${nok}</span><small>NOK</small></div></div><div class="resultat-score">Score: ${score.toFixed(1)}%</div>`;
             resultatDiv.classList.add('show');
-
-            const user = auth.currentUser;
-            if (user) {
-                database.ref('audits').push({
-                    date: date,
-                    type: 'Mur',
-                    uap: mur,
-                    score: parseFloat(score.toFixed(1)),
-                    okCount: ok,
-                    nokCount: nok,
-                    naCount: 0,
-                    totalQuestions: total,
-                    reponses: reponses,
-                    detail: detail,
-                    uid: user.uid,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                });
-            }
+            if(auth.currentUser) database.ref('audits').push({date, type:'Mur', uap: mur, score: parseFloat(score.toFixed(1)), okCount:ok, nokCount:nok, naCount:0, totalQuestions:total, reponses, detail, uid:auth.currentUser.uid, timestamp:firebase.database.ServerValue.TIMESTAMP});
         }
 
-        // ---- Mise à jour des statistiques du dashboard (avec coloration) ----
+        // Dashboard stats
         function updateDashboardStats() {
-            let totalAudits = audits.length;
-            let totalOk = 0, totalNok = 0;
-            let scoresUap1 = [], scoresUap2 = [], scoresMagasin = [];
-            let allScores = [];
-
+            let totalAudits = audits.length, totalOk=0, totalNok=0, scoresUap1=[], scoresUap2=[], scoresMagasin=[], allScores=[];
             audits.forEach(a => {
-                totalOk += a.okCount || 0;
-                totalNok += a.nokCount || 0;
+                totalOk += a.okCount||0; totalNok += a.nokCount||0;
                 let score = Number(a.score);
-                if (!isNaN(score)) {
+                if(!isNaN(score)){
                     allScores.push(score);
-                    if (a.type === 'Ligne') {
-                        if (a.uap.includes('UAP1')) scoresUap1.push(score);
-                        else if (a.uap.includes('UAP2')) scoresUap2.push(score);
-                    } else if (a.type === 'Mur') {
-                        if (a.uap.includes('uap1')) scoresUap1.push(score);
-                        else if (a.uap.includes('uap2')) scoresUap2.push(score);
-                    } else if (a.type === 'Magasin') {
-                        scoresMagasin.push(score);
-                    }
+                    if(a.type==='Ligne'){
+                        if(a.uap.includes('UAP1')) scoresUap1.push(score);
+                        else if(a.uap.includes('UAP2')) scoresUap2.push(score);
+                    } else if(a.type==='Mur'){
+                        if(a.uap.includes('uap1')) scoresUap1.push(score);
+                        else if(a.uap.includes('uap2')) scoresUap2.push(score);
+                    } else if(a.type==='Magasin') scoresMagasin.push(score);
                 }
             });
-
             const moyenne = (arr) => arr.length ? (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1) : 'N/A';
             statTotalAudits.textContent = totalAudits;
             statTotalOk.textContent = totalOk;
             statTotalNok.textContent = totalNok;
-            
-            const moyU1 = moyenne(scoresUap1);
-            const moyU2 = moyenne(scoresUap2);
-            const moyMag = moyenne(scoresMagasin);
-            
-            statMoyenneUap1.textContent = (moyU1 !== 'N/A' ? moyU1 + '%' : 'N/A');
-            statMoyenneUap2.textContent = (moyU2 !== 'N/A' ? moyU2 + '%' : 'N/A');
-            statMoyenneMagasin.textContent = (moyMag !== 'N/A' ? moyMag + '%' : 'N/A');
-            
-            applyScoreColor(statMoyenneUap1, moyU1);
-            applyScoreColor(statMoyenneUap2, moyU2);
-            applyScoreColor(statMoyenneMagasin, moyMag);
-            
-            let moyU1num = parseFloat(moyU1) || 0;
-            let moyU2num = parseFloat(moyU2) || 0;
-            let moyMagnet = parseFloat(moyMag) || 0;
-            let count = [scoresUap1.length, scoresUap2.length, scoresMagasin.length].filter(l => l>0).length;
-            let moyUsine = count ? ((moyU1num + moyU2num + moyMagnet) / count).toFixed(1) : 'N/A';
-            statMoyenneUsine.textContent = (moyUsine !== 'N/A' ? moyUsine + '%' : 'N/A');
+            const moyU1=moyenne(scoresUap1), moyU2=moyenne(scoresUap2), moyMag=moyenne(scoresMagasin);
+            statMoyenneUap1.textContent = moyU1!=='N/A'?moyU1+'%':'N/A';
+            statMoyenneUap2.textContent = moyU2!=='N/A'?moyU2+'%':'N/A';
+            statMoyenneMagasin.textContent = moyMag!=='N/A'?moyMag+'%':'N/A';
+            applyScoreColor(statMoyenneUap1, moyU1); applyScoreColor(statMoyenneUap2, moyU2); applyScoreColor(statMoyenneMagasin, moyMag);
+            let moyU1num=parseFloat(moyU1)||0, moyU2num=parseFloat(moyU2)||0, moyMagnet=parseFloat(moyMag)||0;
+            let count=[scoresUap1.length,scoresUap2.length,scoresMagasin.length].filter(l=>l>0).length;
+            let moyUsine=count?((moyU1num+moyU2num+moyMagnet)/count).toFixed(1):'N/A';
+            statMoyenneUsine.textContent = moyUsine!=='N/A'?moyUsine+'%':'N/A';
             applyScoreColor(statMoyenneUsine, moyUsine);
-
-            if (allScores.length > 0) {
-                let best = Math.max(...allScores);
-                let worst = Math.min(...allScores);
-                statBestScore.textContent = best.toFixed(1) + '%';
-                statWorstScore.textContent = worst.toFixed(1) + '%';
-                applyScoreColor(statBestScore, best);
-                applyScoreColor(statWorstScore, worst);
-            } else {
-                statBestScore.textContent = '-';
-                statWorstScore.textContent = '-';
-                statBestScore.className = 'stat-value';
-                statWorstScore.className = 'stat-value';
-            }
+            if(allScores.length){ let best=Math.max(...allScores), worst=Math.min(...allScores);
+                statBestScore.textContent=best.toFixed(1)+'%'; statWorstScore.textContent=worst.toFixed(1)+'%';
+                applyScoreColor(statBestScore,best); applyScoreColor(statWorstScore,worst);
+            } else { statBestScore.textContent='-'; statWorstScore.textContent='-'; statBestScore.className='stat-value'; statWorstScore.className='stat-value'; }
         }
 
-        // ---- Affichage des 5 pires résultats (avec coloration des scores) ----
         function updateWorstResults() {
             const tbody = document.getElementById('worst-results-body');
-            if (!tbody) return;
-            const validAudits = audits.filter(a => a.score !== undefined && a.score !== null && !isNaN(Number(a.score)));
-            const sorted = [...validAudits].sort((a, b) => Number(a.score) - Number(b.score));
-            const worstFive = sorted.slice(0, 5);
-            tbody.innerHTML = '';
-            if (worstFive.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucun audit disponible</td></tr>';
-                return;
-            }
-            worstFive.forEach(a => {
-                const row = tbody.insertRow();
-                row.insertCell().textContent = a.date || '-';
-                row.insertCell().textContent = a.type || '-';
-                row.insertCell().textContent = a.uap || '-';
-                const scoreVal = Number(a.score);
-                const scoreCell = row.insertCell();
-                const scoreText = (!isNaN(scoreVal) ? scoreVal.toFixed(1) + '%' : '-');
-                scoreCell.textContent = scoreText;
-                if (!isNaN(scoreVal)) {
-                    if (scoreVal >= 85) scoreCell.style.color = '#2e7d32';
-                    else if (scoreVal >= 80) scoreCell.style.color = '#ed6c02';
-                    else scoreCell.style.color = '#d32f2f';
-                }
-                const detailSafe = (a.detail || '').replace(/'/g, "\\'");
-                row.insertCell().innerHTML = `<button class="badge" onclick="alert('${detailSafe}')"><i class="fas fa-eye"></i> Voir</button>`;
+            if(!tbody) return;
+            const validAudits = audits.filter(a => a.score!==undefined && !isNaN(Number(a.score)));
+            const sorted = [...validAudits].sort((a,b)=>Number(a.score)-Number(b.score));
+            const worstFive = sorted.slice(0,5);
+            tbody.innerHTML='';
+            if(worstFive.length===0){ tbody.innerHTML='<tr><td colspan="5" style="text-align:center;">Aucun audit disponible</td></tr>'; return; }
+            worstFive.forEach(a=>{ const row=tbody.insertRow();
+                row.insertCell().textContent=a.date||'-'; row.insertCell().textContent=a.type||'-'; row.insertCell().textContent=a.uap||'-';
+                const scoreVal=Number(a.score); const scoreCell=row.insertCell(); scoreCell.textContent=(!isNaN(scoreVal)?scoreVal.toFixed(1)+'%':'-');
+                if(!isNaN(scoreVal)){ if(scoreVal>=85) scoreCell.style.color='#2e7d32'; else if(scoreVal>=80) scoreCell.style.color='#ed6c02'; else scoreCell.style.color='#d32f2f'; }
+                const detailSafe=(a.detail||'').replace(/'/g,"\\'"); row.insertCell().innerHTML=`<button class="badge" onclick="alert('${detailSafe}')"><i class="fas fa-eye"></i> Voir</button>`;
             });
         }
 
-        // ---- Filtrage du tableau des audits (avec coloration des scores) ----
         function filterAudits() {
             const filterType = document.getElementById('filter-type').value;
             const filterUap = document.getElementById('filter-uap').value;
             let filtered = audits;
-            if (filterType !== 'all') filtered = filtered.filter(a => a.type === filterType);
-            if (filterUap !== 'all') filtered = filtered.filter(a => a.uap === filterUap);
+            if(filterType!=='all') filtered = filtered.filter(a=>a.type===filterType);
+            if(filterUap!=='all') filtered = filtered.filter(a=>a.uap===filterUap);
             const tbody = document.getElementById('audit-table-body');
-            tbody.innerHTML = '';
-            filtered.forEach(a => {
-                const row = tbody.insertRow();
-                row.insertCell().textContent = a.date;
-                row.insertCell().textContent = a.type;
-                row.insertCell().textContent = a.uap;
-                const scoreVal = Number(a.score);
-                const scoreCell = row.insertCell();
-                const scoreText = (!isNaN(scoreVal) ? scoreVal.toFixed(1) + '%' : '-');
-                scoreCell.textContent = scoreText;
-                if (!isNaN(scoreVal)) {
-                    if (scoreVal >= 85) scoreCell.style.color = '#2e7d32';
-                    else if (scoreVal >= 80) scoreCell.style.color = '#ed6c02';
-                    else scoreCell.style.color = '#d32f2f';
-                }
-                const detailSafe = (a.detail || '').replace(/'/g, "\\'");
-                row.insertCell().innerHTML = `<button class="badge" onclick="alert('${detailSafe}')"><i class="fas fa-eye"></i> Voir</button>`;
+            tbody.innerHTML='';
+            filtered.forEach(a=>{ const row=tbody.insertRow();
+                row.insertCell().textContent=a.date; row.insertCell().textContent=a.type; row.insertCell().textContent=a.uap;
+                const scoreVal=Number(a.score); const scoreCell=row.insertCell(); scoreCell.textContent=(!isNaN(scoreVal)?scoreVal.toFixed(1)+'%':'-');
+                if(!isNaN(scoreVal)){ if(scoreVal>=85) scoreCell.style.color='#2e7d32'; else if(scoreVal>=80) scoreCell.style.color='#ed6c02'; else scoreCell.style.color='#d32f2f'; }
+                const detailSafe=(a.detail||'').replace(/'/g,"\\'"); row.insertCell().innerHTML=`<button class="badge" onclick="alert('${detailSafe}')"><i class="fas fa-eye"></i> Voir</button>`;
             });
             const uapSelect = document.getElementById('filter-uap');
             const currentUap = uapSelect.value;
-            const allUaps = [...new Set(audits.map(a => a.uap))];
-            uapSelect.innerHTML = '<option value="all">Tous</option>' + allUaps.map(u => `<option value="${u}" ${u===currentUap?'selected':''}>${u}</option>`).join('');
+            const allUaps = [...new Set(audits.map(a=>a.uap))];
+            uapSelect.innerHTML = '<option value="all">Tous</option>'+allUaps.map(u=>`<option value="${u}" ${u===currentUap?'selected':''}>${u}</option>`).join('');
         }
 
-        // ---- Export Excel ----
         function exportToExcel() {
             const filterType = document.getElementById('filter-type').value;
             const filterUap = document.getElementById('filter-uap').value;
             let filtered = audits;
-            if (filterType !== 'all') filtered = filtered.filter(a => a.type === filterType);
-            if (filterUap !== 'all') filtered = filtered.filter(a => a.uap === filterUap);
-
-            if (filtered.length === 0) {
-                alert('Aucune donnée à exporter.');
-                return;
-            }
-
-            const headers = ['Date', 'Type', 'UAP/Ligne', 'Score (%)', 'Détail'];
-            const rows = filtered.map(a => [
-                a.date || '',
-                a.type || '',
-                a.uap || '',
-                (!isNaN(Number(a.score)) ? Number(a.score).toFixed(1) : ''),
-                (a.detail || '').replace(/"/g, '""')
-            ]);
-
-            let csvContent = headers.join(';') + '\n';
-            rows.forEach(row => {
-                csvContent += row.map(cell => `"${cell}"`).join(';') + '\n';
-            });
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'audits_export.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            if(filterType!=='all') filtered = filtered.filter(a=>a.type===filterType);
+            if(filterUap!=='all') filtered = filtered.filter(a=>a.uap===filterUap);
+            if(filtered.length===0){ alert('Aucune donnée à exporter.'); return; }
+            const headers = ['Date','Type','UAP/Ligne','Score (%)','Détail'];
+            const rows = filtered.map(a=>[a.date||'',a.type||'',a.uap||'',(!isNaN(Number(a.score))?Number(a.score).toFixed(1):''),(a.detail||'').replace(/"/g,'""')]);
+            let csvContent = headers.join(';')+'\n';
+            rows.forEach(row=>{ csvContent += row.map(cell=>`"${cell}"`).join(';')+'\n'; });
+            const blob = new Blob([csvContent],{type:'text/csv;charset=utf-8;'});
+            const link = document.createElement('a'); const url = URL.createObjectURL(blob);
+            link.setAttribute('href',url); link.setAttribute('download','audits_export.csv'); link.style.visibility='hidden';
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
-        // ---- Graphiques ----
-        function updateCourbesCharts() {
-            const periodeType = document.getElementById('periode-type').value;
-            const filtre = document.getElementById('courbes-filtre').value;
-
+        // Nouveaux graphiques avec filtres
+        function getFilteredAudits() {
+            const period = document.getElementById('period-filter').value;
+            const typeFilter = document.getElementById('type-filter').value;
+            const uapFilter = document.getElementById('uap-filter').value;
             let filtered = audits;
-            if (filtre === 'UAP1') {
-                filtered = audits.filter(a => 
-                    (a.type === 'Ligne' && a.uap.includes('UAP1')) || 
-                    (a.type === 'Mur' && a.uap.includes('uap1'))
-                );
-            } else if (filtre === 'UAP2') {
-                filtered = audits.filter(a => 
-                    (a.type === 'Ligne' && a.uap.includes('UAP2')) || 
-                    (a.type === 'Mur' && a.uap.includes('uap2'))
-                );
-            } else if (filtre === 'Magasin') {
-                filtered = audits.filter(a => a.type === 'Magasin');
-            }
-
-            const grouped = {};
-            filtered.forEach(a => {
-                let period;
-                if (periodeType === 'mois') {
-                    period = a.date.substring(0, 7);
-                } else {
-                    const date = new Date(a.date + 'T00:00:00');
-                    const oneJan = new Date(date.getFullYear(), 0, 1);
-                    const week = Math.ceil((((date - oneJan) / 86400000) + oneJan.getDay() + 1) / 7);
-                    period = `${date.getFullYear()}-S${week}`;
-                }
-                if (!grouped[period]) {
-                    grouped[period] = { count:0, ok:0, nok:0, na:0 };
-                }
-                grouped[period].count += 1;
-                grouped[period].ok += a.okCount || 0;
-                grouped[period].nok += a.nokCount || 0;
-                grouped[period].na += a.naCount || 0;
-            });
-
-            const sortedPeriods = Object.keys(grouped).sort();
-            const periodLabels = sortedPeriods;
-            const auditCounts = sortedPeriods.map(p => grouped[p].count);
-            const okCounts = sortedPeriods.map(p => grouped[p].ok);
-            const nokCounts = sortedPeriods.map(p => grouped[p].nok);
-            const naCounts = sortedPeriods.map(p => grouped[p].na);
-
-            if (chartAudits) chartAudits.destroy();
-            const ctx1 = document.getElementById('chart-audits').getContext('2d');
-            chartAudits = new Chart(ctx1, {
-                type: 'bar',
-                data: { labels: periodLabels, datasets: [{ label: "Nombre d'audits", data: auditCounts, backgroundColor: '#cc0000', borderRadius: 8 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: 'Audits par période', font: { size: 16 } } } }
-            });
-
-            if (chartQuestions) chartQuestions.destroy();
-            const ctx2 = document.getElementById('chart-questions').getContext('2d');
-            chartQuestions = new Chart(ctx2, {
-                type: 'bar',
-                data: { labels: periodLabels, datasets: [
-                    { label: 'OK', data: okCounts, backgroundColor: '#38a169', borderRadius: 8 },
-                    { label: 'NOK', data: nokCounts, backgroundColor: '#e53e3e', borderRadius: 8 },
-                    { label: 'N/A', data: naCounts, backgroundColor: '#d69e2e', borderRadius: 8 }
-                ] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Réponses aux questions par période', font: { size: 16 } } }, scales: { x: { stacked: true }, y: { stacked: true } } }
-            });
-        }
-
-        function updateRepartitionChart() {
-            const types = ['Ligne', 'Magasin', 'Mur'];
-            const okData = [], nokData = [], naData = [];
-
-            types.forEach(type => {
-                const auditsType = audits.filter(a => a.type === type);
-                let ok = 0, nok = 0, na = 0;
-                auditsType.forEach(a => {
-                    ok += a.okCount || 0;
-                    nok += a.nokCount || 0;
-                    na += a.naCount || 0;
+            if(typeFilter !== 'all') filtered = filtered.filter(a => a.type === typeFilter);
+            if(uapFilter !== 'all') {
+                filtered = filtered.filter(a => {
+                    if(a.type === 'Ligne') return a.uap.includes(uapFilter);
+                    if(a.type === 'Mur') return a.uap.includes(uapFilter.toLowerCase());
+                    return true;
                 });
-                okData.push(ok);
-                nokData.push(nok);
-                naData.push(na);
-            });
-
-            if (chartRepartition) chartRepartition.destroy();
-            const ctx = document.getElementById('chart-repartition-type').getContext('2d');
-            chartRepartition = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: types,
-                    datasets: [
-                        { label: 'OK', data: okData, backgroundColor: '#38a169', borderRadius: 8 },
-                        { label: 'NOK', data: nokData, backgroundColor: '#e53e3e', borderRadius: 8 },
-                        { label: 'N/A', data: naData, backgroundColor: '#d69e2e', borderRadius: 8 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: { display: true, text: 'Répartition des réponses par type d\'audit', font: { size: 16 } }
-                    },
-                    scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
-                }
-            });
+            }
+            return { filtered, period };
         }
 
-        // Graphique par question
-        function updateQuestionChart() {
-            const type = document.getElementById('question-type-select').value;
-            let questionsLabels = [];
-            let questionKeys = [];
-            if (type === 'Ligne') {
-                questionsLabels = [
-                    'Main d\'œuvre (Qualification)',
-                    'Matière (Etat rebut)',
-                    'Méthode (OK démarrage)',
-                    'Méthode (Dossier)',
-                    'Méthode (Formulaire)',
-                    'Méthode (HSE)',
-                    'Milieu (5S)',
-                    'Machine (Prév. niveau 1)',
-                    'Prév. niveau 2',
-                    'POKA YOKE'
-                ];
-                questionKeys = ['mainLigne','matiereLigne','demarrageLigne','dossierLigne','formulaireLigne','hseLigne','cinqSLigne','prev1Ligne','prev2Ligne','pokaLigne'];
-            } else if (type === 'Magasin') {
-                questionsLabels = [
-                    'Qualification',
-                    'Identification',
-                    'Méthode (Instruction)',
-                    'Méthode (Stockage)',
-                    'Méthode (Formulaire)',
-                    'Méthode (HSE)',
-                    'Milieu (5S)',
-                    'Chariot élévateur'
-                ];
-                questionKeys = ['qualifMag','idMag','instructionMag','stockageMag','formulaireMag','hseMag','cinqSMag','chariotMag'];
-            } else {
-                questionsLabels = [
-                    'Main d\'œuvre',
-                    'Matière (Etat rebut)',
-                    'Méthode (OK démarrage)',
-                    'Méthode (Dossier)',
-                    'Méthode (Formulaire)',
-                    'Méthode (HSE)',
-                    'Milieu (5S)'
-                ];
-                questionKeys = ['mainMur','matiereMur','demarrageMur','dossierMur','formulaireMur','hseMur','cinqSMur'];
+        function getPeriodKey(date, period) {
+            if(period === 'jour') return date;
+            if(period === 'semaine') {
+                const d = new Date(date+'T00:00:00');
+                const oneJan = new Date(d.getFullYear(),0,1);
+                const week = Math.ceil((((d - oneJan)/86400000) + oneJan.getDay() + 1)/7);
+                return `${d.getFullYear()}-S${week}`;
             }
+            return date.substring(0,7);
+        }
 
-            let okCounts = new Array(questionKeys.length).fill(0);
-            let nokCounts = new Array(questionKeys.length).fill(0);
-            let naCounts = new Array(questionKeys.length).fill(0);
+        function updateCourbesCharts() {
+            updateUapComparisonChart();
+            updateTrendForecastChart();
+            updateLinesHistogramChart();
+            updateScoreDistributionChart();
+        }
 
-            const filteredAudits = audits.filter(a => a.type === type);
-            filteredAudits.forEach(a => {
-                if (a.reponses) {
-                    for (let i = 0; i < questionKeys.length; i++) {
-                        const key = questionKeys[i];
-                        const val = a.reponses[key];
-                        if (val === 'OK') okCounts[i]++;
-                        else if (val === 'NOK') nokCounts[i]++;
-                        else if (val === 'N/A') naCounts[i]++;
-                    }
-                }
-            });
-
-            let okPercent = [];
-            let nokPercent = [];
-            let naPercent = [];
-            for (let i = 0; i < questionKeys.length; i++) {
-                const total = okCounts[i] + nokCounts[i] + naCounts[i];
-                if (total > 0) {
-                    okPercent.push((okCounts[i] / total) * 100);
-                    nokPercent.push((nokCounts[i] / total) * 100);
-                    naPercent.push((naCounts[i] / total) * 100);
+        function updateUapComparisonChart() {
+            const { filtered, period } = getFilteredAudits();
+            const uap1Data = {}, uap2Data = {};
+            filtered.forEach(a => {
+                if(a.type !== 'Ligne' && a.type !== 'Mur') return;
+                let uap = null;
+                if(a.uap.includes('UAP1') || a.uap.includes('uap1')) uap = 'UAP1';
+                else if(a.uap.includes('UAP2') || a.uap.includes('uap2')) uap = 'UAP2';
+                if(!uap || a.score === undefined) return;
+                const key = getPeriodKey(a.date, period);
+                if(uap === 'UAP1') {
+                    if(!uap1Data[key]) uap1Data[key] = { sum:0, count:0 };
+                    uap1Data[key].sum += Number(a.score);
+                    uap1Data[key].count++;
                 } else {
-                    okPercent.push(0);
-                    nokPercent.push(0);
-                    naPercent.push(0);
-                }
-            }
-
-            if (chartPerQuestion) chartPerQuestion.destroy();
-            const ctx = document.getElementById('chart-questions-per-question').getContext('2d');
-            chartPerQuestion = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: questionsLabels,
-                    datasets: [
-                        { label: 'OK (%)', data: okPercent, backgroundColor: '#38a169', borderRadius: 8 },
-                        { label: 'NOK (%)', data: nokPercent, backgroundColor: '#e53e3e', borderRadius: 8 },
-                        { label: 'N/A (%)', data: naPercent, backgroundColor: '#d69e2e', borderRadius: 8 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    plugins: {
-                        title: { display: true, text: `Pourcentage par question - ${type}`, font: { size: 16 } }
-                    },
-                    scales: {
-                        x: { stacked: true, beginAtZero: true, max: 100, title: { display: true, text: 'Pourcentage' } },
-                        y: { stacked: true }
-                    }
+                    if(!uap2Data[key]) uap2Data[key] = { sum:0, count:0 };
+                    uap2Data[key].sum += Number(a.score);
+                    uap2Data[key].count++;
                 }
             });
-        }
-
-        // Graphique de tendance
-        function updateTrendChart() {
-            const types = ['Ligne', 'Magasin', 'Mur'];
-            const months = {};
-            
-            audits.forEach(a => {
-                if (!a.date || a.score === undefined || isNaN(Number(a.score))) return;
-                const month = a.date.substring(0, 7);
-                if (!months[month]) {
-                    months[month] = { Ligne: { sum: 0, count: 0 }, Magasin: { sum: 0, count: 0 }, Mur: { sum: 0, count: 0 } };
-                }
-                const type = a.type;
-                if (type === 'Ligne' || type === 'Magasin' || type === 'Mur') {
-                    months[month][type].sum += Number(a.score);
-                    months[month][type].count++;
-                }
-            });
-
-            const sortedMonths = Object.keys(months).sort();
-            
-            const ligneData = [];
-            const magasinData = [];
-            const murData = [];
-            
-            sortedMonths.forEach(m => {
-                const mData = months[m];
-                ligneData.push(mData.Ligne.count > 0 ? (mData.Ligne.sum / mData.Ligne.count).toFixed(1) : null);
-                magasinData.push(mData.Magasin.count > 0 ? (mData.Magasin.sum / mData.Magasin.count).toFixed(1) : null);
-                murData.push(mData.Mur.count > 0 ? (mData.Mur.sum / mData.Mur.count).toFixed(1) : null);
-            });
-
-            if (chartTrend) chartTrend.destroy();
-            const ctx = document.getElementById('chart-trend').getContext('2d');
-            chartTrend = new Chart(ctx, {
+            const allKeys = [...new Set([...Object.keys(uap1Data),...Object.keys(uap2Data)])].sort();
+            const uap1Avg = allKeys.map(k => uap1Data[k] ? uap1Data[k].sum/uap1Data[k].count : null);
+            const uap2Avg = allKeys.map(k => uap2Data[k] ? uap2Data[k].sum/uap2Data[k].count : null);
+            if(chartUapComparison) chartUapComparison.destroy();
+            const ctx = document.getElementById('chart-uap-comparison').getContext('2d');
+            chartUapComparison = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels: sortedMonths,
-                    datasets: [
-                        { label: 'Ligne', data: ligneData, borderColor: '#cc0000', backgroundColor: 'transparent', tension: 0.1, pointBackgroundColor: '#cc0000' },
-                        { label: 'Magasin', data: magasinData, borderColor: '#1976d2', backgroundColor: 'transparent', tension: 0.1, pointBackgroundColor: '#1976d2' },
-                        { label: 'Mur', data: murData, borderColor: '#ed6c02', backgroundColor: 'transparent', tension: 0.1, pointBackgroundColor: '#ed6c02' }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: { display: true, text: 'Évolution du score moyen par mois', font: { size: 16 } }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score moyen (%)' } }
-                    }
-                }
+                data: { labels: allKeys, datasets: [
+                    { label: 'UAP1', data: uap1Avg, borderColor: '#cc0000', backgroundColor: 'transparent', tension: 0.3, fill: false },
+                    { label: 'UAP2', data: uap2Avg, borderColor: '#1976d2', backgroundColor: 'transparent', tension: 0.3, fill: false }
+                ] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score (%)' } } } }
             });
         }
 
-        // ---- Déconnexion ----
-        function logout() {
-            auth.signOut().catch(err => alert('Erreur lors de la déconnexion.'));
+        function updateTrendForecastChart() {
+            const { filtered, period } = getFilteredAudits();
+            const periodData = {};
+            filtered.forEach(a => {
+                if(a.score === undefined || isNaN(Number(a.score))) return;
+                const key = getPeriodKey(a.date, period);
+                if(!periodData[key]) periodData[key] = { sum:0, count:0 };
+                periodData[key].sum += Number(a.score);
+                periodData[key].count++;
+            });
+            const sortedKeys = Object.keys(periodData).sort();
+            const avgScores = sortedKeys.map(k => periodData[k].sum / periodData[k].count);
+            let forecast = [...avgScores];
+            if(avgScores.length >= 3) {
+                const last3Avg = avgScores.slice(-3).reduce((a,b)=>a+b,0)/3;
+                forecast.push(last3Avg);
+            }
+            const forecastLabels = [...sortedKeys];
+            if(forecast.length > avgScores.length) forecastLabels.push('Prévision');
+            if(chartTrendForecast) chartTrendForecast.destroy();
+            const ctx = document.getElementById('chart-trend-forecast').getContext('2d');
+            chartTrendForecast = new Chart(ctx, {
+                type: 'line',
+                data: { labels: forecastLabels, datasets: [
+                    { label: 'Score moyen', data: avgScores, borderColor: '#cc0000', backgroundColor: 'transparent', tension: 0.3 },
+                    { label: 'Prévision', data: forecast, borderColor: '#ff9800', backgroundColor: 'transparent', borderDash: [5,5], tension: 0.3 }
+                ] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
         }
 
-        // ---- Initialisation des scores live au chargement ----
-        window.addEventListener('load', function() {
-            updateLigneScore();
-            updateMagasinScore();
-            updateMurScore();
+        function updateLinesHistogramChart() {
+            const ligneAudits = audits.filter(a => a.type === 'Ligne' && a.score !== undefined && !isNaN(Number(a.score)));
+            const lastAuditByLine = {};
+            ligneAudits.forEach(a => {
+                const lineName = a.uap.split(' (')[0];
+                if(!lastAuditByLine[lineName] || new Date(a.date) > new Date(lastAuditByLine[lineName].date)) {
+                    lastAuditByLine[lineName] = { date: a.date, score: Number(a.score) };
+                }
+            });
+            const lines = Object.keys(lastAuditByLine).sort();
+            const scores = lines.map(l => lastAuditByLine[l].score);
+            const colors = scores.map(s => s >= 85 ? '#2e7d32' : (s >= 80 ? '#ed6c02' : '#d32f2f'));
+            if(chartLinesHistogram) chartLinesHistogram.destroy();
+            const ctx = document.getElementById('chart-lines-histogram').getContext('2d');
+            chartLinesHistogram = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: lines, datasets: [{ label: 'Score (%)', data: scores, backgroundColor: colors, borderRadius: 8 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score (%)' } } } }
+            });
+        }
+
+        function updateScoreDistributionChart() {
+            const ligneAudits = audits.filter(a => a.type === 'Ligne' && a.score !== undefined && !isNaN(Number(a.score)));
+            const scores = ligneAudits.map(a => Number(a.score));
+            const bins = [0,50,60,70,80,85,90,95,100];
+            const labels = ['<50%','50-60%','60-70%','70-80%','80-85%','85-90%','90-95%','95-100%'];
+            const counts = new Array(8).fill(0);
+            scores.forEach(score => {
+                if(score < 50) counts[0]++;
+                else if(score < 60) counts[1]++;
+                else if(score < 70) counts[2]++;
+                else if(score < 80) counts[3]++;
+                else if(score < 85) counts[4]++;
+                else if(score < 90) counts[5]++;
+                else if(score < 95) counts[6]++;
+                else if(score <= 100) counts[7]++;
+            });
+            if(chartScoreDistribution) chartScoreDistribution.destroy();
+            const ctx = document.getElementById('chart-score-distribution').getContext('2d');
+            chartScoreDistribution = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: labels, datasets: [{ label: "Nombre d'audits", data: counts, backgroundColor: '#cc0000', borderRadius: 8 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: "Nombre d'audits" } } } }
+            });
+        }
+
+        // Auth state
+        auth.onAuthStateChanged((user) => {
+            if(user) {
+                loginContainer.style.display = 'none';
+                dashboardContainer.style.display = 'block';
+                userEmailSpan.textContent = user.email;
+                database.ref('audits').on('value', (snapshot) => {
+                    audits = [];
+                    snapshot.forEach((child) => { audits.push({ id: child.key, ...child.val() }); });
+                    filterAudits();
+                    updateDashboardStats();
+                    updateWorstResults();
+                    updateCourbesCharts();
+                });
+            } else {
+                loginContainer.style.display = 'flex';
+                dashboardContainer.style.display = 'none';
+                database.ref('audits').off();
+            }
         });
 
-        // ---- Gestion de la touche Entrée sur le formulaire de connexion ----
-        document.addEventListener('keypress', (e) => {
-            if (e.target.closest('#login-container') && e.key === 'Enter') handleAuth();
-        });
+        function logout() { auth.signOut().catch(err => alert('Erreur lors de la déconnexion.')); }
+        window.addEventListener('load', function() { updateLigneScore(); updateMagasinScore(); updateMurScore(); });
+        document.addEventListener('keypress', (e) => { if(e.target.closest('#login-container') && e.key === 'Enter') handleAuth(); });
+        const forgotPasswordLink = document.querySelector('.forgot-password a');
     </script>
 </body>
 </html>
