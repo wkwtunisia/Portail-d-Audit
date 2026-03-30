@@ -1081,7 +1081,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
-    <script>
+        <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBCnvkriTgPdaE37DRkRHPcULCVAYfbUHE",
             authDomain: "portail-d-audit.firebaseapp.com",
@@ -1098,7 +1098,7 @@
 
         let audits = [];
         let charts = {};
-        let pendingSection = null;
+        let isPasswordModalOpen = false;
         const AUDIT_PASSWORD = "kpiadmin";
 
         const ligneQuestions = [
@@ -1138,7 +1138,6 @@
         function handleSectionClick(section) {
             console.log("Section cliquée:", section);
             if (section === 'auditeurs') {
-                pendingSection = section;
                 showPasswordModal();
             } else {
                 switchSection(section);
@@ -1152,13 +1151,14 @@
             modal.style.display = 'flex';
             input.value = '';
             errorDiv.style.display = 'none';
+            isPasswordModalOpen = true;
             setTimeout(() => input.focus(), 100);
         }
 
         function closePasswordModal() {
             const modal = document.getElementById('passwordModal');
             modal.style.display = 'none';
-            pendingSection = null;
+            isPasswordModalOpen = false;
         }
 
         function verifyPasswordAndOpen() {
@@ -1169,13 +1169,10 @@
             console.log("Mot de passe attendu:", AUDIT_PASSWORD);
             
             if (password === AUDIT_PASSWORD) {
-                console.log("Mot de passe correct, fermeture de la modale");
+                console.log("Mot de passe correct - fermeture de la modale");
                 closePasswordModal();
-                if (pendingSection) {
-                    console.log("Ouverture de la section:", pendingSection);
-                    switchSection(pendingSection);
-                    pendingSection = null;
-                }
+                console.log("Ouverture de la section auditeurs");
+                switchSection('auditeurs');
             } else {
                 console.log("Mot de passe incorrect");
                 errorDiv.style.display = 'block';
@@ -1184,13 +1181,15 @@
             }
         }
 
+        // Événement pour la touche Entrée - avec vérification pour éviter les doublons
         document.addEventListener('keypress', function(e) {
-            const modal = document.getElementById('passwordModal');
-            if (modal.style.display === 'flex' && e.key === 'Enter') {
+            if (isPasswordModalOpen && e.key === 'Enter') {
+                e.preventDefault();
                 verifyPasswordAndOpen();
             }
         });
 
+        // Fermer la modale en cliquant à l'extérieur
         window.onclick = function(event) {
             const modal = document.getElementById('passwordModal');
             if (event.target === modal) {
@@ -1295,20 +1294,35 @@
 
         function switchSection(section) {
             console.log("switchSection appelée pour:", section);
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+            
+            // Cacher toutes les sections
+            document.querySelectorAll('.section').forEach(s => {
+                s.classList.remove('active-section');
+            });
+            
+            // Afficher la section demandée
             const targetSection = document.getElementById(`section-${section}`);
             if (targetSection) {
                 targetSection.classList.add('active-section');
                 console.log("Section activée:", section);
             } else {
                 console.error("Section non trouvée:", section);
+                return;
             }
-            document.querySelectorAll('.sidebar-nav li').forEach(l => l.classList.remove('active'));
+            
+            // Mettre à jour la navigation
+            document.querySelectorAll('.sidebar-nav li').forEach(l => {
+                l.classList.remove('active');
+            });
             const navItem = document.getElementById(`nav-${section}`);
             if (navItem) {
                 navItem.classList.add('active');
             }
-            if (section === 'courbes') updateAllCharts();
+            
+            // Mettre à jour les graphiques si nécessaire
+            if (section === 'courbes') {
+                updateAllCharts();
+            }
         }
 
         function switchAuditType(type) {
