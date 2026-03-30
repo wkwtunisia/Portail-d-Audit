@@ -27,7 +27,6 @@
             position: relative;
         }
 
-        /* --- PAGE DE CONNEXION --- */
         #login-container {
             width: 100%;
             display: flex;
@@ -146,14 +145,12 @@
             display: block;
         }
 
-        .toggle-form,
-        .forgot-password {
+        .toggle-form, .forgot-password {
             text-align: center;
             margin-top: 20px;
         }
 
-        .toggle-form a,
-        .forgot-password a {
+        .toggle-form a, .forgot-password a {
             color: #cc0000;
             text-decoration: none;
             font-weight: 600;
@@ -161,7 +158,6 @@
             cursor: pointer;
         }
 
-        /* --- TABLEAU DE BORD --- */
         #dashboard-container {
             display: none;
             width: 100%;
@@ -319,12 +315,8 @@
         }
 
         @media (min-width: 1024px) {
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            .main-content.shifted {
-                margin-left: 280px;
-            }
+            .sidebar.open { transform: translateX(0); }
+            .main-content.shifted { margin-left: 280px; }
         }
 
         .section {
@@ -337,14 +329,8 @@
         }
 
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .section h1 {
@@ -408,17 +394,9 @@
             opacity: 0.8;
         }
 
-        .score-vert {
-            color: #2e7d32 !important;
-        }
-
-        .score-orange {
-            color: #ed6c02 !important;
-        }
-
-        .score-rouge {
-            color: #d32f2f !important;
-        }
+        .score-vert { color: #2e7d32 !important; }
+        .score-orange { color: #ed6c02 !important; }
+        .score-rouge { color: #d32f2f !important; }
 
         .sub-nav {
             display: flex;
@@ -570,8 +548,7 @@
             cursor: pointer;
         }
 
-        .text-input,
-        select {
+        .text-input, select {
             width: 100%;
             padding: 14px 18px;
             border: 2px solid #e2e8f0;
@@ -581,8 +558,7 @@
             transition: all 0.3s;
         }
 
-        .text-input:focus,
-        select:focus {
+        .text-input:focus, select:focus {
             outline: none;
             border-color: #cc0000;
             box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.1);
@@ -624,14 +600,8 @@
         }
 
         @keyframes scaleIn {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .resultat-stats {
@@ -648,17 +618,9 @@
             text-align: center;
         }
 
-        .stat-badge.ok {
-            border-left: 4px solid #38a169;
-        }
-
-        .stat-badge.nok {
-            border-left: 4px solid #e53e3e;
-        }
-
-        .stat-badge.na {
-            border-left: 4px solid #d69e2e;
-        }
+        .stat-badge.ok { border-left: 4px solid #38a169; }
+        .stat-badge.nok { border-left: 4px solid #e53e3e; }
+        .stat-badge.na { border-left: 4px solid #d69e2e; }
 
         .stat-badge span {
             font-size: 28px;
@@ -793,8 +755,7 @@
             letter-spacing: 0.5px;
         }
 
-        .filter-group select,
-        .filter-group button {
+        .filter-group select, .filter-group button {
             padding: 10px 16px;
             border: 2px solid #e2e8f0;
             border-radius: 40px;
@@ -857,52 +818,106 @@
             margin-left: 10px;
         }
 
-        .question-selector {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
             align-items: center;
         }
 
-        .question-selector label {
-            font-weight: 600;
-            color: #4a5568;
+        .password-modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        .question-selector select {
-            padding: 8px 16px;
-            border-radius: 40px;
+        .password-modal-content i {
+            font-size: 60px;
+            color: #cc0000;
+            margin-bottom: 20px;
+        }
+
+        .password-modal-content h3 {
+            color: #1a202c;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .password-modal-content p {
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        .password-modal-content input {
+            width: 100%;
+            padding: 14px 18px;
             border: 2px solid #e2e8f0;
-            background: white;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .password-modal-content input:focus {
+            outline: none;
+            border-color: #cc0000;
+        }
+
+        .password-modal-content button {
+            padding: 12px 24px;
+            background: #cc0000;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        .password-modal-content button:hover {
+            background: #a30000;
+            transform: translateY(-2px);
+        }
+
+        .password-modal-content .cancel-btn {
+            background: #6c757d;
+        }
+
+        .password-modal-content .cancel-btn:hover {
+            background: #5a6268;
+        }
+
+        .password-error {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 15px;
+            display: none;
         }
 
         @media (max-width: 768px) {
-            .section h1 {
-                font-size: 22px;
-            }
-            .card-container {
-                grid-template-columns: 1fr;
-            }
-            .filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .filter-group {
-                width: 100%;
-            }
-            .chart-container canvas {
-                max-height: 350px;
-            }
-            .stat-mini .value {
-                font-size: 22px;
-            }
+            .section h1 { font-size: 22px; }
+            .card-container { grid-template-columns: 1fr; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+            .filter-group { width: 100%; }
+            .chart-container canvas { max-height: 350px; }
+            .stat-mini .value { font-size: 22px; }
         }
     </style>
 </head>
 <body>
     <div id="app">
-        <!-- Login Container -->
         <div id="login-container">
             <div class="login-box">
                 <div class="login-icon"><i class="fas fa-industry"></i></div>
@@ -926,7 +941,6 @@
             </div>
         </div>
 
-        <!-- Dashboard Container -->
         <div id="dashboard-container">
             <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
             
@@ -938,10 +952,10 @@
                 </div>
                 <div class="sidebar-nav">
                     <ul>
-                        <li id="nav-dashboard" class="active" onclick="switchSection('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
-                        <li id="nav-courbes" onclick="switchSection('courbes')"><i class="fas fa-chart-line"></i> Courbes & Stats</li>
-                        <li id="nav-auditeurs" onclick="switchSection('auditeurs')"><i class="fas fa-pen-alt"></i> Nouvelle audit</li>
-                        <li id="nav-details" onclick="switchSection('details')"><i class="fas fa-list-alt"></i> Détails d'audit</li>
+                        <li id="nav-dashboard" class="active" onclick="handleSectionClick('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+                        <li id="nav-courbes" onclick="handleSectionClick('courbes')"><i class="fas fa-chart-line"></i> Courbes & Stats</li>
+                        <li id="nav-auditeurs" onclick="handleSectionClick('auditeurs')"><i class="fas fa-pen-alt"></i> Nouvelle audit</li>
+                        <li id="nav-details" onclick="handleSectionClick('details')"><i class="fas fa-list-alt"></i> Détails d'audit</li>
                     </ul>
                 </div>
                 <div class="sidebar-footer">
@@ -950,27 +964,22 @@
             </div>
 
             <div class="main-content" id="mainContent">
-                <!-- Dashboard Section -->
                 <div id="section-dashboard" class="section active-section">
                     <h1><i class="fas fa-tachometer-alt"></i> Dashboard <span id="total-audits-badge" class="audit-count-badge"></span></h1>
                     <div class="card-container" id="dashboard-cards"></div>
                     <div style="margin-top: 40px;">
                         <h2 style="margin-bottom: 20px;"><i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> 5 pires résultats</h2>
                         <div class="auditor-table">
-                             <table>
-                                <thead>
-                                    <tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr>
-                                </thead>
+                            <table>
+                                <thead><tr><th>Date</th><th>Type</th><th>UAP/Ligne</th><th>Score</th><th>Détail</th></tr></thead>
                                 <tbody id="worst-results-body"></tbody>
-                             </table>
+                            </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- Courbes Section avec graphiques par question -->
                 <div id="section-courbes" class="section">
                     <h1><i class="fas fa-chart-line"></i> Courbes & Statistiques avancées <span id="courbes-audit-count" class="audit-count-badge"></span></h1>
-                    
                     <div class="filter-bar">
                         <div class="filter-group">
                             <label><i class="fas fa-calendar-alt"></i> Période</label>
@@ -1001,48 +1010,16 @@
                             <button onclick="updateAllCharts()"><i class="fas fa-sync-alt"></i> Actualiser</button>
                         </div>
                     </div>
-
                     <div class="stats-mini-cards" id="mini-stats"></div>
-
-                    <!-- Graphiques d'évolution -->
-                    <div class="chart-container">
-                        <div class="chart-title"><i class="fas fa-chart-line"></i> Évolution UAP1 vs UAP2</div>
-                        <canvas id="chart-uap-comparison"></canvas>
-                    </div>
-
-                    <div class="chart-container">
-                        <div class="chart-title"><i class="fas fa-chart-line"></i> Tendance générale & prévision</div>
-                        <canvas id="chart-trend-forecast"></canvas>
-                    </div>
-
-                    <div class="chart-container">
-                        <div class="chart-title"><i class="fas fa-chart-bar"></i> Performance par ligne - Dernier audit</div>
-                        <canvas id="chart-lines-histogram"></canvas>
-                    </div>
-
-                    <div class="chart-container">
-                        <div class="chart-title"><i class="fas fa-chart-pie"></i> Distribution des scores - Audits Ligne</div>
-                        <canvas id="chart-score-distribution"></canvas>
-                    </div>
-
-                    <!-- Nouveaux graphiques: Pourcentage de réponses par question pour chaque type d'audit -->
-                    <div class="chart-container">
-                        <div class="chart-title"><i class="fas fa-chart-bar"></i> Pourcentage de réponses par question - Audit Ligne</div>
-                        <canvas id="chart-ligne-questions"></canvas>
-                    </div>
-
-                    <div class="chart-container">
-                        <div class="chart-title"><i class="fas fa-chart-bar"></i> Pourcentage de réponses par question - Audit Magasin</div>
-                        <canvas id="chart-magasin-questions"></canvas>
-                    </div>
-
-                    <div class="chart-container">
-                        <div class="chart-title"><i class="fas fa-chart-bar"></i> Pourcentage de réponses par question - Audit Mur qualité</div>
-                        <canvas id="chart-mur-questions"></canvas>
-                    </div>
+                    <div class="chart-container"><div class="chart-title"><i class="fas fa-chart-line"></i> Évolution UAP1 vs UAP2</div><canvas id="chart-uap-comparison"></canvas></div>
+                    <div class="chart-container"><div class="chart-title"><i class="fas fa-chart-line"></i> Tendance générale & prévision</div><canvas id="chart-trend-forecast"></canvas></div>
+                    <div class="chart-container"><div class="chart-title"><i class="fas fa-chart-bar"></i> Performance par ligne - Dernier audit</div><canvas id="chart-lines-histogram"></canvas></div>
+                    <div class="chart-container"><div class="chart-title"><i class="fas fa-chart-pie"></i> Distribution des scores - Audits Ligne</div><canvas id="chart-score-distribution"></canvas></div>
+                    <div class="chart-container"><div class="chart-title"><i class="fas fa-chart-bar"></i> Pourcentage de réponses par question - Audit Ligne</div><canvas id="chart-ligne-questions"></canvas></div>
+                    <div class="chart-container"><div class="chart-title"><i class="fas fa-chart-bar"></i> Pourcentage de réponses par question - Audit Magasin</div><canvas id="chart-magasin-questions"></canvas></div>
+                    <div class="chart-container"><div class="chart-title"><i class="fas fa-chart-bar"></i> Pourcentage de réponses par question - Audit Mur qualité</div><canvas id="chart-mur-questions"></canvas></div>
                 </div>
 
-                <!-- Nouvelle Audit Section -->
                 <div id="section-auditeurs" class="section">
                     <h1><i class="fas fa-pen-alt"></i> Nouvelle audit Gemba</h1>
                     <div class="sub-nav">
@@ -1055,7 +1032,6 @@
                     <div id="audit-mur" class="audit-content"></div>
                 </div>
 
-                <!-- Détails Section -->
                 <div id="section-details" class="section">
                     <h1><i class="fas fa-list-alt"></i> Détails des audits <span id="details-audit-count" class="audit-count-badge"></span></h1>
                     <div class="filter-bar">
@@ -1087,12 +1063,25 @@
         </div>
     </div>
 
+    <div id="passwordModal" class="password-modal">
+        <div class="password-modal-content">
+            <i class="fas fa-lock"></i>
+            <h3>Accès restreint</h3>
+            <p>Veuillez entrer le mot de passe pour accéder à la création d'audit</p>
+            <input type="password" id="modalPassword" placeholder="Mot de passe" autocomplete="off">
+            <div>
+                <button onclick="verifyPasswordAndOpen()"><i class="fas fa-check"></i> Valider</button>
+                <button class="cancel-btn" onclick="closePasswordModal()"><i class="fas fa-times"></i> Annuler</button>
+            </div>
+            <div id="passwordError" class="password-error">Mot de passe incorrect</div>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <script>
-        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBCnvkriTgPdaE37DRkRHPcULCVAYfbUHE",
             authDomain: "portail-d-audit.firebaseapp.com",
@@ -1109,8 +1098,9 @@
 
         let audits = [];
         let charts = {};
+        let pendingSection = null;
+        const AUDIT_PASSWORD = "kpiadmin";
 
-        // Définition des questions pour chaque type d'audit
         const ligneQuestions = [
             { key: 'mainLigne', label: 'Main d\'œuvre (Qualification)' },
             { key: 'matiereLigne', label: 'Matière (Etat rebut)' },
@@ -1145,9 +1135,70 @@
             { key: 'cinqSMur', label: 'Milieu (5S)' }
         ];
 
-        // Load Audit Forms
+        function handleSectionClick(section) {
+            console.log("Section cliquée:", section);
+            if (section === 'auditeurs') {
+                pendingSection = section;
+                showPasswordModal();
+            } else {
+                switchSection(section);
+            }
+        }
+
+        function showPasswordModal() {
+            const modal = document.getElementById('passwordModal');
+            const input = document.getElementById('modalPassword');
+            const errorDiv = document.getElementById('passwordError');
+            modal.style.display = 'flex';
+            input.value = '';
+            errorDiv.style.display = 'none';
+            setTimeout(() => input.focus(), 100);
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('passwordModal');
+            modal.style.display = 'none';
+            pendingSection = null;
+        }
+
+        function verifyPasswordAndOpen() {
+            const password = document.getElementById('modalPassword').value;
+            const errorDiv = document.getElementById('passwordError');
+            
+            console.log("Mot de passe saisi:", password);
+            console.log("Mot de passe attendu:", AUDIT_PASSWORD);
+            
+            if (password === AUDIT_PASSWORD) {
+                console.log("Mot de passe correct, fermeture de la modale");
+                closePasswordModal();
+                if (pendingSection) {
+                    console.log("Ouverture de la section:", pendingSection);
+                    switchSection(pendingSection);
+                    pendingSection = null;
+                }
+            } else {
+                console.log("Mot de passe incorrect");
+                errorDiv.style.display = 'block';
+                document.getElementById('modalPassword').value = '';
+                document.getElementById('modalPassword').focus();
+            }
+        }
+
+        document.addEventListener('keypress', function(e) {
+            const modal = document.getElementById('passwordModal');
+            if (modal.style.display === 'flex' && e.key === 'Enter') {
+                verifyPasswordAndOpen();
+            }
+        });
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('passwordModal');
+            if (event.target === modal) {
+                closePasswordModal();
+            }
+        }
+
         function loadAuditForms() {
-            // Formulaire Ligne
             document.getElementById('audit-ligne').innerHTML = `
                 <div class="audit-form">
                     <h3><i class="fas fa-bolt"></i> Audit Ligne de production</h3>
@@ -1161,7 +1212,6 @@
                     <div id="resultat-ligne" class="resultat-card"></div>
                 </div>`;
             
-            // Formulaire Magasin
             document.getElementById('audit-magasin').innerHTML = `
                 <div class="audit-form">
                     <h3><i class="fas fa-boxes"></i> Audit Magasin / Stock</h3>
@@ -1174,7 +1224,6 @@
                     <div id="resultat-magasin" class="resultat-card"></div>
                 </div>`;
             
-            // Formulaire Mur qualité
             document.getElementById('audit-mur').innerHTML = `
                 <div class="audit-form">
                     <h3><i class="fas fa-chalkboard"></i> Audit Mur qualité</h3>
@@ -1188,7 +1237,6 @@
                 </div>`;
         }
 
-        // Auth Functions
         let isLoginMode = true;
         let isForgotPasswordMode = false;
 
@@ -1238,7 +1286,6 @@
             setTimeout(() => m.className = 'message', 3000);
         }
 
-        // Sidebar Functions
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
             if (window.innerWidth >= 1024) {
@@ -1247,10 +1294,20 @@
         }
 
         function switchSection(section) {
+            console.log("switchSection appelée pour:", section);
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
-            document.getElementById(`section-${section}`).classList.add('active-section');
+            const targetSection = document.getElementById(`section-${section}`);
+            if (targetSection) {
+                targetSection.classList.add('active-section');
+                console.log("Section activée:", section);
+            } else {
+                console.error("Section non trouvée:", section);
+            }
             document.querySelectorAll('.sidebar-nav li').forEach(l => l.classList.remove('active'));
-            document.getElementById(`nav-${section}`).classList.add('active');
+            const navItem = document.getElementById(`nav-${section}`);
+            if (navItem) {
+                navItem.classList.add('active');
+            }
             if (section === 'courbes') updateAllCharts();
         }
 
@@ -1261,7 +1318,6 @@
             document.getElementById(`tab-${type}`).classList.add('active');
         }
 
-        // Submit Audit Function
         window.submitAudit = function(type) {
             let questions, date, zone, uap, ok = 0, nok = 0, na = 0, reponses = {};
             
@@ -1323,14 +1379,13 @@
                     totalQuestions: total, reponses, detail: `OK:${ok} NOK:${nok} NA:${na} Score:${score.toFixed(1)}%`,
                     uid: auth.currentUser.uid, timestamp: firebase.database.ServerValue.TIMESTAMP
                 });
+                alert('Audit soumis avec succès !');
             }
         };
 
-        // Fonction pour calculer les pourcentages de réponses par question
         function calculateQuestionPercentages(auditType, questionsList) {
             const auditsOfType = audits.filter(a => a.type === auditType && a.reponses);
             const results = {};
-            
             questionsList.forEach(q => {
                 let okCount = 0, nokCount = 0, naCount = 0;
                 auditsOfType.forEach(a => {
@@ -1350,9 +1405,7 @@
             return results;
         }
 
-        // Création des graphiques pour les questions
         function updateQuestionCharts() {
-            // Graphique Ligne
             const ligneResults = calculateQuestionPercentages('Ligne', ligneQuestions);
             const ligneLabels = ligneQuestions.map(q => q.label);
             const ligneOkData = ligneQuestions.map(q => ligneResults[q.key]?.ok || 0);
@@ -1360,26 +1413,19 @@
             const ligneNaData = ligneQuestions.map(q => ligneResults[q.key]?.na || 0);
             
             if (charts.ligneQuestions) charts.ligneQuestions.destroy();
-            charts.ligneQuestions = new Chart(document.getElementById('chart-ligne-questions'), {
-                type: 'bar',
-                data: {
-                    labels: ligneLabels,
-                    datasets: [
+            const ctxLigne = document.getElementById('chart-ligne-questions');
+            if (ctxLigne) {
+                charts.ligneQuestions = new Chart(ctxLigne, {
+                    type: 'bar',
+                    data: { labels: ligneLabels, datasets: [
                         { label: 'OK (%)', data: ligneOkData, backgroundColor: '#2e7d32', borderRadius: 8 },
                         { label: 'NOK (%)', data: ligneNokData, backgroundColor: '#d32f2f', borderRadius: 8 },
                         { label: 'N/A (%)', data: ligneNaData, backgroundColor: '#ff8f00', borderRadius: 8 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    indexAxis: 'y',
-                    plugins: { legend: { position: 'top' }, title: { display: false } },
-                    scales: { x: { stacked: true, max: 100, title: { display: true, text: 'Pourcentage (%)' } }, y: { stacked: true } }
-                }
-            });
+                    ] },
+                    options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true, max: 100 }, y: { stacked: true } } }
+                });
+            }
 
-            // Graphique Magasin
             const magasinResults = calculateQuestionPercentages('Magasin', magasinQuestions);
             const magasinLabels = magasinQuestions.map(q => q.label);
             const magasinOkData = magasinQuestions.map(q => magasinResults[q.key]?.ok || 0);
@@ -1387,52 +1433,38 @@
             const magasinNaData = magasinQuestions.map(q => magasinResults[q.key]?.na || 0);
             
             if (charts.magasinQuestions) charts.magasinQuestions.destroy();
-            charts.magasinQuestions = new Chart(document.getElementById('chart-magasin-questions'), {
-                type: 'bar',
-                data: {
-                    labels: magasinLabels,
-                    datasets: [
+            const ctxMagasin = document.getElementById('chart-magasin-questions');
+            if (ctxMagasin) {
+                charts.magasinQuestions = new Chart(ctxMagasin, {
+                    type: 'bar',
+                    data: { labels: magasinLabels, datasets: [
                         { label: 'OK (%)', data: magasinOkData, backgroundColor: '#2e7d32', borderRadius: 8 },
                         { label: 'NOK (%)', data: magasinNokData, backgroundColor: '#d32f2f', borderRadius: 8 },
                         { label: 'N/A (%)', data: magasinNaData, backgroundColor: '#ff8f00', borderRadius: 8 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    indexAxis: 'y',
-                    plugins: { legend: { position: 'top' }, title: { display: false } },
-                    scales: { x: { stacked: true, max: 100, title: { display: true, text: 'Pourcentage (%)' } }, y: { stacked: true } }
-                }
-            });
+                    ] },
+                    options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true, max: 100 }, y: { stacked: true } } }
+                });
+            }
 
-            // Graphique Mur qualité
             const murResults = calculateQuestionPercentages('Mur', murQuestions);
             const murLabels = murQuestions.map(q => q.label);
             const murOkData = murQuestions.map(q => murResults[q.key]?.ok || 0);
             const murNokData = murQuestions.map(q => murResults[q.key]?.nok || 0);
             
             if (charts.murQuestions) charts.murQuestions.destroy();
-            charts.murQuestions = new Chart(document.getElementById('chart-mur-questions'), {
-                type: 'bar',
-                data: {
-                    labels: murLabels,
-                    datasets: [
+            const ctxMur = document.getElementById('chart-mur-questions');
+            if (ctxMur) {
+                charts.murQuestions = new Chart(ctxMur, {
+                    type: 'bar',
+                    data: { labels: murLabels, datasets: [
                         { label: 'OK (%)', data: murOkData, backgroundColor: '#2e7d32', borderRadius: 8 },
                         { label: 'NOK (%)', data: murNokData, backgroundColor: '#d32f2f', borderRadius: 8 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    indexAxis: 'y',
-                    plugins: { legend: { position: 'top' }, title: { display: false } },
-                    scales: { x: { stacked: true, max: 100, title: { display: true, text: 'Pourcentage (%)' } }, y: { stacked: true } }
-                }
-            });
+                    ] },
+                    options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true, max: 100 }, y: { stacked: true } } }
+                });
+            }
         }
 
-        // Chart Functions
         function getFilteredAudits() {
             let filtered = audits;
             let t = document.getElementById('type-filter').value;
@@ -1484,8 +1516,8 @@
         function updateUapChart(data, period) {
             let u1 = {}, u2 = {};
             data.forEach(a => {
-                if (!a.uap || (!a.uap.includes('UAP1') && !a.uap.includes('UAP2') && !a.uap.includes('uap1') && !a.uap.includes('uap2'))) return;
-                let uap = (a.uap.includes('UAP1') || a.uap.includes('uap1')) ? 'UAP1' : 'UAP2';
+                if (!a.uap || (!a.uap.includes('UAP1') && !a.uap.includes('UAP2'))) return;
+                let uap = a.uap.includes('UAP1') ? 'UAP1' : 'UAP2';
                 let key = getPeriodKey(a.date, period);
                 if (uap === 'UAP1') {
                     if (!u1[key]) u1[key] = { s: 0, c: 0 };
@@ -1499,17 +1531,17 @@
             });
             let keys = [...new Set([...Object.keys(u1), ...Object.keys(u2)])].sort();
             if (charts.uap) charts.uap.destroy();
-            charts.uap = new Chart(document.getElementById('chart-uap-comparison'), {
-                type: 'line',
-                data: {
-                    labels: keys,
-                    datasets: [
+            const ctx = document.getElementById('chart-uap-comparison');
+            if (ctx) {
+                charts.uap = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: keys, datasets: [
                         { label: 'UAP1', data: keys.map(k => u1[k] ? u1[k].s / u1[k].c : null), borderColor: '#cc0000', tension: 0.3 },
                         { label: 'UAP2', data: keys.map(k => u2[k] ? u2[k].s / u2[k].c : null), borderColor: '#1976d2', tension: 0.3 }
-                    ]
-                },
-                options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
-            });
+                    ] },
+                    options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+                });
+            }
         }
 
         function updateTrendChart(data, period) {
@@ -1528,17 +1560,17 @@
             let fLabels = [...keys];
             if (forecast.length > avgs.length) fLabels.push('Prévision');
             if (charts.trend) charts.trend.destroy();
-            charts.trend = new Chart(document.getElementById('chart-trend-forecast'), {
-                type: 'line',
-                data: {
-                    labels: fLabels,
-                    datasets: [
+            const ctx = document.getElementById('chart-trend-forecast');
+            if (ctx) {
+                charts.trend = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: fLabels, datasets: [
                         { label: 'Score moyen', data: avgs, borderColor: '#cc0000', tension: 0.3 },
                         { label: 'Prévision', data: forecast, borderColor: '#ff9800', borderDash: [5, 5], tension: 0.3 }
-                    ]
-                },
-                options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
-            });
+                    ] },
+                    options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+                });
+            }
         }
 
         function updateLinesHistogram(data) {
@@ -1553,11 +1585,14 @@
             let scores = names.map(n => lines[n].score);
             let colors = scores.map(s => s >= 85 ? '#2e7d32' : s >= 80 ? '#ed6c02' : '#d32f2f');
             if (charts.histogram) charts.histogram.destroy();
-            charts.histogram = new Chart(document.getElementById('chart-lines-histogram'), {
-                type: 'bar',
-                data: { labels: names, datasets: [{ label: 'Score (%)', data: scores, backgroundColor: colors, borderRadius: 8 }] },
-                options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
-            });
+            const ctx = document.getElementById('chart-lines-histogram');
+            if (ctx) {
+                charts.histogram = new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels: names, datasets: [{ label: 'Score (%)', data: scores, backgroundColor: colors, borderRadius: 8 }] },
+                    options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+                });
+            }
         }
 
         function updateScoreDist(data) {
@@ -1575,14 +1610,16 @@
                 else if (s <= 100) counts[7]++;
             });
             if (charts.dist) charts.dist.destroy();
-            charts.dist = new Chart(document.getElementById('chart-score-distribution'), {
-                type: 'bar',
-                data: { labels, datasets: [{ label: "Nombre d'audits", data: counts, backgroundColor: '#cc0000', borderRadius: 8 }] },
-                options: { responsive: true, scales: { y: { beginAtZero: true } } }
-            });
+            const ctx = document.getElementById('chart-score-distribution');
+            if (ctx) {
+                charts.dist = new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels, datasets: [{ label: "Nombre d'audits", data: counts, backgroundColor: '#cc0000', borderRadius: 8 }] },
+                    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+                });
+            }
         }
 
-        // Filter and Export Functions
         function filterAudits() {
             let t = document.getElementById('filter-type').value;
             let u = document.getElementById('filter-uap').value;
@@ -1605,9 +1642,7 @@
                 }
                 row.insertCell().innerHTML = `<button class="badge" onclick="alert('${(a.detail || '').replace(/'/g, "\\'")}')"><i class="fas fa-eye"></i> Voir</button>`;
             });
-            
             document.getElementById('details-audit-count').textContent = `${filtered.length} audits`;
-            
             let uapSelect = document.getElementById('filter-uap');
             let current = uapSelect.value;
             let allUaps = [...new Set(audits.map(a => a.uap))];
@@ -1630,14 +1665,13 @@
             link.click();
         }
 
-        // Dashboard Functions
         function updateDashboardCards() {
             let total = audits.length;
             let totalOk = audits.reduce((s, a) => s + (a.okCount || 0), 0);
             let totalNok = audits.reduce((s, a) => s + (a.nokCount || 0), 0);
-            let u1Audits = audits.filter(a => (a.uap && (a.uap.includes('UAP1') || a.uap.includes('uap1'))) && a.score);
+            let u1Audits = audits.filter(a => (a.uap && a.uap.includes('UAP1')) && a.score);
             let u1 = u1Audits.length ? u1Audits.reduce((s, a) => s + Number(a.score), 0) / u1Audits.length : 0;
-            let u2Audits = audits.filter(a => (a.uap && (a.uap.includes('UAP2') || a.uap.includes('uap2'))) && a.score);
+            let u2Audits = audits.filter(a => (a.uap && a.uap.includes('UAP2')) && a.score);
             let u2 = u2Audits.length ? u2Audits.reduce((s, a) => s + Number(a.score), 0) / u2Audits.length : 0;
             let magAudits = audits.filter(a => a.type === 'Magasin' && a.score);
             let mag = magAudits.length ? magAudits.reduce((s, a) => s + Number(a.score), 0) / magAudits.length : 0;
@@ -1681,7 +1715,6 @@
             });
         }
 
-        // Live Score Update
         function updateScoreLive() {
             setInterval(() => {
                 let q = ligneQuestions.map(q => q.key);
@@ -1707,7 +1740,6 @@
             }, 500);
         }
 
-        // Auth State Listener
         auth.onAuthStateChanged(user => {
             if (user) {
                 console.log("Utilisateur connecté:", user.email);
